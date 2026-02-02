@@ -69,6 +69,13 @@ table TestData-Fact
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Blank Column' = BLANK()
+		formatString: 0
+		lineageTag: 1cacb884-a371-416c-b98a-245dd3135222
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
 	partition TestData-Fact = m
 		mode: import
 		source = ```
