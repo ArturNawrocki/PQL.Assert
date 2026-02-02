@@ -149,16 +149,20 @@ VAR _Col_ShouldBeNull_Fail = PQL.Assert.Col.ShouldBeNull("Col.ShouldBeNull: ID c
 VAR _Col_ShouldNotBeNull_Pass = PQL.Assert.Col.ShouldNotBeNull("Col.ShouldNotBeNull: ID column should pass", 'TestData'[ID])
 
 // PQL.Assert.Col.ShouldBeBlank
-VAR _Col_ShouldBeBlank_Fail = PQL.Assert.Col.ShouldBeBlank("Col.ShouldBeBlank: ID column should fail (has values)", 'TestData'[ID])
+VAR _Col_ShouldBeBlank_Pass = PQL.Assert.Col.ShouldBeBlank("Col.ShouldBeBlank: Empty column should pass", 'TestData-Fact'[Blank Column])
+VAR _Col_ShouldBeBlank_Fail = PQL.Assert.Col.ShouldBeBlank("Col.ShouldBeBlank: NullableField should fail (has non-blank)", 'TestData-Fact'[NullableField])
 
-// PQL.Assert.Col.ShouldNotBeBlank
-VAR _Col_ShouldNotBeBlank_Pass = PQL.Assert.Col.ShouldNotBeBlank("Col.ShouldNotBeBlank: ID column should pass", 'TestData'[ID])
+// PQL.Assert.Col.ShouldNotBeBlank - tests if ALL values are non-blank
+VAR _Col_ShouldNotBeBlank_Pass = PQL.Assert.Col.ShouldNotBeBlank("Col.ShouldNotBeBlank: ID column should pass (all non-blank)", 'TestData'[ID])
+VAR _Col_ShouldNotBeBlank_Fail = PQL.Assert.Col.ShouldNotBeBlank("Col.ShouldNotBeBlank: Nullable column should fail (has blank)", 'TestData-Fact'[NullableField])
 
-// PQL.Assert.Col.ShouldBeNullOrBlank
+// PQL.Assert.Col.ShouldBeNullOrBlank - tests if ALL values are NULL or blank
+VAR _Col_ShouldBeNullOrBlank_Pass = PQL.Assert.Col.ShouldBeNullOrBlank("Col.ShouldBeNullOrBlank: Empty column should pass", 'TestData-Fact'[Blank Column])
 VAR _Col_ShouldBeNullOrBlank_Fail = PQL.Assert.Col.ShouldBeNullOrBlank("Col.ShouldBeNullOrBlank: ID column should fail (has values)", 'TestData'[ID])
 
-// PQL.Assert.Col.ShouldNotBeNullOrBlank
-VAR _Col_ShouldNotBeNullOrBlank_Pass = PQL.Assert.Col.ShouldNotBeNullOrBlank("Col.ShouldNotBeNullOrBlank: ID column should pass", 'TestData'[ID])
+// PQL.Assert.Col.ShouldNotBeNullOrBlank - tests if ALL values have content
+VAR _Col_ShouldNotBeNullOrBlank_Pass = PQL.Assert.Col.ShouldNotBeNullOrBlank("Col.ShouldNotBeNullOrBlank: ID column should pass (no nulls/blanks)", 'TestData'[ID])
+VAR _Col_ShouldNotBeNullOrBlank_Fail = PQL.Assert.Col.ShouldNotBeNullOrBlank("Col.ShouldNotBeNullOrBlank: Nullable column should fail (has blank)", 'TestData-Fact'[NullableField])
 
 // PQL.Assert.Col.ShouldBeDistinct
 VAR _Col_ShouldBeDistinct_Pass = PQL.Assert.Col.ShouldBeDistinct("Col.ShouldBeDistinct: ID column should be distinct", 'TestData'[ID])
@@ -297,10 +301,14 @@ VAR _AllTests = UNION(
     // Column Assertions
     _Col_ShouldBeNull_Fail,
     _Col_ShouldNotBeNull_Pass,
+    _Col_ShouldBeBlank_Pass,
     _Col_ShouldBeBlank_Fail,
     _Col_ShouldNotBeBlank_Pass,
+    _Col_ShouldNotBeBlank_Fail,
+    _Col_ShouldBeNullOrBlank_Pass,
     _Col_ShouldBeNullOrBlank_Fail,
     _Col_ShouldNotBeNullOrBlank_Pass,
+    _Col_ShouldNotBeNullOrBlank_Fail,
     _Col_ShouldBeDistinct_Pass,
     _Col_ShouldExist_Pass,
     _Col_ShouldExist_Fail,
