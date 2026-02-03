@@ -78,6 +78,55 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 - `PQL.Assert.RetrieveTests()` - Returns all test functions (ending with .Test or .Tests)
 - `PQL.Assert.RetrieveTestsByEnvironment(environment)` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Returns all tests if environment is blank.
 
+### Best Practice Validations
+
+PQL.Assert includes built-in semantic model validation functions based on Best Practice Analyzer rules. These functions help identify common issues and anti-patterns in your Power BI models.
+
+> **Note:** Additional validation rules are being added continuously. This is an initial set covering the most critical model health checks.
+
+#### Error Prevention
+
+- `PQL.Assert.BP.ShouldHaveSameDataTypeInRelationships()` - Validates that relationship columns have matching data types (avoiding int64→decimal relationships)
+- `PQL.Assert.BP.CheckErrorPrevention()` - Runs all error prevention checks
+
+#### Formatting
+
+- `PQL.Assert.BP.ShouldProvideFormatStringForMeasures()` - Validates that visible measures have format strings assigned
+- `PQL.Assert.BP.ShouldNotSummarizeNumericColumns()` - Validates that numeric columns have SummarizeBy set to None
+- `PQL.Assert.BP.CheckFormatting()` - Runs all formatting checks
+
+#### DAX Expressions
+
+- `PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences()` - Validates that column references use Table[Column] format
+- `PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect()` - Validates that measures use TREATAS instead of INTERSECT for better performance
+- `PQL.Assert.BP.CheckDAXExpressions()` - Runs all DAX expression checks
+
+#### Performance
+
+- `PQL.Assert.BP.ShouldAvoidBiDirectionalOnHighCardinalityColumn()` - Validates bi-directional relationships on high-cardinality columns (>1M distinct values)
+- `PQL.Assert.BP.ShouldRemoveAutoDateTable()` - Validates that auto-date tables are disabled
+- `PQL.Assert.BP.ShouldAvoidFloatingPointDataTypes()` - Validates that columns avoid Number (Double) data type
+- `PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns()` - Validates IsAvailableInMdx setting on non-attribute columns
+- `PQL.Assert.BP.CheckPerformance()` - Runs all performance checks
+
+**Example Usage:**
+```dax
+// Run individual validation
+EVALUATE PQL.Assert.BP.ShouldProvideFormatStringForMeasures()
+
+// Run all checks in a category
+EVALUATE PQL.Assert.BP.CheckFormatting()
+EVALUATE PQL.Assert.BP.CheckPerformance()
+
+// Combine all best practice checks
+EVALUATE UNION(
+    PQL.Assert.BP.CheckErrorPrevention(),
+    PQL.Assert.BP.CheckFormatting(),
+    PQL.Assert.BP.CheckDAXExpressions(),
+    PQL.Assert.BP.CheckPerformance()
+)
+```
+
 ## 🏗️ Workspace Governance & Environments
 
 ### Environment Types
@@ -184,17 +233,17 @@ EVALUATE Schema.ANY.Tests()
 ```dax
 DEFINE 
 
-VAR __DS0FilterTable = 
-	TREATAS({TRUE}, 'TestData'[IsActive])
-
-VAR _Test1 =
-	SUMMARIZECOLUMNS(
-		__DS0FilterTable,
-		"CountID", IGNORE(CALCULATE(COUNTA('TestData'[ID])))
-	)
-
 	FUNCTION Measures.DEV.Tests = () =>
-	PQL.Assert.ShouldEqual("ShouldBeEqual to 3", 3, _Test1)
+    VAR __DS0FilterTable = 
+        TREATAS({TRUE}, 'TestData'[IsActive])
+
+    VAR _Test1 =
+        SUMMARIZECOLUMNS(
+            __DS0FilterTable,
+            "CountID", IGNORE(CALCULATE(COUNTA('TestData'[ID])))
+        )
+
+	RETURN PQL.Assert.ShouldEqual("ShouldBeEqual to 3", 3, _Test1)
 
 EVALUATE Measures.DEV.Tests()
 ```

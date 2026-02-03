@@ -20,6 +20,10 @@ ref table LocalDateTable_a54a7c29-b72a-43ab-91d9-98883b3951c0
 ref table Calendar
 ref table LocalDateTable_7bc6f273-e8e4-4cb5-b3b7-85cdcead9c39
 ref table Mock-Fact
+ref table LargeTableOneMillion
+ref table LargeTableOneMillionOne
+ref table LargeTable-Dimension
+ref table LargeTableOneMillionOne-2
 
 ref cultureInfo en-US
 
