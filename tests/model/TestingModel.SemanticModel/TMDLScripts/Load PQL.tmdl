@@ -461,6 +461,50 @@ createOrReplace
 		annotation DAXLIB_PackageId = PQL.Assert
 		annotation DAXLIB_PackageVersion = 0.1.4
 
+	/// Asserts that a column is not used in bi-directional relationships or has low cardinality.
+	/// For high-cardinality columns (>100k distinct values), bi-directional relationships can impact performance.
+	function 'PQL.Assert.BP.ShouldAvoidBiDirectionalOnHighCardinalityColumn' =
+			(tableName : STRING, columnName : STRING) =>
+				VAR _Relationships = INFO.VIEW.RELATIONSHIPS()
+				VAR _BiDirectionalRels = 
+					COUNTROWS(
+						FILTER(
+							_Relationships,
+							([FromTable] = tableName && [FromColumn] = columnName || [ToTable] = tableName && [ToColumn] = columnName)
+							&& [CrossFilteringBehavior] = "Both"
+						)
+					)
+				VAR _Passed = _BiDirectionalRels = 0
+				RETURN ROW(
+					"TestName", "[Performance] Avoid bi-directional relationships against high-cardinality columns",
+					"Expected", "Column should not have bi-directional relationships (cardinality > 100,000)",
+					"Actual", IF(_BiDirectionalRels > 0, "HAS BI-DIRECTIONAL RELATIONSHIPS (" & FORMAT(_BiDirectionalRels, "0") & ")", "NO BI-DIRECTIONAL RELATIONSHIPS"),
+					"Passed", _Passed,
+					"RuleDescription", "Avoid bi-directional relationships on high-cardinality columns for better performance"
+				)
+		annotation DAXLIB_PackageId = PQL.Assert
+		annotation DAXLIB_PackageVersion = 0.1.4
+
+	/// Asserts that auto-date tables should be removed.
+	/// Auto-date tables (DateTableTemplate_* and LocalDateTable_*) consume memory and should be disabled.
+	function 'PQL.Assert.BP.ShouldRemoveAutoDateTable' =
+			() =>
+				VAR _Tables = INFO.VIEW.TABLES()
+				RETURN SELECTCOLUMNS(
+					_Tables,
+					"TestName", "[Performance] Remove auto-date table",
+					"Expected", "Table should not be an auto-date table",
+					"Actual", IF(
+						LEFT([Name], 18) = "DateTableTemplate_" || LEFT([Name], 15) = "LocalDateTable_",
+						"AUTO-DATE TABLE FOUND: " & [Name],
+						"NOT AN AUTO-DATE TABLE"
+					),
+					"Passed", NOT (LEFT([Name], 18) = "DateTableTemplate_" || LEFT([Name], 15) = "LocalDateTable_"),
+					"RuleDescription", "Avoid using auto-date tables. Turn off auto-date table in Power BI Desktop settings to save memory"
+				)
+		annotation DAXLIB_PackageId = PQL.Assert
+		annotation DAXLIB_PackageVersion = 0.1.4
+
 	/// Test Discovery Functions - PQL.Assert namespace
 	function 'PQL.Assert.RetrieveTests' =
 			() =>

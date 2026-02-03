@@ -23,3 +23,19 @@ relationship AutoDetected_2e6d8900-40a2-46fb-a485-1a97c23db76a
 	fromColumn: Mock-Fact.'Date ID'
 	toColumn: Calendar.'Date ID'
 
+relationship a77af4e4-2c97-60cb-8da6-c8c8abf59535
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: LargeTable-Dimension.ID
+	toColumn: LargeTableOneMillion.ID
+
+relationship d326d42b-5fa1-c584-714c-afaed92ca792
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: LargeTable-Dimension.ID
+	toColumn: LargeTableOneMillionOne.ID
+
+relationship 5fba0928-f54a-bccd-35c3-ab98f3a206e7
+	fromColumn: LargeTable-Dimension.ID
+	toColumn: LargeTableOneMillionOne-2.ID
+

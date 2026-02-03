@@ -1,0 +1,48 @@
+/// DAX Best Practice Validation Functions
+/// Publisher: PQL (Power Query Lint)
+/// These functions validate semantic models against best practices and performance recommendations
+/// Asserts that no bi-directional relationships exist on high-cardinality columns.
+/// For high-cardinality columns (>100k distinct values), bi-directional relationships can impact performance.
+function 'PQL.Assert.BP.ShouldAvoidBiDirectionalOnHighCardinalityColumn' =
+		() =>
+		    VAR _Relationships = INFO.VIEW.RELATIONSHIPS()
+		    VAR _BiDirectionalRels = 
+		        COUNTROWS(
+		            FILTER(
+		                _Relationships,
+		                [CrossFilteringBehavior] = "Both"
+		            )
+		        )
+		    VAR _Passed = _BiDirectionalRels = 0
+		    RETURN ROW(
+		        "TestName", "[Performance] Avoid bi-directional relationships against high-cardinality columns",
+		        "Expected", "No bi-directional relationships on high-cardinality columns (>100k)",
+		        "Actual", IF(_BiDirectionalRels > 0, "BI-DIRECTIONAL RELATIONSHIPS FOUND (" & FORMAT(_BiDirectionalRels, "0") & ")", "NO BI-DIRECTIONAL RELATIONSHIPS"),
+		        "Passed", _Passed,
+		        "RuleDescription", "Avoid bi-directional relationships on high-cardinality columns for better performance"
+		    )
+	annotation DAXLIB_PackageId = PQL.Assert
+	annotation DAXLIB_PackageVersion = 0.1.4
+
+/// Asserts that auto-date tables should be removed.
+/// Auto-date tables (DateTableTemplate_* and LocalDateTable_*) consume memory and should be disabled.
+function 'PQL.Assert.BP.ShouldRemoveAutoDateTable' =
+		() =>
+		    VAR _Tables = INFO.VIEW.TABLES()
+		    VAR _AutoDateTableCount = 
+		        COUNTROWS(
+		            FILTER(
+		                _Tables,
+		                LEFT([Name], 18) = "DateTableTemplate_" || LEFT([Name], 15) = "LocalDateTable_"
+		            )
+		        )
+		    VAR _Passed = _AutoDateTableCount = 0
+		    RETURN ROW(
+		        "TestName", "[Performance] Remove auto-date table",
+		        "Expected", "No auto-date tables should exist in the model",
+		        "Actual", IF(_AutoDateTableCount > 0, "AUTO-DATE TABLES FOUND (" & FORMAT(_AutoDateTableCount, "0") & ")", "NO AUTO-DATE TABLES"),
+		        "Passed", _Passed,
+		        "RuleDescription", "Avoid using auto-date tables. Turn off auto-date table in Power BI Desktop settings to save memory"
+		    )
+	annotation DAXLIB_PackageId = PQL.Assert
+	annotation DAXLIB_PackageVersion = 0.1.4
