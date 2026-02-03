@@ -1,0 +1,37 @@
+DEFINE
+		    VAR _CardinalityThreshold = 1000000
+		    VAR _Relationships = INFO.VIEW.RELATIONSHIPS()
+		    VAR _ColumnStats = COLUMNSTATISTICS()
+		    VAR _BiDirectionalRels = 
+		        FILTER(
+		            _Relationships,
+		            [CrossFilteringBehavior] = "BothDirections"
+		        )
+		    VAR _HighCardinalityBiDirRels = 
+		        FILTER(
+		            _BiDirectionalRels,
+		            VAR _FromTable = [FromTable]
+		            VAR _FromColumn = [FromColumn]
+		            VAR _ToTable = [ToTable]
+		            VAR _ToColumn = [ToColumn]
+		            VAR _FromColumnCardinality = 
+		                MAXX(
+		                    FILTER(
+		                        _ColumnStats,
+		                        [Table Name] = _FromTable && [Column Name] = _FromColumn
+		                    ),
+		                    [Cardinality]
+		                )
+		            VAR _ToColumnCardinality = 
+		                MAXX(
+		                    FILTER(
+		                        _ColumnStats,
+		                        [Table Name] = _ToTable && [Column Name] = _ToColumn
+		                    ),
+		                    [Cardinality]
+		                )
+		            RETURN _FromColumnCardinality > _CardinalityThreshold || _ToColumnCardinality > _CardinalityThreshold
+		        )
+		    VAR _HighCardinalityCount = COUNTROWS(_HighCardinalityBiDirRels)
+		    VAR _Passed = _HighCardinalityCount = 0
+EVALUATE _HighCardinalityBiDirRels

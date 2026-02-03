@@ -1,30 +1,55 @@
 createOrReplace
-
 	/// DAX Best Practice Validation Functions
 	/// Publisher: PQL (Power Query Lint)
 	/// These functions validate semantic models against best practices and performance recommendations
 	/// Asserts that no bi-directional relationships exist on high-cardinality columns.
-	/// For high-cardinality columns (>100k distinct values), bi-directional relationships can impact performance.
+	/// For high-cardinality columns (>1M distinct values), bi-directional relationships can impact performance.
 	function 'PQL.Assert.BP.ShouldAvoidBiDirectionalOnHighCardinalityColumn' =
 			() =>
+				VAR _CardinalityThreshold = 1000000
 				VAR _Relationships = INFO.VIEW.RELATIONSHIPS()
+				VAR _ColumnStats = COLUMNSTATISTICS()
 				VAR _BiDirectionalRels = 
-					COUNTROWS(
-						FILTER(
-							_Relationships,
-							[CrossFilteringBehavior] = "Both"
-						)
+					FILTER(
+						_Relationships,
+						[CrossFilteringBehavior] = "BothDirections"
 					)
-				VAR _Passed = _BiDirectionalRels = 0
+				VAR _HighCardinalityBiDirRels = 
+					FILTER(
+						_BiDirectionalRels,
+						VAR _FromTable = [FromTable]
+						VAR _FromColumn = [FromColumn]
+						VAR _ToTable = [ToTable]
+						VAR _ToColumn = [ToColumn]
+						VAR _FromColumnCardinality = 
+							MAXX(
+								FILTER(
+									_ColumnStats,
+									[Table Name] = _FromTable && [Column Name] = _FromColumn
+								),
+								[Cardinality]
+							)
+						VAR _ToColumnCardinality = 
+							MAXX(
+								FILTER(
+									_ColumnStats,
+									[Table Name] = _ToTable && [Column Name] = _ToColumn
+								),
+								[Cardinality]
+							)
+						RETURN _FromColumnCardinality > _CardinalityThreshold || _ToColumnCardinality > _CardinalityThreshold
+					)
+				VAR _HighCardinalityCount = COUNTROWS(_HighCardinalityBiDirRels)
+				VAR _Passed = _HighCardinalityCount = 0
 				RETURN ROW(
 					"TestName", "[Performance] Avoid bi-directional relationships against high-cardinality columns",
-					"Expected", "No bi-directional relationships on high-cardinality columns (>100k)",
-					"Actual", IF(_BiDirectionalRels > 0, "BI-DIRECTIONAL RELATIONSHIPS FOUND (" & FORMAT(_BiDirectionalRels, "0") & ")", "NO BI-DIRECTIONAL RELATIONSHIPS"),
+					"Expected", "No bi-directional relationships on high-cardinality columns (>1M)",
+					"Actual", IF(_HighCardinalityCount > 0, "BI-DIRECTIONAL RELATIONSHIPS ON HIGH-CARDINALITY COLUMNS FOUND (" & FORMAT(_HighCardinalityCount, "0") & ")", "NO HIGH-CARDINALITY BI-DIRECTIONAL RELATIONSHIPS"),
 					"Passed", _Passed,
-					"RuleDescription", "Avoid bi-directional relationships on high-cardinality columns for better performance"
+					"RuleDescription", "Avoid bi-directional relationships on high-cardinality columns (>1M distinct values) for better performance"
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.1.4
+		annotation DAXLIB_PackageVersion = 0.1.5
 
 	/// Asserts that auto-date tables should be removed.
 	/// Auto-date tables (DateTableTemplate_* and LocalDateTable_*) consume memory and should be disabled.
@@ -47,4 +72,4 @@ createOrReplace
 					"RuleDescription", "Avoid using auto-date tables. Turn off auto-date table in Power BI Desktop settings to save memory"
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.1.4
+		annotation DAXLIB_PackageVersion = 0.1.5
