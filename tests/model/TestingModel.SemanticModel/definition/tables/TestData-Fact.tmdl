@@ -76,6 +76,16 @@ table TestData-Fact
 
 		annotation SummarizationSetBy = Automatic
 
+	/// Test measure with UNQUALIFIED column reference (should fail BP rule)
+	measure 'Total Value Unqualified' = SUM([Value])
+		formatString: 0.0
+		lineageTag: aa1111aa-1111-1111-aaaa-111111111111
+
+	/// Test measure with FULLY QUALIFIED column reference (should pass BP rule)
+	measure 'Total Value Qualified' = SUM('TestData-Fact'[Value])
+		formatString: 0.0
+		lineageTag: bb2222bb-2222-2222-bbbb-222222222222
+
 	partition TestData-Fact = m
 		mode: import
 		source = ```

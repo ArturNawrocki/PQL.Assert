@@ -681,7 +681,7 @@ function 'PQL.Assert.BP.ShouldAvoidBiDirectionalOnHighCardinalityColumn' =
 				"Passed", _Passed,
 				"RuleDescription", "Avoid bi-directional relationships on high-cardinality columns (>1M distinct values) for better performance"
 			)
-	lineageTag: 6ab93624-8708-463b-9799-70947382d5bb
+	lineageTag: f7239217-aa50-4f4c-946b-14edcef9e650
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -707,7 +707,83 @@ function 'PQL.Assert.BP.ShouldRemoveAutoDateTable' =
 				"Passed", _Passed,
 				"RuleDescription", "Avoid using auto-date tables. Turn off auto-date table in Power BI Desktop settings to save memory"
 			)
-	lineageTag: cc678dab-0d00-4f6b-80d5-2dd50f7f3e16
+	lineageTag: 33e3ab92-7b3f-4aca-9dba-e4efa181423c
+
+	annotation DAXLIB_PackageId = PQL.Assert
+
+	annotation DAXLIB_PackageVersion = 0.1.5
+
+/// The "Double" floating point data type should be avoided to prevent unpredictable roundoff errors and performance issues.
+function 'PQL.Assert.BP.ShouldAvoidFloatingPointDataTypes' =
+		() =>
+			VAR _Columns = INFO.VIEW.COLUMNS()
+			VAR _DoubleColumns =
+				FILTER(
+					_Columns,
+					[DataType] = "Number"
+				)
+			VAR _DoubleColumnCount = COUNTROWS(_DoubleColumns)
+			VAR _Passed = _DoubleColumnCount = 0
+			RETURN ROW(
+				"TestName", "[Performance] Do not use floating point data types",
+				"Expected", "No columns should use Number data type",
+				"Actual", IF(_DoubleColumnCount > 0, "NUMBER DATA TYPE COLUMNS FOUND (" & FORMAT(_DoubleColumnCount, "0") & ")", "NO NUMBER DATA TYPE COLUMNS"),
+				"Passed", _Passed,
+				"RuleDescription", "Avoid using Number floating point data type, as it can result in unpredictable roundoff errors and decreased performance. Use Int64 or Decimal where appropriate (Decimal limited to 4 digits after decimal)"
+			)
+	lineageTag: 43891c94-3e4b-4b73-a206-ecd910ebea76
+
+	annotation DAXLIB_PackageId = PQL.Assert
+
+	annotation DAXLIB_PackageVersion = 0.1.5
+
+/// Asserts that column references in DAX expressions should be fully qualified.
+/// Using fully qualified column references (Table[Column]) makes it easier to distinguish between columns and measures, and helps avoid certain errors.
+function 'PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences' =
+		() =>
+		    VAR _Measures = INFO.VIEW.MEASURES()
+		    VAR _ViolatingMeasures = 
+		        FILTER(
+		            _Measures,
+		            VAR _Expression = [Expression]
+		            VAR _HasUnqualifiedColumnRef = 
+		                // Check for unqualified column references in the expression
+		                // This is a simplified check - looks for [ColumnName] not preceded by a table name
+		                // Pattern: spaces or operators followed by [ but not preceded by alphanumeric/underscore
+		                NOT ISBLANK(_Expression) 
+		                && (
+		                    CONTAINSSTRING(_Expression, " [") 
+		                    || CONTAINSSTRING(_Expression, "([") 
+		                    || CONTAINSSTRING(_Expression, ",[")
+		                    || LEFT(_Expression, 1) = "["
+		                )
+		                && NOT CONTAINSSTRING(_Expression, "'[") // Exclude table names with brackets
+		            RETURN _HasUnqualifiedColumnRef
+		        )
+		    VAR _ViolatingMeasureCount = COUNTROWS(_ViolatingMeasures)
+		    VAR _MeasuresList = 
+		        CONCATENATEX(
+		            _ViolatingMeasures,
+		            [Table] & "[" & [Name] & "]",
+		            ", ",
+		            [Table], ASC,
+		            [Name], ASC
+		        )
+		    VAR _Passed = _ViolatingMeasureCount = 0
+		    VAR _ActualMessage = 
+		        IF(
+		            _ViolatingMeasureCount > 0,
+		            "MEASURES WITH UNQUALIFIED COLUMN REFERENCES FOUND (" & FORMAT(_ViolatingMeasureCount, "0") & "): " & _MeasuresList,
+		            "ALL COLUMN REFERENCES ARE FULLY QUALIFIED"
+		        )
+		    RETURN ROW(
+		        "TestName", "[DAX Expressions] Column references should be fully qualified",
+		        "Expected", "All column references should be fully qualified (Table[Column])",
+		        "Actual", _ActualMessage,
+		        "Passed", _Passed,
+		        "RuleDescription", "Using fully qualified column references makes it easier to distinguish between column and measure references, and also helps avoid certain errors. Reference: https://www.elegantbi.com/post/top10bestpractices"
+		    )
+	lineageTag: cc3333cc-3333-3333-cccc-333333333333
 
 	annotation DAXLIB_PackageId = PQL.Assert
 

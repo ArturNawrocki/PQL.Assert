@@ -27,12 +27,40 @@ VAR _RemoveAutoDate_Fail =
         "TestExpectation", "should fail"
     )
 
+// PQL.Assert.BP.ShouldAvoidFloatingPointDataTypes
+// Auto-discovers all columns and validates none use Double data type
+VAR _AvoidFloatingPoint_Fail = 
+    ADDCOLUMNS(
+        PQL.Assert.BP.ShouldAvoidFloatingPointDataTypes(),
+        "TestExpectation", "should fail"
+    )
+
+// PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns
+// Auto-discovers hidden columns and validates IsAvailableInMdx is set correctly
+VAR _SetIsAvailableInMdxFalse_Pass = 
+    ADDCOLUMNS(
+        PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns(),
+        "TestExpectation", "should pass"
+    )
+
+// PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences
+// Tests that all column references in measures are fully qualified (Table[Column])
+// Test includes: 'Total Value Unqualified' measure (should fail) and 'Total Value Qualified' measure (should pass)
+VAR _FullyQualifiedColumnRefs_Fail = 
+    ADDCOLUMNS(
+        PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences(),
+        "TestExpectation", "should fail"
+    )
+
 // ============================================
 // Combine All Test Results
 // ============================================
 VAR _AllTests = UNION(
     _AvoidBiDir_Fail,
-    _RemoveAutoDate_Fail
+    _RemoveAutoDate_Fail,
+    _AvoidFloatingPoint_Fail,
+    _SetIsAvailableInMdxFalse_Pass,
+    _FullyQualifiedColumnRefs_Fail
 )
 
 // ============================================

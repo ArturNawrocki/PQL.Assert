@@ -73,3 +73,24 @@ createOrReplace
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
 		annotation DAXLIB_PackageVersion = 0.1.5
+
+	/// The "Double" floating point data type should be avoided to prevent unpredictable roundoff errors and performance issues.
+	function 'PQL.Assert.BP.ShouldAvoidFloatingPointDataTypes' =
+			() =>
+				VAR _Columns = INFO.VIEW.COLUMNS()
+				VAR _DoubleColumns = 
+					FILTER(
+						_Columns,
+						[DataType] = "Number"
+					)
+				VAR _DoubleColumnCount = COUNTROWS(_DoubleColumns)
+				VAR _Passed = _DoubleColumnCount = 0
+				RETURN ROW(
+					"TestName", "[Performance] Do not use floating point data types",
+					"Expected", "No columns should use Number data type",
+					"Actual", IF(_DoubleColumnCount > 0, "NUMBER DATA TYPE COLUMNS FOUND (" & FORMAT(_DoubleColumnCount, "0") & ")", "NO NUMBER DATA TYPE COLUMNS"),
+					"Passed", _Passed,
+					"RuleDescription", "Avoid using Number floating point data type, as it can result in unpredictable roundoff errors and decreased performance. Use Int64 or Decimal where appropriate (Decimal limited to 4 digits after decimal)"
+				)
+		annotation DAXLIB_PackageId = PQL.Assert
+		annotation DAXLIB_PackageVersion = 0.1.5
