@@ -46,6 +46,61 @@ function 'PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences' =
 		        "Actual", _ActualMessage,
 		        "Passed", _Passed,
 		        "RuleDescription", "Using fully qualified column references makes it easier to distinguish between column and measure references, and also helps avoid certain errors. Reference: https://www.elegantbi.com/post/top10bestpractices"
+	    )
+	annotation DAXLIB_PackageId = PQL.Assert
+	annotation DAXLIB_PackageVersion = 0.1.5
+
+/// Asserts that measures should use TREATAS instead of INTERSECT for virtual relationships.
+/// The TREATAS function is more efficient and provides better performance than the INTERSECT function when used in virtual relationships.
+function 'PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect' =
+		() =>
+		    VAR _Measures = INFO.VIEW.MEASURES()
+		    VAR _ViolatingMeasures = 
+		        FILTER(
+		            _Measures,
+		            VAR _Expression = [Expression]
+		            VAR _HasIntersect = 
+		                // Check for INTERSECT function usage (case-insensitive)
+		                NOT ISBLANK(_Expression) 
+		                && (
+		                    CONTAINSSTRING(UPPER(_Expression), "INTERSECT(")
+		                    || CONTAINSSTRING(UPPER(_Expression), "INTERSECT (")
+		                )
+		            RETURN _HasIntersect
+		        )
+		    VAR _ViolatingMeasureCount = COUNTROWS(_ViolatingMeasures)
+		    VAR _MeasuresList = 
+		        CONCATENATEX(
+		            _ViolatingMeasures,
+		            [Table] & "[" & [Name] & "]",
+		            ", ",
+		            [Table], ASC,
+		            [Name], ASC
+		        )
+		    VAR _Passed = _ViolatingMeasureCount = 0
+		    VAR _ActualMessage = 
+		        IF(
+		            _ViolatingMeasureCount > 0,
+		            "MEASURES USING INTERSECT FOUND (" & FORMAT(_ViolatingMeasureCount, "0") & "): " & _MeasuresList,
+		            "NO MEASURES USE INTERSECT"
+		        )
+		    RETURN ROW(
+		        "TestName", "[DAX Expressions] Use the TREATAS function instead of INTERSECT",
+		        "Expected", "Measures should use TREATAS instead of INTERSECT for virtual relationships",
+		        "Actual", _ActualMessage,
+		        "Passed", _Passed,
+		        "RuleDescription", "The TREATAS function is more efficient and provides better performance than the INTERSECT function when used in virtual relationships. Reference: https://www.sqlbi.com/articles/propagate-filters-using-treatas-in-dax/ Severity: Medium (2)."
+	    )
+	annotation DAXLIB_PackageId = PQL.Assert
+	annotation DAXLIB_PackageVersion = 0.1.5
+
+/// Runs all DAX expression best practice checks.
+/// This function executes all DAX expression validation rules and returns combined results.
+function 'PQL.Assert.BP.CheckDAXExpressions' =
+		() =>
+		    UNION(
+		        PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences(),
+		        PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect()
 		    )
 	annotation DAXLIB_PackageId = PQL.Assert
 	annotation DAXLIB_PackageVersion = 0.1.5

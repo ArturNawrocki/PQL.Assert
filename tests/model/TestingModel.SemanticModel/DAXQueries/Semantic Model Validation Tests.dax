@@ -40,7 +40,7 @@ VAR _AvoidFloatingPoint_Fail =
 VAR _SetIsAvailableInMdxFalse_Pass = 
     ADDCOLUMNS(
         PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns(),
-        "TestExpectation", "should pass"
+        "TestExpectation", "should fail"
     )
 
 // PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences
@@ -52,6 +52,53 @@ VAR _FullyQualifiedColumnRefs_Fail =
         "TestExpectation", "should fail"
     )
 
+// PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect
+// Tests that measures should use TREATAS instead of INTERSECT for virtual relationships
+// Test includes: 'Test INTERSECT Usage' measure (should fail - uses INTERSECT instead of TREATAS)
+VAR _UseTreatAsInsteadOfIntersect_Fail = 
+    ADDCOLUMNS(
+        PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect(),
+        "TestExpectation", "should fail"
+    )
+
+// ============================================
+// ERROR PREVENTION TESTS
+// ============================================
+
+// PQL.Assert.BP.ShouldHaveSameDataTypeInRelationships
+// Tests that all relationship columns have matching data types
+// Auto-discovers all relationships and compares FromColumn.DataType with ToColumn.DataType
+// Current model has matching data types, so this should pass
+VAR _SameDataTypeInRelationships_Pass = 
+    ADDCOLUMNS(
+        PQL.Assert.BP.ShouldHaveSameDataTypeInRelationships(),
+        "TestExpectation", "should fail"
+    )
+
+// ============================================
+// FORMATTING TESTS
+// ============================================
+
+// PQL.Assert.BP.ShouldProvideFormatStringForMeasures
+// Tests that all visible measures have format strings assigned
+// Auto-discovers all measures and checks for missing format strings
+// Test includes: 'Measure Without Format' measure (should fail)
+VAR _ProvideFormatStringForMeasures_Fail = 
+    ADDCOLUMNS(
+        PQL.Assert.BP.ShouldProvideFormatStringForMeasures(),
+        "TestExpectation", "should fail"
+    )
+
+// PQL.Assert.BP.ShouldNotSummarizeNumericColumns
+// Tests that numeric columns should have SummarizeBy set to None
+// Auto-discovers numeric columns and checks if SummarizeBy is not "None"
+// Test includes: TestData.Value, TestData-Fact.Value, TestData.'Fixed Decimal' with SummarizeBy = sum (should fail)
+VAR _NotSummarizeNumericColumns_Fail = 
+    ADDCOLUMNS(
+        PQL.Assert.BP.ShouldNotSummarizeNumericColumns(),
+        "TestExpectation", "should fail"
+    )
+
 // ============================================
 // Combine All Test Results
 // ============================================
@@ -60,7 +107,11 @@ VAR _AllTests = UNION(
     _RemoveAutoDate_Fail,
     _AvoidFloatingPoint_Fail,
     _SetIsAvailableInMdxFalse_Pass,
-    _FullyQualifiedColumnRefs_Fail
+    _FullyQualifiedColumnRefs_Fail,
+    _UseTreatAsInsteadOfIntersect_Fail,
+    _SameDataTypeInRelationships_Pass,
+    _ProvideFormatStringForMeasures_Fail,
+    _NotSummarizeNumericColumns_Fail
 )
 
 // ============================================

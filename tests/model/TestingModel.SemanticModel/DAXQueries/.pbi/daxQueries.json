@@ -10,7 +10,8 @@
     "Example.Myenv.Tests",
     "Retrieve Tests",
     "Example.prod.tests",
+    "BP.DEV.Tests",
     "Query 1"
   ],
-  "defaultTab": "Semantic Model Validation Tests"
+  "defaultTab": "Query 1"
 }

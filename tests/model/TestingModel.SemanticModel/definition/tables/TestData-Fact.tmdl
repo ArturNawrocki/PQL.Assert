@@ -1,6 +1,33 @@
 table TestData-Fact
 	lineageTag: 9eca8f14-b5f4-4598-accb-95d0d61a4308
 
+	/// Test measure with UNQUALIFIED column reference (should fail BP rule)
+	measure 'Total Value Unqualified' = SUM([Value])
+		formatString: 0.0
+		lineageTag: aa1111aa-1111-1111-aaaa-111111111111
+
+	/// Test measure with FULLY QUALIFIED column reference (should pass BP rule)
+	measure 'Total Value Qualified' = SUM('TestData-Fact'[Value])
+		formatString: 0.0
+		lineageTag: bb2222bb-2222-2222-bbbb-222222222222
+
+	/// Test measure WITHOUT format string (should fail formatting BP rule)
+	measure 'Measure Without Format' = COUNTROWS('TestData-Fact')
+		lineageTag: cc3333cc-3333-3333-cccc-333333333333
+
+	/// Test measure using INTERSECT (should fail DAX expressions BP rule - should use TREATAS instead)
+	measure 'Test INTERSECT Usage' =
+			CALCULATE(
+			    SUM('TestData-Fact'[Value]),
+			    INTERSECT(
+			        VALUES('TestData-Fact'[Category]),
+			        {"A"}
+			    )
+			)
+		lineageTag: 2556e5d5-f543-4ed3-a559-bd88e0bb1bf6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column ID
 		dataType: int64
 		formatString: 0
@@ -75,16 +102,6 @@ table TestData-Fact
 		summarizeBy: sum
 
 		annotation SummarizationSetBy = Automatic
-
-	/// Test measure with UNQUALIFIED column reference (should fail BP rule)
-	measure 'Total Value Unqualified' = SUM([Value])
-		formatString: 0.0
-		lineageTag: aa1111aa-1111-1111-aaaa-111111111111
-
-	/// Test measure with FULLY QUALIFIED column reference (should pass BP rule)
-	measure 'Total Value Qualified' = SUM('TestData-Fact'[Value])
-		formatString: 0.0
-		lineageTag: bb2222bb-2222-2222-bbbb-222222222222
 
 	partition TestData-Fact = m
 		mode: import

@@ -311,11 +311,8 @@ createOrReplace
 	/// Asserts that all values in a column are non-BLANK (not empty string "" and not NULL BLANK()). Fails if any blank values exist.
 	function 'PQL.Assert.Col.ShouldNotBeBlank' =
 			(testName : STRING, columnRef : ANYREF EXPR) =>
-				VAR _BlankCount = COUNTAX(
-					VALUES(columnRef),
-					IF(ISBLANK(columnRef) || FORMAT(columnRef, "") = "", 1, BLANK())
-				)
-				VAR _TotalCount = COUNTROWS(VALUES(columnRef))
+				VAR _BlankCount = COUNTBLANK(columnRef)
+				VAR _TotalCount = COUNTROWS(ALLNOBLANKROW(columnRef))
 				VAR _Passed = _BlankCount = 0 && _TotalCount > 0
 				RETURN ROW(
 					"TestName", testName,
@@ -347,16 +344,13 @@ createOrReplace
 	/// Asserts that all values in a column are not NULL and not BLANK. Fails if any NULL or empty values exist.
 	function 'PQL.Assert.Col.ShouldNotBeNullOrBlank' =
 			(testName : STRING, columnRef : ANYREF EXPR) =>
-				VAR _EmptyCount = COUNTAX(
-					VALUES(columnRef),
-					IF(ISBLANK(columnRef) || FORMAT(columnRef, "") = "", 1, BLANK())
-				)
-				VAR _TotalCount = COUNTROWS(VALUES(columnRef))
-				VAR _Passed = _EmptyCount = 0 && _TotalCount > 0
+				VAR _BlankCount = COUNTBLANK(columnRef)
+				VAR _TotalCount = COUNTROWS(ALLNOBLANKROW(columnRef))
+				VAR _Passed = _BlankCount = 0 && _TotalCount > 0
 				RETURN ROW(
 					"TestName", testName,
 					"Expected", "Column has no NULL or BLANK values (all values have content)",
-					"Actual", IF(_Passed, "NO NULL/BLANK VALUES", "HAS NULL/BLANK VALUES (" & FORMAT(_EmptyCount, "0") & " empty)"),
+					"Actual", IF(_Passed, "NO NULL/BLANK VALUES", "HAS NULL/BLANK VALUES (" & FORMAT(_BlankCount, "0") & " empty)"),
 					"Passed", _Passed
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
@@ -457,50 +451,6 @@ createOrReplace
 					"Expected", "Relationship '" & fromTable & "[" & fromColumn & "] -> " & toTable & "[" & toColumn & "]' exists",
 					"Actual", IF(_Found, "EXISTS", "NOT FOUND"),
 					"Passed", _Found
-				)
-		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.1.5
-
-	/// Asserts that a column is not used in bi-directional relationships or has low cardinality.
-	/// For high-cardinality columns (>100k distinct values), bi-directional relationships can impact performance.
-	function 'PQL.Assert.BP.ShouldAvoidBiDirectionalOnHighCardinalityColumn' =
-			(tableName : STRING, columnName : STRING) =>
-				VAR _Relationships = INFO.VIEW.RELATIONSHIPS()
-				VAR _BiDirectionalRels = 
-					COUNTROWS(
-						FILTER(
-							_Relationships,
-							([FromTable] = tableName && [FromColumn] = columnName || [ToTable] = tableName && [ToColumn] = columnName)
-							&& [CrossFilteringBehavior] = "Both"
-						)
-					)
-				VAR _Passed = _BiDirectionalRels = 0
-				RETURN ROW(
-					"TestName", "[Performance] Avoid bi-directional relationships against high-cardinality columns",
-					"Expected", "Column should not have bi-directional relationships (cardinality > 100,000)",
-					"Actual", IF(_BiDirectionalRels > 0, "HAS BI-DIRECTIONAL RELATIONSHIPS (" & FORMAT(_BiDirectionalRels, "0") & ")", "NO BI-DIRECTIONAL RELATIONSHIPS"),
-					"Passed", _Passed,
-					"RuleDescription", "Avoid bi-directional relationships on high-cardinality columns for better performance"
-				)
-		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.1.5
-
-	/// Asserts that auto-date tables should be removed.
-	/// Auto-date tables (DateTableTemplate_* and LocalDateTable_*) consume memory and should be disabled.
-	function 'PQL.Assert.BP.ShouldRemoveAutoDateTable' =
-			() =>
-				VAR _Tables = INFO.VIEW.TABLES()
-				RETURN SELECTCOLUMNS(
-					_Tables,
-					"TestName", "[Performance] Remove auto-date table",
-					"Expected", "Table should not be an auto-date table",
-					"Actual", IF(
-						LEFT([Name], 18) = "DateTableTemplate_" || LEFT([Name], 15) = "LocalDateTable_",
-						"AUTO-DATE TABLE FOUND: " & [Name],
-						"NOT AN AUTO-DATE TABLE"
-					),
-					"Passed", NOT (LEFT([Name], 18) = "DateTableTemplate_" || LEFT([Name], 15) = "LocalDateTable_"),
-					"RuleDescription", "Avoid using auto-date tables. Turn off auto-date table in Power BI Desktop settings to save memory"
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
 		annotation DAXLIB_PackageVersion = 0.1.5

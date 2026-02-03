@@ -39,3 +39,9 @@ relationship 5fba0928-f54a-bccd-35c3-ab98f3a206e7
 	fromColumn: LargeTable-Dimension.ID
 	toColumn: LargeTableOneMillionOne-2.ID
 
+relationship 59bab79f-3df9-425c-1bed-30a057f05c1d
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: Calendar.'Date ID'
+	toColumn: TestData.Name
+

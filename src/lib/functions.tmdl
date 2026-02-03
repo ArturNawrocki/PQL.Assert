@@ -310,11 +310,8 @@ function 'PQL.Assert.Col.ShouldBeBlank' =
 /// Asserts that all values in a column are non-BLANK (not empty string "" and not NULL BLANK()). Fails if any blank values exist.
 function 'PQL.Assert.Col.ShouldNotBeBlank' =
 		(testName : STRING, columnRef : ANYREF EXPR) =>
-		    VAR _BlankCount = COUNTAX(
-		        VALUES(columnRef),
-		        IF(ISBLANK(columnRef) || FORMAT(columnRef, "") = "", 1, BLANK())
-		    )
-		    VAR _TotalCount = COUNTROWS(VALUES(columnRef))
+		    VAR _BlankCount = COUNTBLANK(columnRef)
+		    VAR _TotalCount = COUNTROWS(ALLNOBLANKROW(columnRef))
 		    VAR _Passed = _BlankCount = 0 && _TotalCount > 0
 		    RETURN ROW(
 		        "TestName", testName,
@@ -346,16 +343,13 @@ function 'PQL.Assert.Col.ShouldBeNullOrBlank' =
 /// Asserts that all values in a column are not NULL and not BLANK. Fails if any NULL or empty values exist.
 function 'PQL.Assert.Col.ShouldNotBeNullOrBlank' =
 		(testName : STRING, columnRef : ANYREF EXPR) =>
-		    VAR _EmptyCount = COUNTAX(
-		        VALUES(columnRef),
-		        IF(ISBLANK(columnRef) || FORMAT(columnRef, "") = "", 1, BLANK())
-		    )
-		    VAR _TotalCount = COUNTROWS(VALUES(columnRef))
-		    VAR _Passed = _EmptyCount = 0 && _TotalCount > 0
+		    VAR _BlankCount = COUNTBLANK(columnRef)
+		    VAR _TotalCount = COUNTROWS(ALLNOBLANKROW(columnRef))
+		    VAR _Passed = _BlankCount = 0 && _TotalCount > 0
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", "Column has no NULL or BLANK values (all values have content)",
-		        "Actual", IF(_Passed, "NO NULL/BLANK VALUES", "HAS NULL/BLANK VALUES (" & FORMAT(_EmptyCount, "0") & " empty)"),
+		        "Actual", IF(_Passed, "NO NULL/BLANK VALUES", "HAS NULL/BLANK VALUES (" & FORMAT(_BlankCount, "0") & " empty)"),
 		        "Passed", _Passed
 		    )
 	annotation DAXLIB_PackageId = PQL.Assert
