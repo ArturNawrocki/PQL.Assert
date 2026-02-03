@@ -1,0 +1,17 @@
+DEFINE 
+
+
+
+	FUNCTION MeasuresX.DEV.Tests = () =>
+    VAR __DS0FilterTable = 
+        TREATAS({TRUE}, 'TestData'[IsActive])
+
+    VAR _Test1 =
+        SUMMARIZECOLUMNS(
+            __DS0FilterTable,
+            "CountID", IGNORE(CALCULATE(COUNTA('TestData'[ID])))
+        )
+
+	RETURN PQL.Assert.ShouldEqual("ShouldBeEqual to 3", 3, _Test1)
+
+EVALUATE MeasuresX.DEV.Tests()

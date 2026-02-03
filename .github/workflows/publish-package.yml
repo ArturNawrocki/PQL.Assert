@@ -90,6 +90,13 @@ jobs:
             git checkout -b "${BRANCH_NAME}"
           fi
               
+      # Combine TMDL files before copying
+      - name: Combine TMDL files
+        shell: pwsh
+        working-directory: source-repo
+        run: |
+          ./scripts/Combine-TmdlFiles.ps1 -SourceDir "src/lib" -OutputFile "src/lib/functions.tmdl"
+          
       # Create the package folder if it doesn't exist
       - name: Create package folder
         working-directory: fork-repo

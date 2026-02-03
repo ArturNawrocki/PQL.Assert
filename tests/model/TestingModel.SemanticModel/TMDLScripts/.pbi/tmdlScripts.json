@@ -4,7 +4,11 @@
     "Load Test Data",
     "Reset",
     "Load PQL",
-    "Script 1"
+    "Load PQL.BP",
+    "Load PQL.BP.ErrorPrevention",
+    "Load PQL.BP.DAXExpressions",
+    "Load PQL.BP.Formatting",
+    "Load PQL.BP.Performance"
   ],
   "defaultTab": "Load PQL"
 }
