@@ -11,7 +11,7 @@ function 'PQL.Assert.ShouldBeTrue' =
 				"Actual", IF(actualCondition, "TRUE", "FALSE"),
 				"Passed", _Passed
 			)
-	lineageTag: 6d8f654c-6a86-4045-b8ae-3afb46f2a537
+	lineageTag: dc91f798-59ac-4c3e-ac2f-c02107497215
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -26,7 +26,7 @@ function 'PQL.Assert.ShouldBeFalse' =
 				"Actual", IF(actualCondition, "TRUE", "FALSE"),
 				"Passed", _Passed
 			)
-	lineageTag: f66d1d98-43e4-4b9b-b08e-568c892e7919
+	lineageTag: 8371ae4b-4f98-4f38-890d-bb6430bb2661
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -42,7 +42,7 @@ function 'PQL.Assert.ShouldBeNull' =
 				"Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
 				"Passed", _Passed
 			)
-	lineageTag: 08b69aa2-9c95-49fa-86f7-2d4f494fe4dc
+	lineageTag: b5d6b3dd-05b4-4805-a608-86150944260c
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -59,7 +59,7 @@ function 'PQL.Assert.ShouldNotBeNull' =
 				"Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
 				"Passed", _Passed
 			)
-	lineageTag: b28fd5e3-e8a3-499f-a068-36d08364e60b
+	lineageTag: f38dde62-97a5-4b9d-86a1-ac6c49052696
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -75,7 +75,7 @@ function 'PQL.Assert.ShouldBeBlank' =
 				"Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
 				"Passed", _Passed
 			)
-	lineageTag: c148e217-5496-4418-ad1e-e22e4a26720e
+	lineageTag: 5a44b234-ea27-4622-867b-7f84797646dd
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -92,7 +92,7 @@ function 'PQL.Assert.ShouldNotBeBlank' =
 				"Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
 				"Passed", _Passed
 			)
-	lineageTag: 1b846b9b-6603-4dbc-a08f-a48c413cbba5
+	lineageTag: ff1e8981-c13d-4501-9d2e-07d1da41e351
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -108,7 +108,7 @@ function 'PQL.Assert.ShouldBeNullOrBlank' =
 				"Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
 				"Passed", _Passed
 			)
-	lineageTag: 70104935-a500-4246-8103-5fab450dfddd
+	lineageTag: b420a20b-4166-4542-8484-b1047e4d4be1
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -125,7 +125,7 @@ function 'PQL.Assert.ShouldNotBeNullOrBlank' =
 				"Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
 				"Passed", _Passed
 			)
-	lineageTag: db0df3f5-87e2-482e-b79d-331de3abe291
+	lineageTag: 4faf6719-b531-4a67-adbc-098b12b22796
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -140,7 +140,7 @@ function 'PQL.Assert.ShouldEqual' =
 				"Actual", FORMAT(actual, ""),
 				"Passed", _Passed
 			)
-	lineageTag: 5c895ee4-3701-4323-89b6-35e3db7a878a
+	lineageTag: 57069b33-e6a1-4638-8529-c9749d855056
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -155,7 +155,7 @@ function 'PQL.Assert.ShouldNotEqual' =
 				"Actual", FORMAT(actual, ""),
 				"Passed", _Passed
 			)
-	lineageTag: 01af1014-e56a-4272-b986-9adb23072798
+	lineageTag: 9ee05023-6eff-44d7-9437-2989d0317668
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -171,7 +171,7 @@ function 'PQL.Assert.ShouldEqualExactly' =
 				"Actual", actual,
 				"Passed", _Passed
 			)
-	lineageTag: 984cf963-d9cb-4217-acbc-3736003944b3
+	lineageTag: 6ac6a33f-428b-46b0-a96e-d30fcc2f7f4a
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -186,7 +186,7 @@ function 'PQL.Assert.ShouldBeGreaterThan' =
 				"Actual", FORMAT(actual, ""),
 				"Passed", _Passed
 			)
-	lineageTag: 83e1dbad-f938-4346-9ab9-92437caf55bc
+	lineageTag: a210a51d-5132-448f-8c4a-4957cf00b3f6
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -201,7 +201,7 @@ function 'PQL.Assert.ShouldBeLessThan' =
 				"Actual", FORMAT(actual, ""),
 				"Passed", _Passed
 			)
-	lineageTag: 8674507c-5850-4e4b-8fef-1eac4034b4d6
+	lineageTag: e7089de3-b76c-4021-82c4-3a9a1bec5197
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -217,7 +217,7 @@ function 'PQL.Assert.ShouldBeGreaterOrEqual' =
 				"Actual", FORMAT(actual, ""),
 				"Passed", _Passed
 			)
-	lineageTag: fd2a1472-8b9b-4373-8688-740e1af38b6a
+	lineageTag: 588f64a9-a378-4b74-8830-3eaadbd7083b
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -233,7 +233,7 @@ function 'PQL.Assert.ShouldBeLessOrEqual' =
 				"Actual", FORMAT(actual, ""),
 				"Passed", _Passed
 			)
-	lineageTag: 907dcd4d-23b7-4471-b439-3b1e48dc9ec5
+	lineageTag: f5a0cbf8-4181-462d-98a3-ed26eb546b14
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -248,7 +248,7 @@ function 'PQL.Assert.ShouldBeBetween' =
 				"Actual", FORMAT(actual, ""),
 				"Passed", _Passed
 			)
-	lineageTag: 758ec385-2d66-4445-96f4-71c8d153ff2d
+	lineageTag: 7b547292-e677-43cf-87e5-938ec8de21e5
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -265,7 +265,7 @@ function 'PQL.Assert.ShouldStartWith' =
 				"Actual", actual,
 				"Passed", _Passed
 			)
-	lineageTag: 6e4d4dd2-3662-4f5a-a9d8-217c06d5259f
+	lineageTag: e0a58ae4-640c-4f55-8800-b70578379980
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -281,7 +281,7 @@ function 'PQL.Assert.ShouldEndWith' =
 				"Actual", actual,
 				"Passed", _Passed
 			)
-	lineageTag: c95baf18-e11a-4046-96c4-52f75b4d1e19
+	lineageTag: 5f4ed7d5-5259-4551-b597-b36f920e82d6
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -297,7 +297,7 @@ function 'PQL.Assert.ShouldContainString' =
 				"Actual", actual,
 				"Passed", _Passed
 			)
-	lineageTag: c7bebac4-cee8-4d21-a5e2-0c8d885ba87a
+	lineageTag: 3c7d8243-2b22-41cd-b9ef-43bc46bfa464
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -313,7 +313,7 @@ function 'PQL.Assert.ShouldMatch' =
 				"Actual", actual,
 				"Passed", _Passed
 			)
-	lineageTag: 054de87a-6d76-4939-8267-ccee36d09781
+	lineageTag: 14232446-a8be-494f-a6e8-2893946f8f64
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -331,7 +331,7 @@ function 'PQL.Assert.Col.ShouldBeNull' =
 				"Actual", IF(_Passed, "ALL NULL", "HAS NON-NULL VALUES (" & FORMAT(_NonNullCount, "0") & " distinct)"),
 				"Passed", _Passed
 			)
-	lineageTag: 6fcbe488-3784-451a-95d3-1afe3669b857
+	lineageTag: 5aceac48-b760-429a-91db-10dc6f5dd278
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -348,7 +348,7 @@ function 'PQL.Assert.Col.ShouldNotBeNull' =
 				"Actual", IF(_Passed, "HAS VALUES (" & FORMAT(_NonNullCount, "0") & " distinct)", "ALL NULL"),
 				"Passed", _Passed
 			)
-	lineageTag: a26440f3-6222-4a05-9766-d1271daf259d
+	lineageTag: beac799c-33a7-42d2-bdd9-13d00a31e276
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -369,7 +369,7 @@ function 'PQL.Assert.Col.ShouldBeBlank' =
 				"Actual", IF(_Passed, "ALL BLANK", "HAS NON-BLANK VALUES (" & FORMAT(_NonBlankCount, "0") & " non-blank)"),
 				"Passed", _Passed
 			)
-	lineageTag: ffb3d026-7c1c-4e76-9735-39f18a96e3b4
+	lineageTag: ed563a3c-5fbf-4ea5-bb51-65ca3adfda3d
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -387,7 +387,7 @@ function 'PQL.Assert.Col.ShouldNotBeBlank' =
 				"Actual", IF(_Passed, "NO BLANK VALUES", "HAS BLANK VALUES (" & FORMAT(_BlankCount, "0") & " blank)"),
 				"Passed", _Passed
 			)
-	lineageTag: 0d956de2-aa0e-4288-b06d-90e99fb5aec8
+	lineageTag: 0f10bcf1-973a-4ba6-860c-6ad3778c57c6
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -408,7 +408,7 @@ function 'PQL.Assert.Col.ShouldBeNullOrBlank' =
 				"Actual", IF(_Passed, "ALL NULL/BLANK", "HAS VALUES (" & FORMAT(_NonEmptyCount, "0") & " non-empty)"),
 				"Passed", _Passed
 			)
-	lineageTag: 44cc91b6-f07d-4129-bebd-245da0c93232
+	lineageTag: e72a3bd8-db52-4ce3-ad23-f54916b7bec6
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -426,7 +426,7 @@ function 'PQL.Assert.Col.ShouldNotBeNullOrBlank' =
 				"Actual", IF(_Passed, "NO NULL/BLANK VALUES", "HAS NULL/BLANK VALUES (" & FORMAT(_BlankCount, "0") & " empty)"),
 				"Passed", _Passed
 			)
-	lineageTag: 02d20e01-4825-4534-afbb-7d92e5d3e0d7
+	lineageTag: c65764b0-7450-47d5-ac34-e9cf81863cea
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -444,7 +444,7 @@ function 'PQL.Assert.Col.ShouldBeDistinct' =
 				"Actual", IF(_Passed, "ALL DISTINCT (" & FORMAT(_TotalCount, "0") & " rows)", "DUPLICATES FOUND (" & FORMAT(_DistinctCount, "0") & " distinct of " & FORMAT(_TotalCount, "0") & " rows)"),
 				"Passed", _Passed
 			)
-	lineageTag: b6f289bf-8c10-4d21-820e-fb3f0c894312
+	lineageTag: 57bbe98e-f7cb-4f13-9d24-e70acd404d12
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -460,7 +460,7 @@ function 'PQL.Assert.Col.ShouldExist' =
 				"Actual", IF(_Found, "EXISTS", "NOT FOUND"),
 				"Passed", _Found
 			)
-	lineageTag: 2e36e4c6-3cca-4c4b-8584-338f85e8a236
+	lineageTag: 8ad7c460-dad2-4787-b1c2-55dd809937dc
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -478,7 +478,7 @@ function 'PQL.Assert.Tbl.ShouldHaveRows' =
 				"Actual", IF(_Passed, "HAS ROWS (" & FORMAT(_RowCount, "0") & ")", "EMPTY (0 rows)"),
 				"Passed", _Passed
 			)
-	lineageTag: dd78b97c-ca93-4ea9-8251-cc0ee99cbbbb
+	lineageTag: bccb438c-5805-4f27-a6d5-4a3725ca7460
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -495,7 +495,7 @@ function 'PQL.Assert.Tbl.ShouldHaveRowCount' =
 				"Actual", FORMAT(_RowCount, "0") & " rows",
 				"Passed", _Passed
 			)
-	lineageTag: 1fefdb0e-6023-4f51-b88b-b3cdc6a0027e
+	lineageTag: e858e80f-da68-429a-9d82-eedc1447e298
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -511,7 +511,7 @@ function 'PQL.Assert.Tbl.ShouldHaveMoreRowsThan' =
 				"Actual", FORMAT(_RowCount, "0"),
 				"Passed", _Passed
 			)
-	lineageTag: a0a769cf-db13-4bb5-88cd-1e4f117b0b5f
+	lineageTag: 26d5874d-c685-43b2-8105-6222148f6335
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -527,7 +527,7 @@ function 'PQL.Assert.Tbl.ShouldExist' =
 				"Actual", IF(_Found, "EXISTS", "NOT FOUND"),
 				"Passed", _Found
 			)
-	lineageTag: ed7ce759-a35e-401a-921a-5baee7853ab6
+	lineageTag: 27404371-3067-4af1-abdf-5c079aeb659e
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -546,7 +546,7 @@ function 'PQL.Assert.Relationship.ShouldExist' =
 				"Actual", IF(_Found, "EXISTS", "NOT FOUND"),
 				"Passed", _Found
 			)
-	lineageTag: fa4ab7c1-ee9a-498c-a378-69902e835ca8
+	lineageTag: d5d755e1-bed5-4ca1-adea-93552c9d7de8
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -556,7 +556,7 @@ function 'PQL.Assert.Relationship.ShouldExist' =
 function 'PQL.Assert.RetrieveTests' =
 		() =>
 			FILTER(INFO.FUNCTIONS("ORIGIN", "2"), OR(RIGHT([FUNCTION_NAME],5) = ".Test", RIGHT([FUNCTION_NAME],6) = ".Tests"))
-	lineageTag: f0aa1846-c52c-477d-84e6-23e826a28eaf
+	lineageTag: bfa4277f-4222-40a6-a09f-691f264042ee
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -578,7 +578,7 @@ function 'PQL.Assert.RetrieveTestsByEnvironment' =
 						|| CONTAINSSTRING(UPPER([FUNCTION_NAME]), ".ANY.")
 					)
 				)
-	lineageTag: a27bdc1c-2dbd-49c5-9bd2-9d21ff0dcfc0
+	lineageTag: 9d4ed7fc-7707-46dd-a88c-0b897550ccff
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -673,9 +673,9 @@ function 'PQL.Assert.BP.ShouldAvoidBiDirectionalOnHighCardinalityColumn' =
 				"Expected", "No bi-directional relationships on high-cardinality columns (>1M)",
 				"Actual", IF(_HighCardinalityCount > 0, "BI-DIRECTIONAL RELATIONSHIPS ON HIGH-CARDINALITY COLUMNS FOUND (" & FORMAT(_HighCardinalityCount, "0") & ")", "NO HIGH-CARDINALITY BI-DIRECTIONAL RELATIONSHIPS"),
 				"Passed", _Passed,
-				"RuleDescription", "Avoid bi-directional relationships on high-cardinality columns (>1M distinct values) for better performance"
+				"RuleDescription", "Avoid bi-directional relationships on high-cardinality columns (>1M distinct values) for better performance. Severity: Medium (2)."
 			)
-	lineageTag: 4b28791f-1c31-423b-811f-e5f366d23395
+	lineageTag: a9268d4e-38bd-4d7b-b597-5d8ae68304f3
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -699,9 +699,9 @@ function 'PQL.Assert.BP.ShouldRemoveAutoDateTable' =
 				"Expected", "No auto-date tables should exist in the model",
 				"Actual", IF(_AutoDateTableCount > 0, "AUTO-DATE TABLES FOUND (" & FORMAT(_AutoDateTableCount, "0") & ")", "NO AUTO-DATE TABLES"),
 				"Passed", _Passed,
-				"RuleDescription", "Avoid using auto-date tables. Turn off auto-date table in Power BI Desktop settings to save memory"
+				"RuleDescription", "Avoid using auto-date tables. Turn off auto-date table in Power BI Desktop settings to save memory. Severity: Medium (2)."
 			)
-	lineageTag: 4b649ea6-3423-4d14-ab86-7aca728a2d2f
+	lineageTag: eb13530f-c2e9-482e-aac9-0d333f2ebaf2
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -738,9 +738,9 @@ function 'PQL.Assert.BP.ShouldAvoidFloatingPointDataTypes' =
 				"Expected", "No columns should use Number data type",
 				"Actual", _ActualMessage,
 				"Passed", _Passed,
-				"RuleDescription", "Avoid using Number floating point data type, as it can result in unpredictable roundoff errors and decreased performance. Use Int64 or Decimal where appropriate (Decimal limited to 4 digits after decimal)"
+				"RuleDescription", "Avoid using Number floating point data type, as it can result in unpredictable roundoff errors and decreased performance. Use Int64 or Decimal where appropriate (Decimal limited to 4 digits after decimal). Severity: Medium (2)."
 			)
-	lineageTag: 84427c4b-eddf-4da9-857f-63771f1e3944
+	lineageTag: 2d338cb2-0d55-485d-bb6f-b43cd383f2cb
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -793,16 +793,16 @@ function 'PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences' =
 				"Expected", "All column references should be fully qualified (Table[Column])",
 				"Actual", _ActualMessage,
 				"Passed", _Passed,
-				"RuleDescription", "Using fully qualified column references makes it easier to distinguish between column and measure references, and also helps avoid certain errors. Reference: https://www.elegantbi.com/post/top10bestpractices"
-		)
-	lineageTag: 6c5dba56-a30a-4c94-be5e-a3385fc312c2
+				"RuleDescription", "Using fully qualified column references makes it easier to distinguish between column and measure references, and also helps avoid certain errors. Reference: https://www.elegantbi.com/post/top10bestpractices. Severity: Medium (2)."
+			)
+	lineageTag: fba5338e-e054-4e87-86ae-40573a3faa6c
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
 	annotation DAXLIB_PackageVersion = 0.1.6
 
-/// Asserts that IsAvailableInMdx should be set to false on non-attribute hidden columns.
-/// Hidden columns should have IsAvailableInMdx set to false for better performance.
+/// Asserts that IsAvailableInMdx should be set to false on hidden non-attribute columns.
+/// Hidden columns that still have IsAvailableInMdx = true cause unnecessary attribute hierarchy builds, consuming memory and slowing processing.
 function 'PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns' =
 		() =>
 			VAR _Columns = INFO.VIEW.COLUMNS()
@@ -819,7 +819,7 @@ function 'PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns' =
 						) > 0
 					RETURN
 						_IsAvailableInMDX = TRUE
-						&& (_IsHidden = FALSE && _TableIsHidden = FALSE)
+						&& (_IsHidden = TRUE || _TableIsHidden = TRUE)
 				)
 			VAR _ViolatingColumnCount = COUNTROWS(_ViolatingColumns)
 			VAR _ColumnsList =
@@ -834,17 +834,17 @@ function 'PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns' =
 			VAR _ActualMessage =
 				IF(
 					_ViolatingColumnCount > 0,
-					"COLUMNS WITH ISAVAILABLEINMDX=TRUE FOUND (" & FORMAT(_ViolatingColumnCount, "0") & "): " & _ColumnsList,
-					"NO VIOLATING COLUMNS"
+					"HIDDEN COLUMNS WITH ISAVAILABLEINMDX=TRUE FOUND (" & FORMAT(_ViolatingColumnCount, "0") & "): " & _ColumnsList,
+					"ALL HIDDEN COLUMNS HAVE ISAVAILABLEINMDX SET TO FALSE"
 				)
 			RETURN ROW(
 				"TestName", "[Performance] Set IsAvailableInMdx to false on non-attribute columns",
 				"Expected", "Hidden columns should have IsAvailableInMdx = false",
 				"Actual", _ActualMessage,
 				"Passed", _Passed,
-				"RuleDescription", "To speed up processing time and conserve memory, attribute hierarchies should not be built for hidden columns. Set IsAvailableInMdx to false for better performance"
+				"RuleDescription", "To speed up processing time and conserve memory, attribute hierarchies should not be built for hidden columns. Set IsAvailableInMdx to false for better performance. Severity: Medium (2)."
 			)
-	lineageTag: 90ad46b6-2803-405e-94bb-b7fc28d89716
+	lineageTag: a18ecfef-1c2d-4504-ae95-f7943f7b9414
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -932,7 +932,7 @@ function 'PQL.Assert.BP.ShouldHaveSameDataTypeInRelationships' =
 				"Passed", _Passed,
 				"RuleDescription", "Columns used in a relationship should be of the same data type. Ideally, they will be of integer data type. Having columns within a relationship which are of different data types may lead to various issues including slower performance and unexpected query results. Severity: High (3)."
 			)
-	lineageTag: 25cc173d-c8b0-4465-876a-81a88f4b6c7c
+	lineageTag: 5e076992-728a-402e-b29a-a952845f0be7
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1074,9 +1074,9 @@ function 'PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect' =
 				"Expected", "Measures should use TREATAS instead of INTERSECT for virtual relationships",
 				"Actual", _ActualMessage,
 				"Passed", _Passed,
-				"RuleDescription", "The TREATAS function is more efficient and provides better performance than the INTERSECT function when used in virtual relationships. Reference: https://www.sqlbi.com/articles/propagate-filters-using-treatas-in-dax/ Severity: Medium (2)."
-		)
-	lineageTag: 32b11a08-4e74-47b7-843c-837af21152b6
+				"RuleDescription", "The TREATAS function is more efficient and provides better performance than the INTERSECT function when used in virtual relationships. Reference: https://www.sqlbi.com/articles/propagate-filters-using-treatas-in-dax/. Severity: Medium (2)."
+			)
+	lineageTag: 107668f5-2626-4ff1-8c33-43a9a4d23f0c
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1090,7 +1090,7 @@ function 'PQL.Assert.BP.CheckDAXExpressions' =
 				PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences(),
 				PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect()
 			)
-	lineageTag: 1278ea7d-6780-494c-9267-a3b9150c6a33
+	lineageTag: 6462c536-2539-4ff4-b58f-d8aa1b171588
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1103,77 +1103,77 @@ function 'PQL.Assert.BP.CheckDAXExpressions' =
 /// Measures without format strings may display inconsistently and make reports harder to understand.
 function 'PQL.Assert.BP.ShouldProvideFormatStringForMeasures' =
 		() =>
-			VAR _ViewMeasures = INFO.VIEW.MEASURES()
-			VAR _Measures = INFO.MEASURES()
-			VAR _Tables = INFO.VIEW.TABLES()
+		    VAR _ViewMeasures = INFO.VIEW.MEASURES()
+		    VAR _Measures = INFO.MEASURES()
+		    VAR _Tables = INFO.VIEW.TABLES()
 		
-			// Create a lookup for hidden tables
-			VAR _HiddenTables =
-				FILTER(
-					_Tables,
-					[IsHidden] = TRUE
-				)
+		    // Create a lookup for hidden tables
+		    VAR _HiddenTables =
+		        FILTER(
+		            _Tables,
+		            [IsHidden] = TRUE
+		        )
 		
-			// Check measures for missing format strings
-			VAR _ViolatingMeasures =
-				FILTER(
-					_ViewMeasures,
-					VAR _TableName = [Table]
-					VAR _MeasureID = [ID]
+		    // Check measures for missing format strings
+		    VAR _ViolatingMeasures =
+		        FILTER(
+		            _ViewMeasures,
+		            VAR _TableName = [Table]
+		            VAR _MeasureID = [ID]
 		
-					// Get FormatString from INFO.MEASURES()
-					VAR _FormatString =
-						MAXX(
-							FILTER(
-								_Measures,
-								[ID] = _MeasureID
-							),
-							[FormatString]
-						)
+		            // Get FormatString from INFO.MEASURES()
+		            VAR _FormatString =
+		                MAXX(
+		                    FILTER(
+		                        _Measures,
+		                        [ID] = _MeasureID
+		                    ),
+		                    [FormatString]
+		                )
 		
-					// Check if table is hidden
-					VAR _TableIsHidden =
-						COUNTROWS(
-							FILTER(
-								_HiddenTables,
-								[Name] = _TableName
-							)
-						) > 0
+		            // Check if table is hidden
+		            VAR _TableIsHidden =
+		                COUNTROWS(
+		                    FILTER(
+		                        _HiddenTables,
+		                        [Name] = _TableName
+		                    )
+		                ) > 0
 		
-					// Measure is on a visible table and has no format string
-					RETURN
-						NOT _TableIsHidden
-						&& (ISBLANK(_FormatString) || _FormatString = "")
-				)
+		            // Measure is on a visible table and has no format string
+		            RETURN
+		                NOT _TableIsHidden
+		                && (ISBLANK(_FormatString) || _FormatString = "")
+		        )
 		
-			VAR _ViolationCount = COUNTROWS(_ViolatingMeasures)
+		    VAR _ViolationCount = COUNTROWS(_ViolatingMeasures)
 		
-			VAR _MeasuresList =
-				CONCATENATEX(
-					_ViolatingMeasures,
-					[Table] & "[" & [Name] & "]",
-					", ",
-					[Table], ASC,
-					[Name], ASC
-				)
+		    VAR _MeasuresList =
+		        CONCATENATEX(
+		            _ViolatingMeasures,
+		            [Table] & "[" & [Name] & "]",
+		            ", ",
+		            [Table], ASC,
+		            [Name], ASC
+		        )
 		
-			VAR _Passed = _ViolationCount = 0
+		    VAR _Passed = _ViolationCount = 0
 		
-			VAR _ActualMessage =
-				IF(
-					_ViolationCount > 0,
-					"MEASURES WITHOUT FORMAT STRING FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _MeasuresList,
-					"ALL VISIBLE MEASURES HAVE FORMAT STRINGS ASSIGNED"
-				)
+		    VAR _ActualMessage =
+		        IF(
+		            _ViolationCount > 0,
+		            "MEASURES WITHOUT FORMAT STRING FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _MeasuresList,
+		            "ALL VISIBLE MEASURES HAVE FORMAT STRINGS ASSIGNED"
+		        )
 		
-			RETURN ROW(
-				"TestName", "[Formatting] Provide format string for measures",
-				"Expected", "All visible measures should have format strings assigned",
-				"Actual", _ActualMessage,
-				"Passed", _Passed,
-				"RuleDescription", "Visible measures should have their format string property assigned. Measures without format strings may display inconsistently and make reports harder to understand. Severity: High (3)."
-			)
-	lineageTag: 6a1402c5-fd66-4da4-a44d-91244bab026a
+		    RETURN ROW(
+		        "TestName", "[Formatting] Provide format string for measures",
+		        "Expected", "All visible measures should have format strings assigned",
+		        "Actual", _ActualMessage,
+		        "Passed", _Passed,
+		        "RuleDescription", "Visible measures should have their format string property assigned. Measures without format strings may display inconsistently and make reports harder to understand. Severity: High (3)."
+		    )
+	lineageTag: 3de7e49e-4f30-4441-b889-d85a4037ee1c
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1183,76 +1183,76 @@ function 'PQL.Assert.BP.ShouldProvideFormatStringForMeasures' =
 /// Numeric columns with SummarizeBy enabled may cause accidental aggregation in reports. Users should create explicit measures instead.
 function 'PQL.Assert.BP.ShouldNotSummarizeNumericColumns' =
 		() =>
-			VAR _Columns = INFO.VIEW.COLUMNS()
-			VAR _Tables = INFO.VIEW.TABLES()
+		    VAR _Columns = INFO.VIEW.COLUMNS()
+		    VAR _Tables = INFO.VIEW.TABLES()
 		
-			// Create a lookup for hidden tables
-			VAR _HiddenTables =
-				FILTER(
-					_Tables,
-					[IsHidden] = TRUE
-				)
+		    // Create a lookup for hidden tables
+		    VAR _HiddenTables =
+		        FILTER(
+		            _Tables,
+		            [IsHidden] = TRUE
+		        )
 		
-			// Check numeric columns with SummarizeBy not set to None
-			VAR _ViolatingColumns =
-				FILTER(
-					_Columns,
-					VAR _TableName = [Table]
-					VAR _DataType = [DataType]
-					VAR _IsHidden = [IsHidden]
-					VAR _SummarizeBy = [SummarizeBy]
+		    // Check numeric columns with SummarizeBy not set to None
+		    VAR _ViolatingColumns =
+		        FILTER(
+		            _Columns,
+		            VAR _TableName = [Table]
+		            VAR _DataType = [DataType]
+		            VAR _IsHidden = [IsHidden]
+		            VAR _SummarizeBy = [SummarizeBy]
 		
-					// Check if table is hidden
-					VAR _TableIsHidden =
-						COUNTROWS(
-							FILTER(
-								_HiddenTables,
-								[Name] = _TableName
-							)
-						) > 0
+		            // Check if table is hidden
+		            VAR _TableIsHidden =
+		                COUNTROWS(
+		                    FILTER(
+		                        _HiddenTables,
+		                        [Name] = _TableName
+		                    )
+		                ) > 0
 		
-					// Column is numeric (Int64, Decimal, or Double)
-					VAR _IsNumeric =
-						_DataType = "Integer"
-						|| _DataType = "Currency"
-						|| _DataType = "Number"
+		            // Column is numeric (Int64, Decimal, or Double)
+		            VAR _IsNumeric =
+		                _DataType = "Integer"
+		                || _DataType = "Currency"
+		                || _DataType = "Number"
 		
-					// Check if SummarizeBy is not set to None
-					RETURN
-						_IsNumeric
-						&& NOT _IsHidden
-						&& NOT _TableIsHidden
-						&& _SummarizeBy <> "None"
-				)
+		            // Check if SummarizeBy is not set to None
+		            RETURN
+		                _IsNumeric
+		                && NOT _IsHidden
+		                && NOT _TableIsHidden
+		                && _SummarizeBy <> "None"
+		        )
 		
-			VAR _ViolationCount = COUNTROWS(_ViolatingColumns)
+		    VAR _ViolationCount = COUNTROWS(_ViolatingColumns)
 		
-			VAR _ColumnsList =
-				CONCATENATEX(
-					_ViolatingColumns,
-					[Table] & "[" & [Name] & "] (SummarizeBy: " & [SummarizeBy] & ")",
-					", ",
-					[Table], ASC,
-					[Name], ASC
-				)
+		    VAR _ColumnsList =
+		        CONCATENATEX(
+		            _ViolatingColumns,
+		            [Table] & "[" & [Name] & "] (SummarizeBy: " & [SummarizeBy] & ")",
+		            ", ",
+		            [Table], ASC,
+		            [Name], ASC
+		        )
 		
-			VAR _Passed = _ViolationCount = 0
+		    VAR _Passed = _ViolationCount = 0
 		
-			VAR _ActualMessage =
-				IF(
-					_ViolationCount > 0,
-					"NUMERIC COLUMNS WITH SUMMARIZE BY FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _ColumnsList,
-					"ALL NUMERIC COLUMNS HAVE SUMMARIZE BY SET TO NONE"
-				)
+		    VAR _ActualMessage =
+		        IF(
+		            _ViolationCount > 0,
+		            "NUMERIC COLUMNS WITH SUMMARIZE BY FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _ColumnsList,
+		            "ALL NUMERIC COLUMNS HAVE SUMMARIZE BY SET TO NONE"
+		        )
 		
-			RETURN ROW(
-				"TestName", "[Formatting] Do not summarize numeric columns",
-				"Expected", "Numeric columns should have SummarizeBy set to None",
-				"Actual", _ActualMessage,
-				"Passed", _Passed,
-				"RuleDescription", "Numeric columns (Int64, Decimal, Double) should have their SummarizeBy property set to None to avoid accidental aggregation in Power BI. Users should create explicit measures instead. Severity: High (3)."
-			)
-	lineageTag: e00053e9-7862-437f-a878-f023357c1802
+		    RETURN ROW(
+		        "TestName", "[Formatting] Do not summarize numeric columns",
+		        "Expected", "Numeric columns should have SummarizeBy set to None",
+		        "Actual", _ActualMessage,
+		        "Passed", _Passed,
+		        "RuleDescription", "Numeric columns (Int64, Decimal, Double) should have their SummarizeBy property set to None to avoid accidental aggregation in Power BI. Users should create explicit measures instead. Severity: High (3)."
+		    )
+	lineageTag: 5551263d-cac2-49e0-814c-db8895c2b7a8
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1266,10 +1266,9 @@ function 'PQL.Assert.BP.CheckFormatting' =
 		        PQL.Assert.BP.ShouldProvideFormatStringForMeasures(),
 		        PQL.Assert.BP.ShouldNotSummarizeNumericColumns(),
 		        PQL.Assert.BP.ShouldMarkRowLabels(),
-		        PQL.Assert.BP.ShouldMarkPrimaryKeys(),
-		        PQL.Assert.BP.ShouldHideForeignKeys()
+		        PQL.Assert.BP.ShouldMarkPrimaryKeys()
 		    )
-	lineageTag: b304d7de-d5f7-49df-bf39-b0a9c0b256cc
+	lineageTag: 380c05f9-652a-425a-9024-d1669044ed88
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1280,7 +1279,7 @@ function 'PQL.Assert.BP.CheckFormatting' =
 function 'PQL.Assert.BP.CheckErrorPrevention' =
 		() =>
 			PQL.Assert.BP.ShouldHaveSameDataTypeInRelationships()
-	lineageTag: 5702cd59-d966-4595-8de7-c394d159ee1d
+	lineageTag: 1db245e1-6c7d-4cc5-9ce3-eced1b4eb83a
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1296,7 +1295,7 @@ function 'PQL.Assert.BP.CheckPerformance' =
 				PQL.Assert.BP.ShouldAvoidFloatingPointDataTypes(),
 				PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns()
 			)
-	lineageTag: c41471e7-52b9-42ee-812d-20951add0887
+	lineageTag: 1c0387d5-9efd-4ff2-bab9-a65c45fbe0f0
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1308,117 +1307,117 @@ function 'PQL.Assert.BP.CheckPerformance' =
 /// Asserts that hidden measures not referenced by any DAX expressions should be removed.
 /// Hidden measures that are not referenced by any DAX expression are unnecessary and should be removed for maintainability.
 /// Scope: Measure. CompatibilityLevel >= 1200.
-function 'PQL.Assert.BP.ShouldRemoveUnnecessaryMeasures' = ```
+function 'PQL.Assert.BP.ShouldRemoveUnnecessaryMeasures' =
 		() =>
-		    VAR _Measures = INFO.MEASURES()
-		    VAR _Tables = INFO.TABLES()
-		    VAR _Columns = INFO.COLUMNS()
-		    
-		    // Get hidden table IDs
-		    VAR _HiddenTableIDs = 
-		        SELECTCOLUMNS(
-		            FILTER(_Tables, [IsHidden]),
-		            "@ID", VALUE([ID])
-		        )
-		    
-		    // Get all measure expressions for reference checking
-		    VAR _AllMeasureExpressions = 
-		        SELECTCOLUMNS(
-		            _Measures,
-		            "@Expr", [Expression]
-		        )
-		    
-		    // Get calculated column expressions for reference checking
-		    VAR _CalcColumnExpressions = 
-		        SELECTCOLUMNS(
-		            FILTER(_Columns, [Type] = 2),
-		            "@Expr", [Expression]
-		        )
-		    
-		    // Find hidden measures not referenced by any expression
-		    VAR _ViolatingMeasures = 
-		        ADDCOLUMNS(
-		            FILTER(
-		                _Measures,
-		                VAR _MeasureName = [Name]
-		                VAR _IsHidden = [IsHidden]
-		                VAR _TableID = VALUE([TableID])
-		                
-		                // Check if table is hidden
-		                VAR _TableIsHidden = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _HiddenTableIDs,
-		                            [@ID] = _TableID
-		                        )
-		                    ) > 0
-		                
-		                // Measure must be hidden (directly or via table)
-		                VAR _IsHiddenMeasure = _IsHidden || _TableIsHidden
-		                
-		                // Check if measure name appears in any other measure expression
-		                VAR _SearchPattern = "[" & _MeasureName & "]"
-		                VAR _ReferencedInMeasures = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _AllMeasureExpressions,
-		                            CONTAINSSTRING([@Expr], _SearchPattern)
-		                        )
-		                    )
-		                
-		                // Check if measure name appears in any calculated column expression
-		                VAR _ReferencedInColumns = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _CalcColumnExpressions,
-		                            CONTAINSSTRING([@Expr], _SearchPattern)
-		                        )
-		                    )
-		                
-		                VAR _IsReferenced = (_ReferencedInMeasures + _ReferencedInColumns) > 0
-		                
-		                RETURN _IsHiddenMeasure && NOT _IsReferenced
-		            ),
-		            "@TableName",
-		                VAR _TableID = VALUE([TableID])
-		                RETURN 
-		                    MAXX(
-		                        FILTER(
-		                            _Tables,
-		                            VALUE([ID]) = _TableID
-		                        ),
-		                        [Name]
-		                    )
-		        )
-		    
-		    VAR _ViolationCount = COUNTROWS(_ViolatingMeasures)
-		    
-		    VAR _MeasuresList = 
-		        CONCATENATEX(
-		            _ViolatingMeasures,
-		            [@TableName] & "[" & [Name] & "]",
-		            ", ",
-		            [@TableName], ASC,
-		            [Name], ASC
-		        )
-		    
-		    VAR _Passed = _ViolationCount = 0
-		    
-		    VAR _ActualMessage = 
-		        IF(
-		            _ViolationCount > 0,
-		            "UNNECESSARY HIDDEN MEASURES FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _MeasuresList,
-		            "NO UNNECESSARY HIDDEN MEASURES FOUND"
-		        )
-		    
-		    RETURN ROW(
-		        "TestName", "[Maintenance] Remove unnecessary measures",
-		        "Expected", "Hidden measures not referenced by any DAX expression should be removed",
-		        "Actual", _ActualMessage,
-		        "Passed", _Passed,
-		        "RuleDescription", "Hidden measures that are not referenced by any DAX expression are unnecessary and should be removed for maintainability. Scope: Measure. CompatibilityLevel: 1200. Severity: High (3)."
-		    )
-		```
+			VAR _Measures = INFO.MEASURES()
+			VAR _Tables = INFO.TABLES()
+			VAR _Columns = INFO.COLUMNS()
+		
+			// Get hidden table IDs
+			VAR _HiddenTableIDs =
+				SELECTCOLUMNS(
+					FILTER(_Tables, [IsHidden]),
+					"@ID", VALUE([ID])
+				)
+		
+			// Get all measure expressions for reference checking
+			VAR _AllMeasureExpressions =
+				SELECTCOLUMNS(
+					_Measures,
+					"@Expr", [Expression]
+				)
+		
+			// Get calculated column expressions for reference checking
+			VAR _CalcColumnExpressions =
+				SELECTCOLUMNS(
+					FILTER(_Columns, [Type] = 2),
+					"@Expr", [Expression]
+				)
+		
+			// Find hidden measures not referenced by any expression
+			VAR _ViolatingMeasures =
+				ADDCOLUMNS(
+					FILTER(
+						_Measures,
+						VAR _MeasureName = [Name]
+						VAR _IsHidden = [IsHidden]
+						VAR _TableID = VALUE([TableID])
+		
+						// Check if table is hidden
+						VAR _TableIsHidden =
+							COUNTROWS(
+								FILTER(
+									_HiddenTableIDs,
+									[@ID] = _TableID
+								)
+							) > 0
+		
+						// Measure must be hidden (directly or via table)
+						VAR _IsHiddenMeasure = _IsHidden || _TableIsHidden
+		
+						// Check if measure name appears in any other measure expression
+						VAR _SearchPattern = "[" & _MeasureName & "]"
+						VAR _ReferencedInMeasures =
+							COUNTROWS(
+								FILTER(
+									_AllMeasureExpressions,
+									CONTAINSSTRING([@Expr], _SearchPattern)
+								)
+							)
+		
+						// Check if measure name appears in any calculated column expression
+						VAR _ReferencedInColumns =
+							COUNTROWS(
+								FILTER(
+									_CalcColumnExpressions,
+									CONTAINSSTRING([@Expr], _SearchPattern)
+								)
+							)
+		
+						VAR _IsReferenced = (_ReferencedInMeasures + _ReferencedInColumns) > 0
+		
+						RETURN _IsHiddenMeasure && NOT _IsReferenced
+					),
+					"@TableName",
+						VAR _TableID = VALUE([TableID])
+						RETURN
+							MAXX(
+								FILTER(
+									_Tables,
+									VALUE([ID]) = _TableID
+								),
+								[Name]
+							)
+				)
+		
+			VAR _ViolationCount = COUNTROWS(_ViolatingMeasures)
+		
+			VAR _MeasuresList =
+				CONCATENATEX(
+					_ViolatingMeasures,
+					[@TableName] & "[" & [Name] & "]",
+					", ",
+					[@TableName], ASC,
+					[Name], ASC
+				)
+		
+			VAR _Passed = _ViolationCount = 0
+		
+			VAR _ActualMessage =
+				IF(
+					_ViolationCount > 0,
+					"UNNECESSARY HIDDEN MEASURES FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _MeasuresList,
+					"NO UNNECESSARY HIDDEN MEASURES FOUND"
+				)
+		
+			RETURN ROW(
+				"TestName", "[Maintenance] Remove unnecessary measures",
+				"Expected", "Hidden measures not referenced by any DAX expression should be removed",
+				"Actual", _ActualMessage,
+				"Passed", _Passed,
+				"RuleDescription", "Hidden measures that are not referenced by any DAX expression are unnecessary and should be removed for maintainability. Scope: Measure. CompatibilityLevel: 1200. Severity: High (3)."
+			)
+	lineageTag: 9e2c97a9-87c9-47ca-b143-b53d1d94176b
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1429,145 +1428,145 @@ function 'PQL.Assert.BP.ShouldRemoveUnnecessaryMeasures' = ```
 /// Scope: Table, Measure, DataColumn, CalculatedColumn, CalculatedTable, CalculatedTableColumn, CalculationGroup.
 /// CompatibilityLevel >= 1200.
 /// Reference: https://www.elegantbi.com/post/datadictionary
-function 'PQL.Assert.BP.ShouldHaveObjectDescriptions' = ```
+function 'PQL.Assert.BP.ShouldHaveObjectDescriptions' =
 		() =>
-		    VAR _Tables = INFO.TABLES()
-		    VAR _Measures = INFO.MEASURES()
-		    VAR _Columns = INFO.COLUMNS()
-		    
-		    // Get hidden table IDs for lookup
-		    VAR _HiddenTableIDs = 
-		        SELECTCOLUMNS(
-		            FILTER(_Tables, [IsHidden]),
-		            "@ID", VALUE([ID])
-		        )
-		    
-		    // Visible tables without description (exclude system tables)
-		    VAR _TablesWithoutDesc = 
-		        FILTER(
-		            _Tables,
-		            NOT [IsHidden]
-		            && NOT CONTAINSSTRING([Name], "DateTableTemplate")
-		            && NOT CONTAINSSTRING([Name], "LocalDateTable")
-		            && (ISBLANK([Description]) || [Description] = "")
-		        )
-		    
-		    // Visible measures without description (on visible tables)
-		    VAR _MeasuresWithoutDesc = 
-		        ADDCOLUMNS(
-		            FILTER(
-		                _Measures,
-		                VAR _TableID = VALUE([TableID])
-		                VAR _IsHidden = [IsHidden]
-		                VAR _TableIsHidden = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _HiddenTableIDs,
-		                            [@ID] = _TableID
-		                        )
-		                    ) > 0
-		                RETURN
-		                    NOT _IsHidden
-		                    && NOT _TableIsHidden
-		                    && (ISBLANK([Description]) || [Description] = "")
-		            ),
-		            "@TableName",
-		                VAR _TableID = VALUE([TableID])
-		                RETURN 
-		                    MAXX(
-		                        FILTER(
-		                            _Tables,
-		                            VALUE([ID]) = _TableID
-		                        ),
-		                        [Name]
-		                    )
-		        )
-		    
-		    // Visible columns without description (types 1, 2, 4 on visible tables)
-		    VAR _ColumnsWithoutDesc = 
-		        ADDCOLUMNS(
-		            FILTER(
-		                _Columns,
-		                VAR _TableID = VALUE([TableID])
-		                VAR _IsHidden = [IsHidden]
-		                VAR _ColumnType = [Type]
-		                VAR _TableIsHidden = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _HiddenTableIDs,
-		                            [@ID] = _TableID
-		                        )
-		                    ) > 0
-		                VAR _IsInScope = _ColumnType = 1 || _ColumnType = 2 || _ColumnType = 4
-		                RETURN
-		                    _IsInScope
-		                    && NOT _IsHidden
-		                    && NOT _TableIsHidden
-		                    && (ISBLANK([Description]) || [Description] = "")
-		            ),
-		            "@TableName",
-		                VAR _TableID = VALUE([TableID])
-		                RETURN 
-		                    MAXX(
-		                        FILTER(
-		                            _Tables,
-		                            VALUE([ID]) = _TableID
-		                        ),
-		                        [Name]
-		                    )
-		        )
-		    
-		    VAR _TableCount = COUNTROWS(_TablesWithoutDesc)
-		    VAR _MeasureCount = COUNTROWS(_MeasuresWithoutDesc)
-		    VAR _ColumnCount = COUNTROWS(_ColumnsWithoutDesc)
-		    VAR _ViolationCount = _TableCount + _MeasureCount + _ColumnCount
-		    
-		    VAR _TablesList = 
-		        CONCATENATEX(
-		            _TablesWithoutDesc,
-		            "'" & [Name] & "'",
-		            ", ",
-		            [Name], ASC
-		        )
-		    
-		    VAR _MeasuresList = 
-		        CONCATENATEX(
-		            _MeasuresWithoutDesc,
-		            [@TableName] & "[" & [Name] & "]",
-		            ", ",
-		            [@TableName], ASC,
-		            [Name], ASC
-		        )
-		    
-		    VAR _ColumnsList = 
-		        CONCATENATEX(
-		            _ColumnsWithoutDesc,
-		            [@TableName] & "[" & [ExplicitName] & "]",
-		            ", ",
-		            [@TableName], ASC,
-		            [ExplicitName], ASC
-		        )
-		    
-		    VAR _Passed = _ViolationCount = 0
-		    
-		    VAR _ActualMessage = 
-		        IF(
-		            _ViolationCount > 0,
-		            "OBJECTS WITHOUT DESCRIPTIONS (" & FORMAT(_ViolationCount, "0") & ")"
-		                & IF(_TableCount > 0, " | Tables (" & FORMAT(_TableCount, "0") & "): " & _TablesList, "")
-		                & IF(_MeasureCount > 0, " | Measures (" & FORMAT(_MeasureCount, "0") & "): " & _MeasuresList, "")
-		                & IF(_ColumnCount > 0, " | Columns (" & FORMAT(_ColumnCount, "0") & "): " & _ColumnsList, ""),
-		            "ALL VISIBLE OBJECTS HAVE DESCRIPTIONS"
-		        )
-		    
-		    RETURN ROW(
-		        "TestName", "[Maintenance] Visible objects with no description",
-		        "Expected", "All visible tables, measures, and columns should have descriptions",
-		        "Actual", _ActualMessage,
-		        "Passed", _Passed,
-		        "RuleDescription", "Add descriptions to visible objects. Descriptions are shown on hover within the Field List in Power BI Desktop. Additionally, you can leverage these descriptions to create an automated data dictionary. Reference: https://www.elegantbi.com/post/datadictionary. Scope: Table, Measure, DataColumn, CalculatedColumn, CalculatedTable, CalculatedTableColumn, CalculationGroup. CompatibilityLevel: 1200. Severity: High (3)."
-		    )
-		```
+			VAR _Tables = INFO.TABLES()
+			VAR _Measures = INFO.MEASURES()
+			VAR _Columns = INFO.COLUMNS()
+		
+			// Get hidden table IDs for lookup
+			VAR _HiddenTableIDs =
+				SELECTCOLUMNS(
+					FILTER(_Tables, [IsHidden]),
+					"@ID", VALUE([ID])
+				)
+		
+			// Visible tables without description (exclude system tables)
+			VAR _TablesWithoutDesc =
+				FILTER(
+					_Tables,
+					NOT [IsHidden]
+					&& NOT CONTAINSSTRING([Name], "DateTableTemplate")
+					&& NOT CONTAINSSTRING([Name], "LocalDateTable")
+					&& (ISBLANK([Description]) || [Description] = "")
+				)
+		
+			// Visible measures without description (on visible tables)
+			VAR _MeasuresWithoutDesc =
+				ADDCOLUMNS(
+					FILTER(
+						_Measures,
+						VAR _TableID = VALUE([TableID])
+						VAR _IsHidden = [IsHidden]
+						VAR _TableIsHidden =
+							COUNTROWS(
+								FILTER(
+									_HiddenTableIDs,
+									[@ID] = _TableID
+								)
+							) > 0
+						RETURN
+							NOT _IsHidden
+							&& NOT _TableIsHidden
+							&& (ISBLANK([Description]) || [Description] = "")
+					),
+					"@TableName",
+						VAR _TableID = VALUE([TableID])
+						RETURN
+							MAXX(
+								FILTER(
+									_Tables,
+									VALUE([ID]) = _TableID
+								),
+								[Name]
+							)
+				)
+		
+			// Visible columns without description (types 1, 2, 4 on visible tables)
+			VAR _ColumnsWithoutDesc =
+				ADDCOLUMNS(
+					FILTER(
+						_Columns,
+						VAR _TableID = VALUE([TableID])
+						VAR _IsHidden = [IsHidden]
+						VAR _ColumnType = [Type]
+						VAR _TableIsHidden =
+							COUNTROWS(
+								FILTER(
+									_HiddenTableIDs,
+									[@ID] = _TableID
+								)
+							) > 0
+						VAR _IsInScope = _ColumnType = 1 || _ColumnType = 2 || _ColumnType = 4
+						RETURN
+							_IsInScope
+							&& NOT _IsHidden
+							&& NOT _TableIsHidden
+							&& (ISBLANK([Description]) || [Description] = "")
+					),
+					"@TableName",
+						VAR _TableID = VALUE([TableID])
+						RETURN
+							MAXX(
+								FILTER(
+									_Tables,
+									VALUE([ID]) = _TableID
+								),
+								[Name]
+							)
+				)
+		
+			VAR _TableCount = COUNTROWS(_TablesWithoutDesc)
+			VAR _MeasureCount = COUNTROWS(_MeasuresWithoutDesc)
+			VAR _ColumnCount = COUNTROWS(_ColumnsWithoutDesc)
+			VAR _ViolationCount = _TableCount + _MeasureCount + _ColumnCount
+		
+			VAR _TablesList =
+				CONCATENATEX(
+					_TablesWithoutDesc,
+					"'" & [Name] & "'",
+					", ",
+					[Name], ASC
+				)
+		
+			VAR _MeasuresList =
+				CONCATENATEX(
+					_MeasuresWithoutDesc,
+					[@TableName] & "[" & [Name] & "]",
+					", ",
+					[@TableName], ASC,
+					[Name], ASC
+				)
+		
+			VAR _ColumnsList =
+				CONCATENATEX(
+					_ColumnsWithoutDesc,
+					[@TableName] & "[" & [ExplicitName] & "]",
+					", ",
+					[@TableName], ASC,
+					[ExplicitName], ASC
+				)
+		
+			VAR _Passed = _ViolationCount = 0
+		
+			VAR _ActualMessage =
+				IF(
+					_ViolationCount > 0,
+					"OBJECTS WITHOUT DESCRIPTIONS (" & FORMAT(_ViolationCount, "0") & ")"
+						& IF(_TableCount > 0, " | Tables (" & FORMAT(_TableCount, "0") & "): " & _TablesList, "")
+						& IF(_MeasureCount > 0, " | Measures (" & FORMAT(_MeasureCount, "0") & "): " & _MeasuresList, "")
+						& IF(_ColumnCount > 0, " | Columns (" & FORMAT(_ColumnCount, "0") & "): " & _ColumnsList, ""),
+					"ALL VISIBLE OBJECTS HAVE DESCRIPTIONS"
+				)
+		
+			RETURN ROW(
+				"TestName", "[Maintenance] Visible objects with no description",
+				"Expected", "All visible tables, measures, and columns should have descriptions",
+				"Actual", _ActualMessage,
+				"Passed", _Passed,
+				"RuleDescription", "Add descriptions to visible objects. Descriptions are shown on hover within the Field List in Power BI Desktop. Additionally, you can leverage these descriptions to create an automated data dictionary. Reference: https://www.elegantbi.com/post/datadictionary. Scope: Table, Measure, DataColumn, CalculatedColumn, CalculatedTable, CalculatedTableColumn, CalculationGroup. CompatibilityLevel: 1200. Severity: High (3)."
+			)
+	lineageTag: 0814c81f-7ad3-4802-8077-2c34a5d30ddb
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1575,158 +1574,159 @@ function 'PQL.Assert.BP.ShouldHaveObjectDescriptions' = ```
 
 /// Asserts that hidden columns not referenced by any DAX expressions, relationships, hierarchy levels, or Sort By-properties should be removed.
 /// Scope: DataColumn, CalculatedColumn, CalculatedTableColumn. CompatibilityLevel >= 1200.
-function 'PQL.Assert.BP.ShouldRemoveUnnecessaryColumns' = ```
+function 'PQL.Assert.BP.ShouldRemoveUnnecessaryColumns' =
 		() =>
-		    VAR _Columns = INFO.COLUMNS()
-		    VAR _Tables = INFO.TABLES()
-		    VAR _Dependencies = INFO.CALCDEPENDENCY()
-		    VAR _TablePermissions = INFO.TABLEPERMISSIONS()
-		    
-		    // Get hidden table IDs
-		    VAR _HiddenTableIDs = 
-		        SELECTCOLUMNS(
-		            FILTER(_Tables, [IsHidden]),
-		            "@ID", VALUE([ID])
-		        )
-		    
-		    // All columns referenced by anything (measures, calc columns, relationships, hierarchies)
-		    VAR _ReferencedColumns = 
-		        DISTINCT(
-		            SELECTCOLUMNS(
-		                FILTER(
-		                    _Dependencies,
-		                    [REFERENCED_OBJECT_TYPE] = "COLUMN"
-		                    || [REFERENCED_OBJECT_TYPE] = "CALC_COLUMN"
-		                    || [REFERENCED_OBJECT_TYPE] = "ATTRIBUTE_HIERARCHY"
-		                ),
-		                "@RefTable", [REFERENCED_TABLE],
-		                "@RefColumn", [REFERENCED_OBJECT]
-		            )
-		        )
-		    
-		    // Columns used as SortBy target (SortByColumnID references)
-		    VAR _SortByColumnIDs = 
-		        DISTINCT(
-		            SELECTCOLUMNS(
-		                FILTER(_Columns, NOT ISBLANK([SortByColumnID]) && [SortByColumnID] > 0),
-		                "@SortByID", [SortByColumnID]
-		            )
-		        )
-		    
-		    // RLS filter expressions (if any roles exist)
-		    VAR _RLSExpressions = 
-		        SELECTCOLUMNS(
-		            FILTER(_TablePermissions, NOT ISBLANK([FilterExpression]) && [FilterExpression] <> ""),
-		            "@FilterExpr", [FilterExpression]
-		        )
-		    
-		    // Find hidden columns not referenced by anything
-		    VAR _ViolatingColumns = 
-		        ADDCOLUMNS(
-		            FILTER(
-		                _Columns,
-		                VAR _ColumnType = [Type]
-		                VAR _IsHidden = [IsHidden]
-		                VAR _TableID = VALUE([TableID])
-		                VAR _ColumnID = VALUE([ID])
-		                VAR _ColumnName = [ExplicitName]
-		                
-		                // Scope: DataColumn (1), CalculatedColumn (2), CalculatedTableColumn (4)
-		                VAR _IsInScope = _ColumnType = 1 || _ColumnType = 2 || _ColumnType = 4
-		                
-		                // Check if table is hidden
-		                VAR _TableIsHidden = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _HiddenTableIDs,
-		                            [@ID] = _TableID
-		                        )
-		                    ) > 0
-		                
-		                // Column or table must be hidden
-		                VAR _IsHiddenColumn = _IsHidden || _TableIsHidden
-		                
-		                // Get table name for reference matching
-		                VAR _TableName = 
-		                    MAXX(
-		                        FILTER(_Tables, VALUE([ID]) = _TableID),
-		                        [Name]
-		                    )
-		                
-		                // Check if referenced by any DAX, relationship, or hierarchy
-		                VAR _IsReferenced = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _ReferencedColumns,
-		                            [@RefTable] = _TableName && [@RefColumn] = _ColumnName
-		                        )
-		                    ) > 0
-		                
-		                // Check if used as SortBy target by another column
-		                VAR _UsedInSortBy = 
-		                    COUNTROWS(
-		                        FILTER(_SortByColumnIDs, [@SortByID] = _ColumnID)
-		                    ) > 0
-		                
-		                // Check if referenced in RLS filter expressions
-		                VAR _SearchPattern1 = _TableName & "[" & _ColumnName & "]"
-		                VAR _SearchPattern2 = "'" & _TableName & "'[" & _ColumnName & "]"
-		                VAR _UsedInRLS = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _RLSExpressions,
-		                            CONTAINSSTRING([@FilterExpr], _SearchPattern1)
-		                            || CONTAINSSTRING([@FilterExpr], _SearchPattern2)
-		                        )
-		                    ) > 0
-		                
-		                RETURN
-		                    _IsInScope
-		                    && _IsHiddenColumn
-		                    && NOT _IsReferenced
-		                    && NOT _UsedInSortBy
-		                    && NOT _UsedInRLS
-		            ),
-		            "@TableName",
-		                VAR _TableID = VALUE([TableID])
-		                RETURN 
-		                    MAXX(
-		                        FILTER(
-		                            _Tables,
-		                            VALUE([ID]) = _TableID
-		                        ),
-		                        [Name]
-		                    )
-		        )
-		    
-		    VAR _ViolationCount = COUNTROWS(_ViolatingColumns)
-		    
-		    VAR _ColumnsList = 
-		        CONCATENATEX(
-		            _ViolatingColumns,
-		            [@TableName] & "[" & [ExplicitName] & "]",
-		            ", ",
-		            [@TableName], ASC,
-		            [ExplicitName], ASC
-		        )
-		    
-		    VAR _Passed = _ViolationCount = 0
-		    
-		    VAR _ActualMessage = 
-		        IF(
-		            _ViolationCount > 0,
-		            "UNNECESSARY HIDDEN COLUMNS FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _ColumnsList,
-		            "NO UNNECESSARY HIDDEN COLUMNS FOUND"
-		        )
-		    
-		    RETURN ROW(
-		        "TestName", "[Maintenance] Remove unnecessary columns",
-		        "Expected", "Hidden columns not referenced by any DAX expression, relationship, hierarchy, or SortBy should be removed",
-		        "Actual", _ActualMessage,
-		        "Passed", _Passed,
-		        "RuleDescription", "Hidden columns that are not referenced by any DAX expressions, relationships, hierarchy levels, or Sort By-properties should be removed. Scope: DataColumn, CalculatedColumn, CalculatedTableColumn. CompatibilityLevel: 1200. Severity: High (3)."
-		    )
-		```
+			VAR _Columns = INFO.COLUMNS()
+			VAR _Tables = INFO.TABLES()
+			VAR _Dependencies = INFO.CALCDEPENDENCY()
+			VAR _TablePermissions = INFO.TABLEPERMISSIONS()
+		
+			// Get hidden table IDs
+			VAR _HiddenTableIDs =
+				SELECTCOLUMNS(
+					FILTER(_Tables, [IsHidden]),
+					"@ID", VALUE([ID])
+				)
+		
+			// All columns referenced by anything (measures, calc columns, relationships, hierarchies)
+			// REFERENCED_OBJECT_TYPE: COLUMN, CALC_COLUMN for direct refs; ATTRIBUTE_HIERARCHY for hierarchy levels
+			VAR _ReferencedColumns =
+				DISTINCT(
+					SELECTCOLUMNS(
+						FILTER(
+							_Dependencies,
+							[REFERENCED_OBJECT_TYPE] = "COLUMN"
+							|| [REFERENCED_OBJECT_TYPE] = "CALC_COLUMN"
+							|| [REFERENCED_OBJECT_TYPE] = "ATTRIBUTE_HIERARCHY"
+						),
+						"@RefTable", [REFERENCED_TABLE],
+						"@RefColumn", [REFERENCED_OBJECT]
+					)
+				)
+		
+			// Columns used as SortBy target (SortByColumnID references)
+			VAR _SortByColumnIDs =
+				DISTINCT(
+					SELECTCOLUMNS(
+						FILTER(_Columns, NOT ISBLANK([SortByColumnID]) && [SortByColumnID] > 0),
+						"@SortByID", [SortByColumnID]
+					)
+				)
+		
+			// RLS filter expressions (if any roles exist)
+			VAR _RLSExpressions =
+				SELECTCOLUMNS(
+					FILTER(_TablePermissions, NOT ISBLANK([FilterExpression]) && [FilterExpression] <> ""),
+					"@FilterExpr", [FilterExpression]
+				)
+		
+			// Find hidden columns not referenced by anything
+			VAR _ViolatingColumns =
+				ADDCOLUMNS(
+					FILTER(
+						_Columns,
+						VAR _ColumnType = [Type]
+						VAR _IsHidden = [IsHidden]
+						VAR _TableID = VALUE([TableID])
+						VAR _ColumnID = VALUE([ID])
+						VAR _ColumnName = [ExplicitName]
+		
+						// Scope: DataColumn (1), CalculatedColumn (2), CalculatedTableColumn (4)
+						VAR _IsInScope = _ColumnType = 1 || _ColumnType = 2 || _ColumnType = 4
+		
+						// Check if table is hidden
+						VAR _TableIsHidden =
+							COUNTROWS(
+								FILTER(
+									_HiddenTableIDs,
+									[@ID] = _TableID
+								)
+							) > 0
+		
+						// Column or table must be hidden
+						VAR _IsHiddenColumn = _IsHidden || _TableIsHidden
+		
+						// Get table name for reference matching
+						VAR _TableName =
+							MAXX(
+								FILTER(_Tables, VALUE([ID]) = _TableID),
+								[Name]
+							)
+		
+						// Check if referenced by any DAX, relationship, or hierarchy
+						VAR _IsReferenced =
+							COUNTROWS(
+								FILTER(
+									_ReferencedColumns,
+									[@RefTable] = _TableName && [@RefColumn] = _ColumnName
+								)
+							) > 0
+		
+						// Check if used as SortBy target by another column
+						VAR _UsedInSortBy =
+							COUNTROWS(
+								FILTER(_SortByColumnIDs, [@SortByID] = _ColumnID)
+							) > 0
+		
+						// Check if referenced in RLS filter expressions
+						VAR _SearchPattern1 = _TableName & "[" & _ColumnName & "]"
+						VAR _SearchPattern2 = "'" & _TableName & "'[" & _ColumnName & "]"
+						VAR _UsedInRLS =
+							COUNTROWS(
+								FILTER(
+									_RLSExpressions,
+									CONTAINSSTRING([@FilterExpr], _SearchPattern1)
+									|| CONTAINSSTRING([@FilterExpr], _SearchPattern2)
+								)
+							) > 0
+		
+						RETURN
+							_IsInScope
+							&& _IsHiddenColumn
+							&& NOT _IsReferenced
+							&& NOT _UsedInSortBy
+							&& NOT _UsedInRLS
+					),
+					"@TableName",
+						VAR _TableID = VALUE([TableID])
+						RETURN
+							MAXX(
+								FILTER(
+									_Tables,
+									VALUE([ID]) = _TableID
+								),
+								[Name]
+							)
+				)
+		
+			VAR _ViolationCount = COUNTROWS(_ViolatingColumns)
+		
+			VAR _ColumnsList =
+				CONCATENATEX(
+					_ViolatingColumns,
+					[@TableName] & "[" & [ExplicitName] & "]",
+					", ",
+					[@TableName], ASC,
+					[ExplicitName], ASC
+				)
+		
+			VAR _Passed = _ViolationCount = 0
+		
+			VAR _ActualMessage =
+				IF(
+					_ViolationCount > 0,
+					"UNNECESSARY HIDDEN COLUMNS FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _ColumnsList,
+					"NO UNNECESSARY HIDDEN COLUMNS FOUND"
+				)
+		
+			RETURN ROW(
+				"TestName", "[Maintenance] Remove unnecessary columns",
+				"Expected", "Hidden columns not referenced by any DAX expression, relationship, hierarchy, or SortBy should be removed",
+				"Actual", _ActualMessage,
+				"Passed", _Passed,
+				"RuleDescription", "Hidden columns that are not referenced by any DAX expressions, relationships, hierarchy levels, or Sort By-properties should be removed. Scope: DataColumn, CalculatedColumn, CalculatedTableColumn. CompatibilityLevel: 1200. Severity: High (3)."
+			)
+	lineageTag: 660d29cc-f813-46c4-b940-79d6f8df1a00
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1736,11 +1736,12 @@ function 'PQL.Assert.BP.ShouldRemoveUnnecessaryColumns' = ```
 /// This function executes all maintenance validation rules and returns combined results.
 function 'PQL.Assert.BP.CheckMaintenance' =
 		() =>
-		    UNION(
-		        PQL.Assert.BP.ShouldRemoveUnnecessaryMeasures(),
-		        PQL.Assert.BP.ShouldRemoveUnnecessaryColumns(),
-		        PQL.Assert.BP.ShouldHaveObjectDescriptions()
-		    )
+			UNION(
+				PQL.Assert.BP.ShouldRemoveUnnecessaryMeasures(),
+				PQL.Assert.BP.ShouldRemoveUnnecessaryColumns(),
+				PQL.Assert.BP.ShouldHaveObjectDescriptions()
+			)
+	lineageTag: edaeb20a-cd88-4baa-89f9-fc01efd9d9b6
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -1749,63 +1750,63 @@ function 'PQL.Assert.BP.CheckMaintenance' =
 /// Asserts that tables should have at least one column marked as a row label (IsDefaultLabel = true).
 /// Row labels help Power BI Copilot understand which columns represent the primary identifier for rows in a table.
 /// Reference: https://blog.crossjoin.co.uk/2024/08/25/tuning-power-bi-copilot-with-row-labels-and-key-columns/
-function 'PQL.Assert.BP.ShouldMarkRowLabels' = ```
+function 'PQL.Assert.BP.ShouldMarkRowLabels' =
 		() =>
 		    VAR _Columns = INFO.COLUMNS()
 		    VAR _Tables = INFO.TABLES()
-		    
+		
 		    // Get visible tables (excluding hidden and system tables)
-		    VAR _VisibleTables = 
+		    VAR _VisibleTables =
 		        FILTER(
 		            _Tables,
 		            NOT [IsHidden]
 		            && NOT CONTAINSSTRING([Name], "DateTableTemplate")
 		            && NOT CONTAINSSTRING([Name], "LocalDateTable")
 		        )
-		    
+		
 		    // Check each visible table for row labels
-		    VAR _TablesWithoutRowLabels = 
+		    VAR _TablesWithoutRowLabels =
 		        ADDCOLUMNS(
 		            _VisibleTables,
 		            "@HasRowLabel",
-		                VAR _TableID = VALUE([ID])
-		                VAR _RowLabelCount = 
+		                VAR _TableID = [ID]
+		                VAR _RowLabelCount =
 		                    COUNTROWS(
 		                        FILTER(
 		                            _Columns,
-		                            VALUE([TableID]) = _TableID
+		                            [TableID] = _TableID
 		                            && [IsDefaultLabel] = TRUE
 		                            && NOT [IsHidden]
 		                        )
 		                    )
 		                RETURN _RowLabelCount > 0
 		        )
-		    
-		    VAR _ViolatingTables = 
+		
+		    VAR _ViolatingTables =
 		        FILTER(
 		            _TablesWithoutRowLabels,
 		            [@HasRowLabel] = FALSE
 		        )
-		    
+		
 		    VAR _ViolationCount = COUNTROWS(_ViolatingTables)
-		    
-		    VAR _TablesList = 
+		
+		    VAR _TablesList =
 		        CONCATENATEX(
 		            _ViolatingTables,
 		            [Name],
 		            ", ",
 		            [Name], ASC
 		        )
-		    
+		
 		    VAR _Passed = _ViolationCount = 0
-		    
-		    VAR _ActualMessage = 
+		
+		    VAR _ActualMessage =
 		        IF(
 		            _ViolationCount > 0,
 		            "TABLES WITHOUT ROW LABELS FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _TablesList,
 		            "ALL TABLES HAVE ROW LABELS ASSIGNED"
 		        )
-		    
+		
 		    RETURN ROW(
 		        "TestName", "[Formatting] Mark row labels",
 		        "Expected", "Tables should have at least one column marked as a row label",
@@ -1813,33 +1814,23 @@ function 'PQL.Assert.BP.ShouldMarkRowLabels' = ```
 		        "Passed", _Passed,
 		        "RuleDescription", "Set the 'RowLabel' property to 'True' for row label columns within the column properties. This helps Power BI Copilot understand which columns represent the primary identifier for rows in a table. Reference: https://blog.crossjoin.co.uk/2024/08/25/tuning-power-bi-copilot-with-row-labels-and-key-columns/. Severity: High (3)."
 		    )
-		```
+	lineageTag: b9a46abf-01f0-4adc-83c9-497683a5c98b
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
 	annotation DAXLIB_PackageVersion = 0.1.6
 
 /// Asserts that columns on the "One" side of relationships should have the IsKey property set to true.
-/// Set the 'Key' property to 'True' for primary key columns within the column properties.
-/// Scope: DataColumn, CalculatedColumn, CalculatedTableColumn. CompatibilityLevel >= 1200.
-function 'PQL.Assert.BP.ShouldMarkPrimaryKeys' = ```
+/// Marking primary keys helps Power BI understand table relationships and optimize query performance.
+function 'PQL.Assert.BP.ShouldMarkPrimaryKeys' =
 		() =>
 		    VAR _Columns = INFO.COLUMNS()
 		    VAR _Tables = INFO.TABLES()
 		    VAR _Relationships = INFO.RELATIONSHIPS()
-		    
-		    // Get visible tables (excluding hidden, system, and Time-category tables)
-		    VAR _VisibleTables = 
-		        FILTER(
-		            _Tables,
-		            NOT [IsHidden]
-		            && NOT CONTAINSSTRING([Name], "DateTableTemplate")
-		            && NOT CONTAINSSTRING([Name], "LocalDateTable")
-		            && [DataCategory] <> "Time"
-		        )
-		    
+		
 		    // Get columns that are on the "One" side of relationships (primary keys)
-		    VAR _PrimaryKeyColumns = 
+		    // ToCardinality is Int64: 1 = One, 2 = Many
+		    VAR _PrimaryKeyColumns =
 		        ADDCOLUMNS(
 		            FILTER(
 		                _Relationships,
@@ -1848,86 +1839,89 @@ function 'PQL.Assert.BP.ShouldMarkPrimaryKeys' = ```
 		            "@ToTableID", [ToTableID],
 		            "@ToColumnID", [ToColumnID]
 		        )
-		    
+		
 		    // Find columns that should be marked as keys but aren't
-		    VAR _ViolatingColumns = 
-		        ADDCOLUMNS(
-		            FILTER(
-		                _Columns,
-		                VAR _ColumnID = VALUE([ID])
-		                VAR _TableID = VALUE([TableID])
-		                VAR _ColumnType = [Type]
-		                VAR _IsHidden = [IsHidden]
-		                VAR _IsKey = [IsKey]
-		                
-		                // Scope: DataColumn (1), CalculatedColumn (2), CalculatedTableColumn (4)
-		                VAR _IsInScope = _ColumnType = 1 || _ColumnType = 2 || _ColumnType = 4
-		                
-		                // Check if table is in visible tables list
-		                VAR _TableIsVisible = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _VisibleTables,
-		                            VALUE([ID]) = _TableID
-		                        )
-		                    ) > 0
-		                
-		                // Check if this column is a primary key in any relationship
-		                VAR _IsPrimaryKey = 
-		                    COUNTROWS(
-		                        FILTER(
-		                            _PrimaryKeyColumns,
-		                            VALUE([@ToColumnID]) = _ColumnID
-		                        )
-		                    ) > 0
-		                
-		                // Return true if column should be marked as key but isn't
-		                RETURN 
-		                    _IsInScope
-		                    && _IsPrimaryKey
-		                    && NOT _IsKey
-		                    && NOT _IsHidden
-		                    && _TableIsVisible
-		            ),
-		            "@TableName",
-		                VAR _TableID = VALUE([TableID])
-		                RETURN 
-		                    MAXX(
-		                        FILTER(
-		                            _Tables,
-		                            VALUE([ID]) = _TableID
-		                        ),
-		                        [Name]
+		    VAR _ViolatingColumns =
+		        FILTER(
+		            _Columns,
+		            VAR _ColumnID = [ID]
+		            VAR _TableID = [TableID]
+		            VAR _IsHidden = [IsHidden]
+		            VAR _IsKey = [IsKey]
+		
+		            // Get table information
+		            VAR _TableIsHidden =
+		                COUNTROWS(
+		                    FILTER(
+		                        _Tables,
+		                        [ID] = _TableID
+		                        && [IsHidden] = TRUE
 		                    )
+		                ) > 0
+		
+		            VAR _TableDataCategory =
+		                MAXX(
+		                    FILTER(
+		                        _Tables,
+		                        [ID] = _TableID
+		                    ),
+		                    [DataCategory]
+		                )
+		
+		            // Check if this column is a primary key in any relationship
+		            VAR _IsPrimaryKey =
+		                COUNTROWS(
+		                    FILTER(
+		                        _PrimaryKeyColumns,
+		                        [@ToColumnID] = _ColumnID
+		                    )
+		                ) > 0
+		
+		            // Return true if column should be marked as key but isn't
+		            RETURN
+		                _IsPrimaryKey
+		                && NOT _IsKey
+		                && NOT _IsHidden
+		                && NOT _TableIsHidden
+		                && (_TableDataCategory <> "Time" || ISBLANK(_TableDataCategory))
 		        )
-		    
+		
 		    VAR _ViolationCount = COUNTROWS(_ViolatingColumns)
-		    
-		    // Build detailed list using simple column reference
-		    VAR _ColumnsList = 
+		
+		    // Build detailed list with table and column names
+		    VAR _ColumnsList =
 		        CONCATENATEX(
 		            _ViolatingColumns,
-		            [@TableName] & "[" & [ExplicitName] & "]",
+		            VAR _TableID = [TableID]
+		            VAR _TableName =
+		                MAXX(
+		                    FILTER(
+		                        _Tables,
+		                        [ID] = _TableID
+		                    ),
+		                    [Name]
+		                )
+		            RETURN _TableName & "[" & [ExplicitName] & "]",
 		            ", "
 		        )
-		    
+		
 		    VAR _Passed = _ViolationCount = 0
-		    
-		    VAR _ActualMessage = 
+		
+		    VAR _ActualMessage =
 		        IF(
 		            _ViolationCount > 0,
 		            "PRIMARY KEY COLUMNS NOT MARKED AS KEYS FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _ColumnsList,
 		            "ALL PRIMARY KEY COLUMNS ARE MARKED AS KEYS"
 		        )
-		    
+		
 		    RETURN ROW(
 		        "TestName", "[Formatting] Mark primary keys",
 		        "Expected", "Columns on the 'One' side of relationships should have IsKey = true",
 		        "Actual", _ActualMessage,
 		        "Passed", _Passed,
-		        "RuleDescription", "Set the 'Key' property to 'True' for primary key columns within the column properties. Scope: DataColumn, CalculatedColumn, CalculatedTableColumn. CompatibilityLevel: 1200. Severity: High (3)."
+		        "RuleDescription", "Set the 'Key' property to 'True' for primary key columns within the column properties. This helps Power BI understand table relationships and optimize query performance. Severity: High (3)."
 		    )
-		```
+	lineageTag: 387bdcfc-33c7-481a-b1d6-2c7f701ab1ff
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -2018,6 +2012,7 @@ function 'PQL.Assert.BP.ShouldHideForeignKeys' = ```
 		        "RuleDescription", "Foreign keys should always be hidden. Scope: DataColumn, CalculatedColumn, CalculatedTableColumn. CompatibilityLevel: 1200. Severity: High (3)."
 		    )
 		```
+	lineageTag: 3b4c2c19-c293-40bf-9737-29812181978a
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
