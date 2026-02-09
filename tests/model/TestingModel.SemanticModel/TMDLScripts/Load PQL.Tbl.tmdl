@@ -62,6 +62,7 @@ createOrReplace
 
 	/// Schema & Column Shape
 	/// Asserts that a table has all the specified columns (comma-separated list).
+	/// Note: Supports up to 11 column names in the comma-separated list.
 	function 'PQL.Assert.Tbl.ShouldHaveColumns' =
 			(testName : STRING, tableRef : STRING, columnNamesList : STRING) =>
 				VAR _Columns = INFO.VIEW.COLUMNS()

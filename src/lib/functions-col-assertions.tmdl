@@ -196,10 +196,6 @@ createOrReplace
 	/// Asserts that column values are unique within partitions defined by another column.
 	function 'PQL.Assert.Col.ShouldBeUniqueWithin' =
 			(testName : STRING, columnRef : ANYREF EXPR, partitionByCol : ANYREF EXPR) =>
-				VAR _Duplicates = COUNTAX(
-					SUMMARIZE(ALLNOBLANKROW(columnRef), partitionByCol, columnRef),
-					1
-				)
 				VAR _TotalCombinations = COUNTROWS(
 					SUMMARIZE(ALLNOBLANKROW(columnRef), partitionByCol, columnRef)
 				)

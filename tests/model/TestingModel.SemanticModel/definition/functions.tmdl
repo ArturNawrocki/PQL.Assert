@@ -543,10 +543,6 @@ function 'PQL.Assert.Col.PopulatedRateShouldBeAtLeast' =
 /// Asserts that column values are unique within partitions defined by another column.
 function 'PQL.Assert.Col.ShouldBeUniqueWithin' =
 		(testName : STRING, columnRef : ANYREF EXPR, partitionByCol : ANYREF EXPR) =>
-			VAR _Duplicates = COUNTAX(
-				SUMMARIZE(ALLNOBLANKROW(columnRef), partitionByCol, columnRef),
-				1
-			)
 			VAR _TotalCombinations = COUNTROWS(
 				SUMMARIZE(ALLNOBLANKROW(columnRef), partitionByCol, columnRef)
 			)
@@ -1146,6 +1142,7 @@ function 'PQL.Assert.Tbl.ShouldExist' =
 
 /// Schema & Column Shape
 /// Asserts that a table has all the specified columns (comma-separated list).
+/// Note: Supports up to 11 column names in the comma-separated list.
 function 'PQL.Assert.Tbl.ShouldHaveColumns' =
 		(testName : STRING, tableRef : STRING, columnNamesList : STRING) =>
 			VAR _Columns = INFO.VIEW.COLUMNS()
