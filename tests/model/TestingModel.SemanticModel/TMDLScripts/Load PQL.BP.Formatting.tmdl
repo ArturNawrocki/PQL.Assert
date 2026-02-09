@@ -77,7 +77,7 @@ createOrReplace
 					"RuleDescription", "Visible measures should have their format string property assigned. Measures without format strings may display inconsistently and make reports harder to understand. Severity: High (3)."
 				)	
 		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.1.5
+		annotation DAXLIB_PackageVersion = 0.1.6
 	/// Asserts that numeric columns should have SummarizeBy set to None.
 	/// Numeric columns with SummarizeBy enabled may cause accidental aggregation in reports. Users should create explicit measures instead.
 	function 'PQL.Assert.BP.ShouldNotSummarizeNumericColumns' =
@@ -152,7 +152,7 @@ createOrReplace
 					"RuleDescription", "Numeric columns (Int64, Decimal, Double) should have their SummarizeBy property set to None to avoid accidental aggregation in Power BI. Users should create explicit measures instead. Severity: High (3)."
 				)	
 		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.1.5
+		annotation DAXLIB_PackageVersion = 0.1.6
 	/// Runs all formatting best practice checks.
 	/// This function executes all formatting validation rules and returns combined results.
 	function 'PQL.Assert.BP.CheckFormatting' =
@@ -162,4 +162,4 @@ createOrReplace
 					PQL.Assert.BP.ShouldNotSummarizeNumericColumns()
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.1.5
+		annotation DAXLIB_PackageVersion = 0.1.6

@@ -1,17 +1,13 @@
 DEFINE
 
 // ============================================
-// Semantic Model Validation Test Suite
-// Tests for best practices and performance rules
-// ============================================
-
-// ============================================
-// RELATIONSHIP VALIDATION TESTS
+// Performance Validation Test Suite
+// Tests for performance best practices
 // ============================================
 
 // PQL.Assert.BP.ShouldAvoidBiDirectionalOnHighCardinalityColumn
 // Tests that bi-directional relationships are avoided on high-cardinality columns
-// Hard-coded cardinality threshold: 100,000 (100k distinct values)
+// Hard-coded cardinality threshold: 1,000,000 (1M distinct values)
 // Auto-discovers all bi-directional relationships in the model
 VAR _AvoidBiDir_Fail = 
     ADDCOLUMNS(
@@ -36,66 +32,10 @@ VAR _AvoidFloatingPoint_Fail =
     )
 
 // PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns
-// Auto-discovers hidden columns and validates IsAvailableInMdx is set correctly
-VAR _SetIsAvailableInMdxFalse_Pass = 
+// Auto-discovers hidden columns and validates IsAvailableInMdx is set to false
+VAR _SetIsAvailableInMdxFalse_Fail = 
     ADDCOLUMNS(
         PQL.Assert.BP.ShouldSetIsAvailableInMdxFalseOnNonAttributeColumns(),
-        "TestExpectation", "should fail"
-    )
-
-// PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences
-// Tests that all column references in measures are fully qualified (Table[Column])
-// Test includes: 'Total Value Unqualified' measure (should fail) and 'Total Value Qualified' measure (should pass)
-VAR _FullyQualifiedColumnRefs_Fail = 
-    ADDCOLUMNS(
-        PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences(),
-        "TestExpectation", "should fail"
-    )
-
-// PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect
-// Tests that measures should use TREATAS instead of INTERSECT for virtual relationships
-// Test includes: 'Test INTERSECT Usage' measure (should fail - uses INTERSECT instead of TREATAS)
-VAR _UseTreatAsInsteadOfIntersect_Fail = 
-    ADDCOLUMNS(
-        PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect(),
-        "TestExpectation", "should fail"
-    )
-
-// ============================================
-// ERROR PREVENTION TESTS
-// ============================================
-
-// PQL.Assert.BP.ShouldHaveSameDataTypeInRelationships
-// Tests that all relationship columns have matching data types
-// Auto-discovers all relationships and compares FromColumn.DataType with ToColumn.DataType
-// Current model has matching data types, so this should pass
-VAR _SameDataTypeInRelationships_Pass = 
-    ADDCOLUMNS(
-        PQL.Assert.BP.ShouldHaveSameDataTypeInRelationships(),
-        "TestExpectation", "should fail"
-    )
-
-// ============================================
-// FORMATTING TESTS
-// ============================================
-
-// PQL.Assert.BP.ShouldProvideFormatStringForMeasures
-// Tests that all visible measures have format strings assigned
-// Auto-discovers all measures and checks for missing format strings
-// Test includes: 'Measure Without Format' measure (should fail)
-VAR _ProvideFormatStringForMeasures_Fail = 
-    ADDCOLUMNS(
-        PQL.Assert.BP.ShouldProvideFormatStringForMeasures(),
-        "TestExpectation", "should fail"
-    )
-
-// PQL.Assert.BP.ShouldNotSummarizeNumericColumns
-// Tests that numeric columns should have SummarizeBy set to None
-// Auto-discovers numeric columns and checks if SummarizeBy is not "None"
-// Test includes: TestData.Value, TestData-Fact.Value, TestData.'Fixed Decimal' with SummarizeBy = sum (should fail)
-VAR _NotSummarizeNumericColumns_Fail = 
-    ADDCOLUMNS(
-        PQL.Assert.BP.ShouldNotSummarizeNumericColumns(),
         "TestExpectation", "should fail"
     )
 
@@ -106,12 +46,7 @@ VAR _AllTests = UNION(
     _AvoidBiDir_Fail,
     _RemoveAutoDate_Fail,
     _AvoidFloatingPoint_Fail,
-    _SetIsAvailableInMdxFalse_Pass,
-    _FullyQualifiedColumnRefs_Fail,
-    _UseTreatAsInsteadOfIntersect_Fail,
-    _SameDataTypeInRelationships_Pass,
-    _ProvideFormatStringForMeasures_Fail,
-    _NotSummarizeNumericColumns_Fail
+    _SetIsAvailableInMdxFalse_Fail
 )
 
 // ============================================
@@ -130,19 +65,10 @@ VAR _ValidationResults =
         "ValidationStatus",
             SWITCH(
                 TRUE(),
-                // Test expects "should pass" and Passed = TRUE
                 [TestExpectation] = "should pass" && [Passed] = TRUE, "✅ CORRECT",
-                
-                // Test expects "should fail" and Passed = FALSE  
                 [TestExpectation] = "should fail" && [Passed] = FALSE, "✅ CORRECT",
-                
-                // Test expects "should pass" but Passed = FALSE
                 [TestExpectation] = "should pass" && [Passed] = FALSE, "❌ MISMATCH: Expected PASS but got FAIL",
-                
-                // Test expects "should fail" but Passed = TRUE
                 [TestExpectation] = "should fail" && [Passed] = TRUE, "❌ MISMATCH: Expected FAIL but got PASS",
-                
-                // Test doesn't specify expectation
                 "⚠️ NO CLEAR EXPECTATION"
             )
     )
@@ -173,7 +99,7 @@ VAR _CorrectCount =
 
 VAR _Summary = 
     ROW(
-        "TestName", "=== VALIDATION SUMMARY ===",
+        "TestName", "=== PERFORMANCE VALIDATION SUMMARY ===",
         "Expected", "Total: " & _TotalTestsWithExpectations,
         "Actual", "Correct: " & _CorrectCount & " | Mismatches: " & _MismatchCount,
         "Passed", IF(_MismatchCount = 0, TRUE, FALSE),
@@ -189,7 +115,6 @@ VAR _Summary =
             )
     )
 
-// Show only mismatches and summary for quick review
 VAR _MismatchesOnly = 
     FILTER(
         _ValidationResults,
@@ -202,20 +127,14 @@ VAR _QuickReport =
         _MismatchesOnly
     )
 
-// Combine summary with detailed results  
 VAR _DetailedReport = 
     UNION(
         _Summary,
         _ValidationResults
     )
 
-// Output validation results - switch between _QuickReport and _DetailedReport
 EVALUATE _QuickReport
 ORDER BY 
-    IF([TestName] = "=== VALIDATION SUMMARY ===", 0, 1),
+    IF([TestName] = "=== PERFORMANCE VALIDATION SUMMARY ===", 0, 1),
     [ValidationStatus] DESC,
     [TestName]
-
-// Uncomment the line below to see all test results with validation status
-// EVALUATE _DetailedReport
-// ORDER BY [ValidationStatus] DESC, [TestName]
