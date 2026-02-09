@@ -36,8 +36,34 @@ foreach ($file in $tmdlFiles) {
     Write-Host "Processing: $($file.Name)"
     $content = Get-Content -Path $file.FullName -Raw
     
-    # Add the content to the combined output
-    $combinedContent += $content
+    # Remove createOrReplace statement (first line) and unindent the content
+    $lines = $content -split "`r?`n"
+    $processedLines = @()
+    $skipFirstCreateOrReplace = $true
+    
+    foreach ($line in $lines) {
+        # Skip the first "createOrReplace" line and the blank line after it
+        if ($skipFirstCreateOrReplace -and $line -match '^\s*createOrReplace\s*$') {
+            $skipFirstCreateOrReplace = $false
+            continue
+        }
+        
+        # Skip the blank line immediately after createOrReplace
+        if (-not $skipFirstCreateOrReplace -and $line -match '^\s*$' -and $processedLines.Count -eq 0) {
+            continue
+        }
+        
+        # For other lines, remove one level of indentation (one tab)
+        if ($line -match '^\t(.*)$') {
+            $processedLines += $matches[1]
+        } else {
+            $processedLines += $line
+        }
+    }
+    
+    # Join processed lines and add to combined content
+    $processedContent = $processedLines -join "`n"
+    $combinedContent += $processedContent
     
     # Add a blank line separator between files (except for the last file)
     if ($file -ne $tmdlFiles[-1]) {

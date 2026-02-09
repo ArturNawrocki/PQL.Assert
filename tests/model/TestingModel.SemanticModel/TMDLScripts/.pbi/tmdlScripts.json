@@ -8,7 +8,8 @@
     "Load PQL.BP.ErrorPrevention",
     "Load PQL.BP.DAXExpressions",
     "Load PQL.BP.Formatting",
-    "Load PQL.BP.Performance"
+    "Load PQL.BP.Performance",
+    "Load PQL.BP.Maintenance"
   ],
   "defaultTab": "Load PQL"
 }

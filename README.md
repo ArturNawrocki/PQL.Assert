@@ -71,11 +71,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## ⚡ Power Automate Integration
 
-The `examples/` folder contains a Power Automate solution (`PQLAssertviaPowerAutomate_1_0_0_1.zip`) that enables automated test execution against your semantic models.
+The `examples/power-automate/` folder contains a Power Automate solution (`PQLAssertviaPowerAutomate_1_0_0_1.zip`) that enables automated test execution against your semantic models.
 
 ### Importing the Solution
 
-1. **Download** the solution ZIP file from `examples/PQLAssertviaPowerAutomate_1_0_0_1.zip`
+1. **Download** the solution ZIP file from `examples/power-automate/PQLAssertviaPowerAutomate_1_0_0_1.zip`
 2. **Navigate** to [Power Automate](https://make.powerautomate.com) or [Power Apps](https://make.powerapps.com)
 3. **Import** the solution following Microsoft's guide: [Import solutions](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/import-update-export-solutions)
 4. **Set environment variables** when prompted during import:
@@ -86,6 +86,106 @@ The `examples/` folder contains a Power Automate solution (`PQLAssertviaPowerAut
 
 - **Workspace GUID**: Navigate to your workspace in Power BI Service. The URL will contain: `https://app.powerbi.com/groups/{workspace-guid}/...`
 - **Semantic Model ID**: Open your semantic model settings or view the URL when accessing the dataset: `https://app.powerbi.com/groups/{workspace-guid}/datasets/{semantic-model-id}/...`
+
+## 🤖 GitHub Copilot Custom Agent
+
+The `examples/custom-agents/` folder contains a custom GitHub Copilot agent configuration for automated semantic model testing. This agent specializes in creating and managing DAX Query View tests using PQL.Assert.
+
+### What is the Custom Agent?
+
+The **Power BI Semantic Model Test Specialist** is a custom Copilot agent that:
+- Creates DAX Query View tests following best practices
+- Validates data quality, schema, and calculations
+- Follows environment-specific testing patterns (DEV, TEST, PROD, ANY)
+- Integrates directly with your semantic model via MCP (Model Context Protocol)
+
+### Setting Up the Custom Agent
+
+#### Prerequisites
+
+- GitHub Copilot subscription with Copilot Chat
+- VS Code with GitHub Copilot extension
+- Power BI Model Context Protocol (MCP) extension for VS Code
+- Access to a Power BI semantic model (.pbip format)
+
+#### Installation Steps
+
+1. **Install Required VS Code Extensions**
+   - [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
+   - [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat)
+   - [Power BI Model Context Protocol](https://marketplace.visualstudio.com/items?itemName=powerbi.powerbi-modeling-mcp)
+
+2. **Configure the Custom Agent**
+   - Copy `examples/custom-agents/sm-testing-agent.md` to your workspace `.github/agents` folder:
+     ```
+     .github/
+       agents/
+         sm-testing-agent.md
+     ```
+   - Or place it in your global Copilot instructions folder (varies by OS)
+
+3. **Connect to Your Semantic Model**
+   - Open your Power BI project (.pbip) in VS Code
+   - Use the Power BI MCP extension to connect to your semantic model
+   - The agent will automatically detect the connection
+
+4. **Start Using the Agent**
+   - Open GitHub Copilot Chat in VS Code
+   - Reference the agent by name or let Copilot detect it
+   - Ask it to create tests:
+     ```
+     @workspace Create data quality tests for the Customers table
+     ```
+     ```
+     @workspace Create DEV environment tests for Total Revenue measure
+     ```
+     ```
+     @workspace Validate schema for all fact tables
+     ```
+
+### Agent Capabilities
+
+The custom agent can:
+- **Create Tests**: Generate DAX Query View tests with proper naming conventions
+- **Validate Data Quality**: Check for nulls, blanks, uniqueness, and referential integrity
+- **Test Calculations**: Validate measure logic in DEV environments
+- **Validate Schema**: Ensure tables, columns, and relationships exist
+- **Run Best Practice Checks**: Execute built-in semantic model validations
+- **Discover Tests**: Find and filter existing test functions by environment
+- **Rename Tests**: Update test names and manage environment transitions
+
+### Example Usage
+
+```text
+# In VS Code Copilot Chat:
+
+User: Create content validation tests for the Sales table in ANY environment
+
+Agent: [Creates DAX Query View test function with assertions for:
+  - Table has rows
+  - Key columns not null
+  - Data within expected ranges]
+
+User: Run all DEV tests
+
+Agent: [Executes PQL.Assert.RetrieveTestsByEnvironment("DEV") and shows results]
+
+User: Validate best practices for performance
+
+Agent: [Runs PQL.Assert.BP.CheckPerformance() and reports findings]
+```
+
+### Agent Configuration
+
+The agent follows strict constraints:
+- Must ask for environment (DEV, TEST, PROD, ANY) before creating tests
+- Places all test files in DAXQueries folder root (no subfolders)
+- Updates daxQueries.json for tab ordering
+- Verifies PQL.Assert installation before test creation
+- Does not modify production measures or model structure unless explicitly asked
+- Returns complete DAX queries (not fragments)
+
+For complete agent documentation, see [examples/custom-agents/sm-testing-agent.md](examples/custom-agents/sm-testing-agent.md).
 
 ## 🆘 Support
 
