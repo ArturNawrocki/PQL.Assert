@@ -50,6 +50,15 @@ VAR _HideForeignKeys_Fail =
         "TestExpectation", "should fail"
     )
 
+// PQL.Assert.BP.ShouldHideFactTableColumns
+// Tests that visible numeric columns used in aggregation measures should be hidden
+// Test includes: Mock-Fact[Total] used in SUM('Mock-Fact'[Total]), TestData-Fact[Value] used in SUM (should fail)
+VAR _HideFactTableColumns_Fail = 
+    ADDCOLUMNS(
+        PQL.Assert.BP.ShouldHideFactTableColumns(),
+        "TestExpectation", "should fail"
+    )
+
 // ============================================
 // Combine All Test Results
 // ============================================
@@ -58,7 +67,8 @@ VAR _AllTests = UNION(
     _NotSummarizeNumericColumns_Fail,
     _MarkRowLabels_Fail,
     _MarkPrimaryKeys_Fail,
-    _HideForeignKeys_Fail
+    _HideForeignKeys_Fail,
+    _HideFactTableColumns_Fail
 )
 
 // ============================================
