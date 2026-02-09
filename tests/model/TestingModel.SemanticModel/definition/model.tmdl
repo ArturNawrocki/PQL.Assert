@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_ProTooling = ["TMDLView_Desktop","DaxQueryView_Desktop","DevMode","TMDL-Extension"]
+annotation PBI_ProTooling = ["TMDLView_Desktop","DaxQueryView_Desktop","DevMode","TMDL-Extension","MCP-PBIModeling"]
 
 annotation PBI_QueryOrder = ["TestData","TestData-Fact","Calendar","Mock-Fact"]
 
