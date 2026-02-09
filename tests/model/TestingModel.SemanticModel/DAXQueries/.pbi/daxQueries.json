@@ -6,6 +6,7 @@
     "BP.ErrorPrevention.Tests",
     "BP.Formatting.Tests",
     "BP.Performance.Tests",
+    "BP.Maintenance.Tests",
     "BP.DEV.Tests",
     "Example.ANY.Tests",
     "Table.DEV.Test",

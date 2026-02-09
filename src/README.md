@@ -93,6 +93,9 @@ PQL.Assert includes built-in semantic model validation functions based on Best P
 
 - `PQL.Assert.BP.ShouldProvideFormatStringForMeasures()` - Validates that visible measures have format strings assigned
 - `PQL.Assert.BP.ShouldNotSummarizeNumericColumns()` - Validates that numeric columns have SummarizeBy set to None
+- `PQL.Assert.BP.ShouldMarkRowLabels()` - Validates that visible tables have at least one column marked as a row label (IsDefaultLabel = true), helping Power BI Copilot identify primary identifiers
+- `PQL.Assert.BP.ShouldMarkPrimaryKeys()` - Validates that columns on the "One" side of relationships have the IsKey property set to true
+- `PQL.Assert.BP.ShouldHideForeignKeys()` - Validates that foreign key columns (on the "Many" side of relationships) are hidden
 - `PQL.Assert.BP.CheckFormatting()` - Runs all formatting checks
 
 #### DAX Expressions
@@ -100,6 +103,13 @@ PQL.Assert includes built-in semantic model validation functions based on Best P
 - `PQL.Assert.BP.ShouldUseFullyQualifiedColumnReferences()` - Validates that column references use Table[Column] format
 - `PQL.Assert.BP.ShouldUseTreatAsInsteadOfIntersect()` - Validates that measures use TREATAS instead of INTERSECT for better performance
 - `PQL.Assert.BP.CheckDAXExpressions()` - Runs all DAX expression checks
+
+#### Maintenance
+
+- `PQL.Assert.BP.ShouldRemoveUnnecessaryMeasures()` - Validates that hidden measures not referenced by any DAX expressions are flagged for removal
+- `PQL.Assert.BP.ShouldHaveObjectDescriptions()` - Validates that visible tables, measures, and columns have descriptions assigned
+- `PQL.Assert.BP.ShouldRemoveUnnecessaryColumns()` - Validates that hidden columns not referenced by any DAX expressions, relationships, hierarchy levels, or Sort By-properties are flagged for removal
+- `PQL.Assert.BP.CheckMaintenance()` - Runs all maintenance checks
 
 #### Performance
 
@@ -123,6 +133,7 @@ EVALUATE UNION(
     PQL.Assert.BP.CheckErrorPrevention(),
     PQL.Assert.BP.CheckFormatting(),
     PQL.Assert.BP.CheckDAXExpressions(),
+    PQL.Assert.BP.CheckMaintenance(),
     PQL.Assert.BP.CheckPerformance()
 )
 ```
