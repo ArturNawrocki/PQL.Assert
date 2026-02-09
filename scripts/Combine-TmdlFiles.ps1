@@ -53,8 +53,10 @@ foreach ($file in $tmdlFiles) {
             continue
         }
         
-        # For other lines, remove one level of indentation (one tab)
+        # For other lines, remove one level of indentation (4 spaces or one tab)
         if ($line -match '^\t(.*)$') {
+            $processedLines += $matches[1]
+        } elseif ($line -match '^    (.*)$') {
             $processedLines += $matches[1]
         } else {
             $processedLines += $line
