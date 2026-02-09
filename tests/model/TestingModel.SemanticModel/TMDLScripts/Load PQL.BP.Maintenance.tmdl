@@ -262,12 +262,169 @@ createOrReplace
 				)	
 		annotation DAXLIB_PackageId = PQL.Assert
 		annotation DAXLIB_PackageVersion = 0.1.6
+	/// Asserts that hidden columns not referenced by any DAX expressions, relationships, hierarchy levels, or Sort By-properties should be removed.
+	/// Scope: DataColumn, CalculatedColumn, CalculatedTableColumn. CompatibilityLevel >= 1200.
+	function 'PQL.Assert.BP.ShouldRemoveUnnecessaryColumns' =
+			() =>
+				VAR _Columns = INFO.COLUMNS()
+				VAR _Tables = INFO.TABLES()
+				VAR _Dependencies = INFO.CALCDEPENDENCY()
+				VAR _TablePermissions = INFO.TABLEPERMISSIONS()
+				
+				// Get hidden table IDs
+				VAR _HiddenTableIDs = 
+					SELECTCOLUMNS(
+						FILTER(_Tables, [IsHidden]),
+						"@ID", VALUE([ID])
+					)
+				
+				// All columns referenced by anything (measures, calc columns, relationships, hierarchies)
+				// REFERENCED_OBJECT_TYPE: COLUMN, CALC_COLUMN for direct refs; ATTRIBUTE_HIERARCHY for hierarchy levels
+				VAR _ReferencedColumns = 
+					DISTINCT(
+						SELECTCOLUMNS(
+							FILTER(
+								_Dependencies,
+								[REFERENCED_OBJECT_TYPE] = "COLUMN"
+								|| [REFERENCED_OBJECT_TYPE] = "CALC_COLUMN"
+								|| [REFERENCED_OBJECT_TYPE] = "ATTRIBUTE_HIERARCHY"
+							),
+							"@RefTable", [REFERENCED_TABLE],
+							"@RefColumn", [REFERENCED_OBJECT]
+						)
+					)
+				
+				// Columns used as SortBy target (SortByColumnID references)
+				VAR _SortByColumnIDs = 
+					DISTINCT(
+						SELECTCOLUMNS(
+							FILTER(_Columns, NOT ISBLANK([SortByColumnID]) && [SortByColumnID] > 0),
+							"@SortByID", [SortByColumnID]
+						)
+					)
+				
+				// RLS filter expressions (if any roles exist)
+				VAR _RLSExpressions = 
+					SELECTCOLUMNS(
+						FILTER(_TablePermissions, NOT ISBLANK([FilterExpression]) && [FilterExpression] <> ""),
+						"@FilterExpr", [FilterExpression]
+					)
+				
+				// Find hidden columns not referenced by anything
+				VAR _ViolatingColumns = 
+					ADDCOLUMNS(
+						FILTER(
+							_Columns,
+							VAR _ColumnType = [Type]
+							VAR _IsHidden = [IsHidden]
+							VAR _TableID = VALUE([TableID])
+							VAR _ColumnID = VALUE([ID])
+							VAR _ColumnName = [ExplicitName]
+							
+							// Scope: DataColumn (1), CalculatedColumn (2), CalculatedTableColumn (4)
+							VAR _IsInScope = _ColumnType = 1 || _ColumnType = 2 || _ColumnType = 4
+							
+							// Check if table is hidden
+							VAR _TableIsHidden = 
+								COUNTROWS(
+									FILTER(
+										_HiddenTableIDs,
+										[@ID] = _TableID
+									)
+								) > 0
+							
+							// Column or table must be hidden
+							VAR _IsHiddenColumn = _IsHidden || _TableIsHidden
+							
+							// Get table name for reference matching
+							VAR _TableName = 
+								MAXX(
+									FILTER(_Tables, VALUE([ID]) = _TableID),
+									[Name]
+								)
+							
+							// Check if referenced by any DAX, relationship, or hierarchy
+							VAR _IsReferenced = 
+								COUNTROWS(
+									FILTER(
+										_ReferencedColumns,
+										[@RefTable] = _TableName && [@RefColumn] = _ColumnName
+									)
+								) > 0
+							
+							// Check if used as SortBy target by another column
+							VAR _UsedInSortBy = 
+								COUNTROWS(
+									FILTER(_SortByColumnIDs, [@SortByID] = _ColumnID)
+								) > 0
+							
+							// Check if referenced in RLS filter expressions
+							VAR _SearchPattern1 = _TableName & "[" & _ColumnName & "]"
+							VAR _SearchPattern2 = "'" & _TableName & "'[" & _ColumnName & "]"
+							VAR _UsedInRLS = 
+								COUNTROWS(
+									FILTER(
+										_RLSExpressions,
+										CONTAINSSTRING([@FilterExpr], _SearchPattern1)
+										|| CONTAINSSTRING([@FilterExpr], _SearchPattern2)
+									)
+								) > 0
+							
+							RETURN
+								_IsInScope
+								&& _IsHiddenColumn
+								&& NOT _IsReferenced
+								&& NOT _UsedInSortBy
+								&& NOT _UsedInRLS
+						),
+						"@TableName",
+							VAR _TableID = VALUE([TableID])
+							RETURN 
+								MAXX(
+									FILTER(
+										_Tables,
+										VALUE([ID]) = _TableID
+									),
+									[Name]
+								)
+					)
+				
+				VAR _ViolationCount = COUNTROWS(_ViolatingColumns)
+				
+				VAR _ColumnsList = 
+					CONCATENATEX(
+						_ViolatingColumns,
+						[@TableName] & "[" & [ExplicitName] & "]",
+						", ",
+						[@TableName], ASC,
+						[ExplicitName], ASC
+					)
+				
+				VAR _Passed = _ViolationCount = 0
+				
+				VAR _ActualMessage = 
+					IF(
+						_ViolationCount > 0,
+						"UNNECESSARY HIDDEN COLUMNS FOUND (" & FORMAT(_ViolationCount, "0") & "): " & _ColumnsList,
+						"NO UNNECESSARY HIDDEN COLUMNS FOUND"
+					)
+				
+				RETURN ROW(
+					"TestName", "[Maintenance] Remove unnecessary columns",
+					"Expected", "Hidden columns not referenced by any DAX expression, relationship, hierarchy, or SortBy should be removed",
+					"Actual", _ActualMessage,
+					"Passed", _Passed,
+					"RuleDescription", "Hidden columns that are not referenced by any DAX expressions, relationships, hierarchy levels, or Sort By-properties should be removed. Scope: DataColumn, CalculatedColumn, CalculatedTableColumn. CompatibilityLevel: 1200. Severity: High (3)."
+				)	
+		annotation DAXLIB_PackageId = PQL.Assert
+		annotation DAXLIB_PackageVersion = 0.1.6
 	/// Runs all maintenance best practice checks.
 	/// This function executes all maintenance validation rules and returns combined results.
 	function 'PQL.Assert.BP.CheckMaintenance' =
 			() =>
 				UNION(
 					PQL.Assert.BP.ShouldRemoveUnnecessaryMeasures(),
+					PQL.Assert.BP.ShouldRemoveUnnecessaryColumns(),
 					PQL.Assert.BP.ShouldHaveObjectDescriptions()
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
