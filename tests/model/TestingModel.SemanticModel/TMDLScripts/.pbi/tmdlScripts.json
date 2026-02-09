@@ -11,5 +11,5 @@
     "Load PQL.BP.Performance",
     "Load PQL.BP.Maintenance"
   ],
-  "defaultTab": "Load PQL"
+  "defaultTab": "Load PQL.BP.Formatting"
 }
