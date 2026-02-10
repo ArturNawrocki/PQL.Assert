@@ -171,6 +171,97 @@ VAR _Col_ShouldBeDistinct_Pass = PQL.Assert.Col.ShouldBeDistinct("Col.ShouldBeDi
 VAR _Col_ShouldExist_Pass = PQL.Assert.Col.ShouldExist("Col.ShouldExist: TestData[ID] should exist", "TestData", "ID")
 VAR _Col_ShouldExist_Fail = PQL.Assert.Col.ShouldExist("Col.ShouldExist: FakeTable[Col] should fail", "FakeTable", "Col")
 
+// PQL.Assert.Col.NullRateShouldBeAtMost
+VAR _NullRate_Pass = PQL.Assert.Col.NullRateShouldBeAtMost("Col.NullRateShouldBeAtMost: NullableField <=50% should pass", 'TestData'[NullableField], 50)
+VAR _NullRate_Fail = PQL.Assert.Col.NullRateShouldBeAtMost("Col.NullRateShouldBeAtMost: NullableField <=10% should fail", 'TestData'[NullableField], 10)
+
+// PQL.Assert.Col.BlankRateShouldBeAtMost
+VAR _BlankRate_Pass = PQL.Assert.Col.BlankRateShouldBeAtMost("Col.BlankRateShouldBeAtMost: ID <=0% should pass", 'TestData'[ID], 0)
+
+// PQL.Assert.Col.NullOrBlankRateShouldBeAtMost
+VAR _NullOrBlankRate_Pass = PQL.Assert.Col.NullOrBlankRateShouldBeAtMost("Col.NullOrBlankRateShouldBeAtMost: NullableField <=50% should pass", 'TestData'[NullableField], 50)
+VAR _NullOrBlankRate_Fail = PQL.Assert.Col.NullOrBlankRateShouldBeAtMost("Col.NullOrBlankRateShouldBeAtMost: NullableField <=10% should fail", 'TestData'[NullableField], 10)
+
+// PQL.Assert.Col.PopulatedRateShouldBeAtLeast
+VAR _PopulatedRate_Pass = PQL.Assert.Col.PopulatedRateShouldBeAtLeast("Col.PopulatedRateShouldBeAtLeast: NullableField >=50% should pass", 'TestData'[NullableField], 50)
+VAR _PopulatedRate_Fail = PQL.Assert.Col.PopulatedRateShouldBeAtLeast("Col.PopulatedRateShouldBeAtLeast: NullableField >=90% should fail", 'TestData'[NullableField], 90)
+
+// PQL.Assert.Col.ShouldNotContainDuplicates
+VAR _NoDupes_Pass = PQL.Assert.Col.ShouldNotContainDuplicates("Col.ShouldNotContainDuplicates: ID should pass", 'TestData'[ID])
+
+// PQL.Assert.Col.ShouldBeInRange
+VAR _InRange_Pass = PQL.Assert.Col.ShouldBeInRange("Col.ShouldBeInRange: Value [0,500] should pass", 'TestData'[Value], 0, 500)
+VAR _InRange_Fail = PQL.Assert.Col.ShouldBeInRange("Col.ShouldBeInRange: Value [0,100] should fail", 'TestData'[Value], 0, 100)
+
+// PQL.Assert.Col.MinShouldBeAtLeast
+VAR _MinAtLeast_Pass = PQL.Assert.Col.MinShouldBeAtLeast("Col.MinShouldBeAtLeast: Value >=0 should pass", 'TestData'[Value], 0)
+VAR _MinAtLeast_Fail = PQL.Assert.Col.MinShouldBeAtLeast("Col.MinShouldBeAtLeast: Value >=100 should fail", 'TestData'[Value], 100)
+
+// PQL.Assert.Col.MaxShouldBeAtMost
+VAR _MaxAtMost_Pass = PQL.Assert.Col.MaxShouldBeAtMost("Col.MaxShouldBeAtMost: Value <=500 should pass", 'TestData'[Value], 500)
+VAR _MaxAtMost_Fail = PQL.Assert.Col.MaxShouldBeAtMost("Col.MaxShouldBeAtMost: Value <=200 should fail", 'TestData'[Value], 200)
+
+// PQL.Assert.Col.MeanShouldBeInRange
+VAR _Mean_Pass = PQL.Assert.Col.MeanShouldBeInRange("Col.MeanShouldBeInRange: Value [100,200] should pass", 'TestData'[Value], 100, 200)
+VAR _Mean_Fail = PQL.Assert.Col.MeanShouldBeInRange("Col.MeanShouldBeInRange: Value [0,100] should fail", 'TestData'[Value], 0, 100)
+
+// PQL.Assert.Col.StdDevShouldBeAtMost
+VAR _StdDev_Pass = PQL.Assert.Col.StdDevShouldBeAtMost("Col.StdDevShouldBeAtMost: Value <=200 should pass", 'TestData'[Value], 200)
+VAR _StdDev_Fail = PQL.Assert.Col.StdDevShouldBeAtMost("Col.StdDevShouldBeAtMost: Value <=10 should fail", 'TestData'[Value], 10)
+
+// PQL.Assert.Col.ShareOfZerosAtMost
+VAR _ZeroShare_Pass = PQL.Assert.Col.ShareOfZerosAtMost("Col.ShareOfZerosAtMost: Value <=5% should pass", 'TestData'[Value], 5)
+
+// PQL.Assert.Col.ShouldBeNonNegative
+VAR _NonNeg_Pass = PQL.Assert.Col.ShouldBeNonNegative("Col.ShouldBeNonNegative: Value should pass", 'TestData'[Value])
+
+// PQL.Assert.Col.ShouldBePositive
+VAR _Positive_Pass = PQL.Assert.Col.ShouldBePositive("Col.ShouldBePositive: Value should pass", 'TestData'[Value])
+
+// PQL.Assert.Col.ShouldBeNonZero
+VAR _NonZero_Pass = PQL.Assert.Col.ShouldBeNonZero("Col.ShouldBeNonZero: Value should pass", 'TestData'[Value])
+
+// PQL.Assert.Col.ValuesShouldBeInSet
+VAR _ValuesInSet_Pass = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B,C} should pass", 'TestData'[Category], {"A", "B", "C"})
+VAR _ValuesInSet_Fail = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B} should fail", 'TestData'[Category], {"A", "B"})
+
+// PQL.Assert.Col.ValuesShouldNotBeInSet
+VAR _ValuesNotInSet_Pass = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {X,Y} should pass", 'TestData'[Category], {"X", "Y"})
+VAR _ValuesNotInSet_Fail = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {A,X} should fail", 'TestData'[Category], {"A", "X"})
+
+// PQL.Assert.Col.DistinctCountShouldBeAtMost
+VAR _DistAtMost_Pass = PQL.Assert.Col.DistinctCountShouldBeAtMost("Col.DistinctCountShouldBeAtMost: Category <=5 should pass", 'TestData'[Category], 5)
+VAR _DistAtMost_Fail = PQL.Assert.Col.DistinctCountShouldBeAtMost("Col.DistinctCountShouldBeAtMost: Category <=2 should fail", 'TestData'[Category], 2)
+
+// PQL.Assert.Col.DistinctCountShouldBeAtLeast
+VAR _DistAtLeast_Pass = PQL.Assert.Col.DistinctCountShouldBeAtLeast("Col.DistinctCountShouldBeAtLeast: Category >=2 should pass", 'TestData'[Category], 2)
+VAR _DistAtLeast_Fail = PQL.Assert.Col.DistinctCountShouldBeAtLeast("Col.DistinctCountShouldBeAtLeast: Category >=10 should fail", 'TestData'[Category], 10)
+
+// PQL.Assert.Col.TextShouldMatchPattern
+VAR _TextMatch_Pass = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'a' should pass", 'TestData'[Name], "a")
+VAR _TextMatch_Fail = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'xyz' should fail", 'TestData'[Name], "xyz")
+
+// PQL.Assert.Col.TextShouldNotMatchPattern
+VAR _TextNotMatch_Pass = PQL.Assert.Col.TextShouldNotMatchPattern("Col.TextShouldNotMatchPattern: Name not 'xyz' should pass", 'TestData'[Name], "xyz")
+VAR _TextNotMatch_Fail = PQL.Assert.Col.TextShouldNotMatchPattern("Col.TextShouldNotMatchPattern: Name not 'lpha' should fail", 'TestData'[Name], "lpha")
+
+// PQL.Assert.Col.TextShouldHaveNoLeadingOrTrailingSpaces
+VAR _NoSpaces_Pass = PQL.Assert.Col.TextShouldHaveNoLeadingOrTrailingSpaces("Col.TextShouldHaveNoLeadingOrTrailingSpaces: Name should pass", 'TestData'[Name])
+
+// PQL.Assert.Col.TextShouldBeTrimmed
+VAR _Trimmed_Pass = PQL.Assert.Col.TextShouldBeTrimmed("Col.TextShouldBeTrimmed: Name should pass", 'TestData'[Name])
+
+// PQL.Assert.Col.TextCaseShouldBeUpper
+VAR _Upper_Pass = PQL.Assert.Col.TextCaseShouldBeUpper("Col.TextCaseShouldBeUpper: Category should pass", 'TestData'[Category])
+VAR _Upper_Fail = PQL.Assert.Col.TextCaseShouldBeUpper("Col.TextCaseShouldBeUpper: Name should fail", 'TestData'[Name])
+
+// PQL.Assert.Col.TextCaseShouldBeLower
+VAR _Lower_Fail = PQL.Assert.Col.TextCaseShouldBeLower("Col.TextCaseShouldBeLower: Name should fail", 'TestData'[Name])
+
+// PQL.Assert.Col.TextLengthShouldBeInRange
+VAR _TextLen_Pass = PQL.Assert.Col.TextLengthShouldBeInRange("Col.TextLengthShouldBeInRange: Name [3,10] should pass", 'TestData'[Name], 3, 10)
+VAR _TextLen_Fail = PQL.Assert.Col.TextLengthShouldBeInRange("Col.TextLengthShouldBeInRange: Name [5,5] should fail", 'TestData'[Name], 5, 5)
+
 // ============================================
 // TABLE ASSERTION FUNCTIONS
 // ============================================
@@ -190,6 +281,18 @@ VAR _Tbl_ShouldHaveMoreRowsThan_Fail = PQL.Assert.Tbl.ShouldHaveMoreRowsThan("Tb
 // PQL.Assert.Tbl.ShouldExist
 VAR _Tbl_ShouldExist_Pass = PQL.Assert.Tbl.ShouldExist("Tbl.ShouldExist: TestData table should exist", "TestData")
 VAR _Tbl_ShouldExist_Fail = PQL.Assert.Tbl.ShouldExist("Tbl.ShouldExist: FakeTable should fail", "FakeTable")
+
+// PQL.Assert.Tbl.ShouldHaveColumns
+VAR _Tbl_ShouldHaveColumns_Pass = PQL.Assert.Tbl.ShouldHaveColumns("Tbl.ShouldHaveColumns: TestData has ID,Name should pass", "TestData", "ID,Name")
+VAR _Tbl_ShouldHaveColumns_Fail = PQL.Assert.Tbl.ShouldHaveColumns("Tbl.ShouldHaveColumns: TestData has FakeCol should fail", "TestData", "FakeCol")
+
+// PQL.Assert.Tbl.ShouldNotHaveExtraColumns
+VAR _Tbl_NoExtra_Pass = PQL.Assert.Tbl.ShouldNotHaveExtraColumns("Tbl.ShouldNotHaveExtraColumns: All cols allowed should pass", "TestData", "ID,Name,Value,Category,IsActive,CreatedDate,NullableField")
+VAR _Tbl_NoExtra_Fail = PQL.Assert.Tbl.ShouldNotHaveExtraColumns("Tbl.ShouldNotHaveExtraColumns: Only ID allowed should fail", "TestData", "ID")
+
+// PQL.Assert.Tbl.ColumnDataTypeShouldBe
+VAR _Tbl_DataType_Pass = PQL.Assert.Tbl.ColumnDataTypeShouldBe("Tbl.ColumnDataTypeShouldBe: ID=Integer should pass", "TestData", "ID", "Integer")
+VAR _Tbl_DataType_Fail = PQL.Assert.Tbl.ColumnDataTypeShouldBe("Tbl.ColumnDataTypeShouldBe: ID=String should fail", "TestData", "ID", "String")
 
 // ============================================
 // RELATIONSHIP ASSERTION FUNCTIONS
@@ -312,6 +415,47 @@ VAR _AllTests = UNION(
     _Col_ShouldBeDistinct_Pass,
     _Col_ShouldExist_Pass,
     _Col_ShouldExist_Fail,
+    _NullRate_Pass,
+    _NullRate_Fail,
+    _BlankRate_Pass,
+    _NullOrBlankRate_Pass,
+    _NullOrBlankRate_Fail,
+    _PopulatedRate_Pass,
+    _PopulatedRate_Fail,
+    _NoDupes_Pass,
+    _InRange_Pass,
+    _InRange_Fail,
+    _MinAtLeast_Pass,
+    _MinAtLeast_Fail,
+    _MaxAtMost_Pass,
+    _MaxAtMost_Fail,
+    _Mean_Pass,
+    _Mean_Fail,
+    _StdDev_Pass,
+    _StdDev_Fail,
+    _ZeroShare_Pass,
+    _NonNeg_Pass,
+    _Positive_Pass,
+    _NonZero_Pass,
+    _ValuesInSet_Pass,
+    _ValuesInSet_Fail,
+    _ValuesNotInSet_Pass,
+    _ValuesNotInSet_Fail,
+    _DistAtMost_Pass,
+    _DistAtMost_Fail,
+    _DistAtLeast_Pass,
+    _DistAtLeast_Fail,
+    _TextMatch_Pass,
+    _TextMatch_Fail,
+    _TextNotMatch_Pass,
+    _TextNotMatch_Fail,
+    _NoSpaces_Pass,
+    _Trimmed_Pass,
+    _Upper_Pass,
+    _Upper_Fail,
+    _Lower_Fail,
+    _TextLen_Pass,
+    _TextLen_Fail,
     
     // Table Assertions
     _Tbl_ShouldHaveRows_Pass,
@@ -322,6 +466,12 @@ VAR _AllTests = UNION(
     _Tbl_ShouldHaveMoreRowsThan_Fail,
     _Tbl_ShouldExist_Pass,
     _Tbl_ShouldExist_Fail,
+    _Tbl_ShouldHaveColumns_Pass,
+    _Tbl_ShouldHaveColumns_Fail,
+    _Tbl_NoExtra_Pass,
+    _Tbl_NoExtra_Fail,
+    _Tbl_DataType_Pass,
+    _Tbl_DataType_Fail,
     
     // Relationship Assertions
     _Rel_ShouldExist_Pass,

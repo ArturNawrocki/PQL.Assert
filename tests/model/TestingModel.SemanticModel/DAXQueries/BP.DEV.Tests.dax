@@ -5,3 +5,5 @@ EVALUATE PQL.Assert.BP.CheckDAXExpressions()
 EVALUATE PQL.Assert.BP.CheckFormatting()
 
 EVALUATE PQL.Assert.BP.CheckPerformance()
+
+EVALUATE PQL.Assert.BP.CheckMaintenance()
