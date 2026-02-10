@@ -108,6 +108,7 @@ jobs:
           mkdir -p "fork-repo/${{ steps.package.outputs.folder }}/lib"
           cp source-repo/src/manifest.daxlib "fork-repo/${{ steps.package.outputs.folder }}/"
           cp source-repo/src/README.md "fork-repo/${{ steps.package.outputs.folder }}/"
+          cp source-repo/src/icon.png "fork-repo/${{ steps.package.outputs.folder }}/"
           cp source-repo/src/lib/functions.tmdl "fork-repo/${{ steps.package.outputs.folder }}/lib/"
 
       # Replace the package ID and version placeholders in functions.tmdl
