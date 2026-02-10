@@ -38,6 +38,9 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     - MUST run tests after creating them and verify they pass
     - MUST NOT modify production model tables or relationships
     - MUST use the same indentation style as existing files
+    - MUST execute all model operations (DAX queries, function loads, TMDL scripts) sequentially — NEVER in parallel
+    - MUST wait for each DAX query to complete before starting the next one
+    - MUST re-verify the connection before each test file execution in runAllTests
     - Avoid generating report visuals
   }
 
@@ -292,10 +295,13 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     // ─── Test Execution ──────────────────────────────────────
 
     runTests(testFileName) => {
+      // Execute one test file at a time. Never batch multiple DAX queries in parallel.
       1. ensureConnected()
-      2. read: DAX_QUERIES/{testFileName}.dax
-      3. execute: DAX query via dax_query_operations
-      4. parse: results into TestResult[]
+      2. verify: connection is active via connection_operations GetConnection
+         if connection error: reconnect via connectToTestingModel()
+      3. read: DAX_QUERIES/{testFileName}.dax
+      4. execute: DAX query via dax_query_operations (single call, wait for result)
+      5. parse: results into TestResult[]
       5. summarize:
            - total tests
            - passed count
@@ -311,10 +317,24 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     }
 
     runAllTests() => {
+      // IMPORTANT: All test files MUST be executed one at a time, sequentially.
+      // The Analysis Services connection does not support parallel DAX queries.
+      // Never issue multiple dax_query_operations calls in the same tool-call batch.
       1. ensureConnected()
       2. scan: DAX_QUERIES for all *.Tests.dax and *.Test.dax files
-      3. for each file: runTests(file)
-      4. aggregate: total pass/fail across all files
+      3. build: ordered list of test files
+      4. for each file IN SEQUENCE (one at a time, never parallel):
+           a. verify connection is still active via connection_operations GetConnection
+           b. if connection lost or error:
+                reconnect via connectToTestingModel()
+                wait for connection confirmation before proceeding
+           c. read: the test .dax file
+           d. execute: DAX query via dax_query_operations
+           e. wait: for query result to return before moving to next file
+           f. parse: results into TestResult[]
+           g. store: results for this file
+           h. only THEN proceed to next file
+      5. aggregate: total pass/fail across all files
       return: aggregated results
     }
 

@@ -196,10 +196,9 @@ createOrReplace
 	/// Asserts that column values are unique within partitions defined by another column.
 	function 'PQL.Assert.Col.ShouldBeUniqueWithin' =
 			(testName : STRING, columnRef : ANYREF EXPR, partitionByCol : ANYREF EXPR) =>
-				VAR _TotalCombinations = COUNTROWS(
-					SUMMARIZE(ALLNOBLANKROW(columnRef), partitionByCol, columnRef)
-				)
-				VAR _TotalRows = COUNTROWS(ALLNOBLANKROW(columnRef))
+				VAR _Base = FILTER(ALL(partitionByCol, columnRef), NOT ISBLANK(columnRef))
+				VAR _TotalCombinations = COUNTROWS(DISTINCT(_Base))
+				VAR _TotalRows = COUNTA(columnRef)
 				VAR _Passed = _TotalCombinations = _TotalRows
 				RETURN ROW(
 					"TestName", testName,
@@ -213,10 +212,9 @@ createOrReplace
 	/// Asserts that the combination of two columns forms a distinct composite key.
 	function 'PQL.Assert.Col.ComboShouldBeDistinct' =
 			(testName : STRING, columnRef1 : ANYREF EXPR, columnRef2 : ANYREF EXPR) =>
-				VAR _DistinctCombos = COUNTROWS(
-					SUMMARIZE(ALLNOBLANKROW(columnRef1), columnRef1, columnRef2)
-				)
-				VAR _TotalRows = COUNTROWS(ALLNOBLANKROW(columnRef1))
+				VAR _Base = FILTER(ALL(columnRef1, columnRef2), NOT ISBLANK(columnRef1))
+				VAR _DistinctCombos = COUNTROWS(DISTINCT(_Base))
+				VAR _TotalRows = COUNTA(columnRef1)
 				VAR _Passed = _DistinctCombos = _TotalRows
 				RETURN ROW(
 					"TestName", testName,

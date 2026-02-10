@@ -173,8 +173,8 @@ VAR _DistAtLeast_Pass = PQL.Assert.Col.DistinctCountShouldBeAtLeast("Col.Distinc
 VAR _DistAtLeast_Fail = PQL.Assert.Col.DistinctCountShouldBeAtLeast("Col.DistinctCountShouldBeAtLeast: Category >=10 should fail", 'TestData'[Category], 10)
 
 // PQL.Assert.Col.TextShouldMatchPattern
-// TestData Name: Alpha, Beta, Gamma, Delta, Epsilon - all contain 'a' (case insensitive)
-VAR _TextMatch_Pass = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'a' should pass", 'TestData'[Name], "a")
+// TestData Name: Alpha, Beta, Gamma, Delta, Epsilon - Epsilon has no 'a'
+VAR _TextMatch_Fail_Epsilon = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'a' should fail (Epsilon has no 'a')", 'TestData'[Name], "a")
 VAR _TextMatch_Fail = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'xyz' should fail", 'TestData'[Name], "xyz")
 
 // PQL.Assert.Col.TextShouldNotMatchPattern
@@ -272,7 +272,7 @@ VAR _AllTests = UNION(
     _DistAtMost_Fail,
     _DistAtLeast_Pass,
     _DistAtLeast_Fail,
-    _TextMatch_Pass,
+    _TextMatch_Fail_Epsilon,
     _TextMatch_Fail,
     _TextNotMatch_Pass,
     _TextNotMatch_Fail,

@@ -9,7 +9,9 @@
     "Load PQL.BP.DAXExpressions",
     "Load PQL.BP.Formatting",
     "Load PQL.BP.Performance",
-    "Load PQL.BP.Maintenance"
+    "Load PQL.BP.Maintenance",
+    "Load PQL.Col",
+    "Load PQL.Tbl"
   ],
   "defaultTab": "Load PQL.BP.Formatting"
 }

@@ -15,7 +15,9 @@
     "Example.Myenv.Tests",
     "Retrieve Tests",
     "Example.prod.tests",
-    "Query 1"
+    "Query 1",
+    "Col.Tests",
+    "Tbl.Tests"
   ],
-  "defaultTab": "Query 1"
+  "defaultTab": "Col.Tests"
 }

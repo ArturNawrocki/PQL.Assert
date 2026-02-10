@@ -238,7 +238,7 @@ VAR _DistAtLeast_Pass = PQL.Assert.Col.DistinctCountShouldBeAtLeast("Col.Distinc
 VAR _DistAtLeast_Fail = PQL.Assert.Col.DistinctCountShouldBeAtLeast("Col.DistinctCountShouldBeAtLeast: Category >=10 should fail", 'TestData'[Category], 10)
 
 // PQL.Assert.Col.TextShouldMatchPattern
-VAR _TextMatch_Pass = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'a' should pass", 'TestData'[Name], "a")
+VAR _TextMatch_Pass = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'a' should fail", 'TestData'[Name], "a")
 VAR _TextMatch_Fail = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'xyz' should fail", 'TestData'[Name], "xyz")
 
 // PQL.Assert.Col.TextShouldNotMatchPattern
@@ -287,7 +287,7 @@ VAR _Tbl_ShouldHaveColumns_Pass = PQL.Assert.Tbl.ShouldHaveColumns("Tbl.ShouldHa
 VAR _Tbl_ShouldHaveColumns_Fail = PQL.Assert.Tbl.ShouldHaveColumns("Tbl.ShouldHaveColumns: TestData has FakeCol should fail", "TestData", "FakeCol")
 
 // PQL.Assert.Tbl.ShouldNotHaveExtraColumns
-VAR _Tbl_NoExtra_Pass = PQL.Assert.Tbl.ShouldNotHaveExtraColumns("Tbl.ShouldNotHaveExtraColumns: All cols allowed should pass", "TestData", "ID,Name,Value,Category,IsActive,CreatedDate,NullableField")
+VAR _Tbl_NoExtra_Pass = PQL.Assert.Tbl.ShouldNotHaveExtraColumns("Tbl.ShouldNotHaveExtraColumns: All cols allowed should pass", "TestData", "ID,Name,Value,Category,IsActive,CreatedDate,NullableField,Fixed Decimal")
 VAR _Tbl_NoExtra_Fail = PQL.Assert.Tbl.ShouldNotHaveExtraColumns("Tbl.ShouldNotHaveExtraColumns: Only ID allowed should fail", "TestData", "ID")
 
 // PQL.Assert.Tbl.ColumnDataTypeShouldBe

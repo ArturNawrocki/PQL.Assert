@@ -1,6 +1,11 @@
 table Mock-Fact
 	lineageTag: 720117e7-cd86-45ba-a1c0-e54f596d7e86
 
+	/// Test measure for ShouldHideFactTableColumns - aggregates a visible numeric column
+	measure 'Total Sales' = SUM('Mock-Fact'[Total])
+		formatString: #,##0
+		lineageTag: b1e2f3a4-5678-90ab-cdef-123456789abc
+
 	column 'Date ID'
 		dataType: int64
 		formatString: 0
@@ -26,11 +31,6 @@ table Mock-Fact
 		sourceColumn: Total
 
 		annotation SummarizationSetBy = Automatic
-
-	/// Test measure for ShouldHideFactTableColumns - aggregates a visible numeric column
-	measure 'Total Sales' = SUM('Mock-Fact'[Total])
-		formatString: #,##0
-		lineageTag: b1e2f3a4-5678-90ab-cdef-123456789abc
 
 	partition Mock-Fact = m
 		mode: import
