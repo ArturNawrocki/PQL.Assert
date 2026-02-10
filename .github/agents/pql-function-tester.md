@@ -38,9 +38,11 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     - MUST run tests after creating them and verify they pass
     - MUST NOT modify production model tables or relationships
     - MUST use the same indentation style as existing files
-    - MUST execute all model operations (DAX queries, function loads, TMDL scripts) sequentially — NEVER in parallel
-    - MUST wait for each DAX query to complete before starting the next one
-    - MUST re-verify the connection before each test file execution in runAllTests
+    - SHOULD attempt parallel test execution first for efficiency
+    - MUST fall back to sequential execution if parallel execution fails
+    - MUST surface all connection errors clearly to the user in chat
+    - MUST re-verify the connection before test execution
+    - MUST execute TMDL scripts and function loads sequentially (not in parallel)
     - Avoid generating report visuals
   }
 
@@ -295,47 +297,93 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     // ─── Test Execution ──────────────────────────────────────
 
     runTests(testFileName) => {
-      // Execute one test file at a time. Never batch multiple DAX queries in parallel.
+      // Execute a single test file
       1. ensureConnected()
       2. verify: connection is active via connection_operations GetConnection
-         if connection error: reconnect via connectToTestingModel()
+         if connection error:
+           report to chat: "❌ Connection Error: Cannot reach TestingModel"
+           attempt: reconnect via connectToTestingModel()
+           if reconnect fails:
+             report to chat: "❌ Reconnection failed. Ensure Power BI Desktop is open with TestingModel."
+             halt: return error state
+           report to chat: "✓ Reconnected successfully"
       3. read: DAX_QUERIES/{testFileName}.dax
-      4. execute: DAX query via dax_query_operations (single call, wait for result)
+      4. try {
+           execute: DAX query via dax_query_operations (single call, wait for result)
+         } catch (error) {
+           report to chat: "❌ Query Execution Error: {error.message}"
+           if error is connection-related:
+             report to chat: "The connection to Analysis Services was lost or timed out."
+           return: error state
+         }
       5. parse: results into TestResult[]
-      5. summarize:
+      6. summarize:
            - total tests
            - passed count
            - failed count
            - list any failures with TestName, Expected, Actual
-      6. if all passed:
-           report: "All {n} tests passed"
+      7. if all passed:
+           report: "✓ All {n} tests passed"
          else:
-           report: "{f} of {n} tests FAILED"
+           report: "❌ {f} of {n} tests FAILED"
            list: each failure
            ask: "Would you like to fix the failing tests?"
       return: TestResult[]
     }
 
     runAllTests() => {
-      // IMPORTANT: All test files MUST be executed one at a time, sequentially.
-      // The Analysis Services connection does not support parallel DAX queries.
-      // Never issue multiple dax_query_operations calls in the same tool-call batch.
+      // Strategy: Try parallel execution first for speed, fall back to sequential if errors occur
       1. ensureConnected()
       2. scan: DAX_QUERIES for all *.Tests.dax and *.Test.dax files
       3. build: ordered list of test files
-      4. for each file IN SEQUENCE (one at a time, never parallel):
-           a. verify connection is still active via connection_operations GetConnection
-           b. if connection lost or error:
-                reconnect via connectToTestingModel()
-                wait for connection confirmation before proceeding
-           c. read: the test .dax file
-           d. execute: DAX query via dax_query_operations
-           e. wait: for query result to return before moving to next file
-           f. parse: results into TestResult[]
-           g. store: results for this file
-           h. only THEN proceed to next file
-      5. aggregate: total pass/fail across all files
-      return: aggregated results
+      4. report to chat: "Found {n} test files. Attempting parallel execution..."
+      
+      // PHASE 1: Attempt Parallel Execution
+      5. try {
+           a. read: all test .dax files in parallel
+           b. execute: ALL DAX queries via dax_query_operations in parallel batch
+           c. wait: for all queries to complete
+           d. parse: all results into TestResult[]
+           e. report to chat: "✓ Parallel execution successful. {n} test files completed."
+           f. aggregate: total pass/fail across all files
+           g. return: aggregated results
+         }
+      
+      // PHASE 2: Fall back to Sequential on Error
+      6. catch (any error including connection errors) {
+           a. report to chat: "⚠ Parallel execution failed: {error.message}"
+           b. report to chat: "Falling back to sequential execution..."
+           
+           c. re-verify connection via connection_operations GetConnection
+           d. if connection lost or error:
+                report to chat: "❌ Connection Error: {error.details}"
+                attempt: reconnect via connectToTestingModel()
+                if reconnect fails:
+                  report to chat: "❌ Cannot reconnect to TestingModel. Ensure Power BI Desktop is open."
+                  halt: return error state
+                report to chat: "✓ Reconnected successfully"
+           
+           e. for each file IN SEQUENCE (one at a time):
+                i.   report to chat: "Running test file {i}/{n}: {fileName}..."
+                ii.  verify connection is still active via connection_operations GetConnection
+                iii. if connection error:
+                       report to chat: "❌ Connection lost during test execution"
+                       attempt: reconnect via connectToTestingModel()
+                       if reconnect fails: halt
+                iv.  read: the test .dax file
+                v.   execute: DAX query via dax_query_operations (single query, wait for result)
+                vi.  if query fails:
+                       report to chat: "❌ Test file {fileName} failed: {error.message}"
+                       store: error for this file
+                       continue: to next file
+                vii. parse: results into TestResult[]
+                viii.store: results for this file
+                ix.  report to chat: "✓ {fileName}: {passed}/{total} tests passed"
+           
+           f. report to chat: "Sequential execution completed."
+           g. aggregate: total pass/fail across all files (including any errors)
+           h. return: aggregated results with error summary
+         }
     }
 
     // ─── Environment ─────────────────────────────────────────

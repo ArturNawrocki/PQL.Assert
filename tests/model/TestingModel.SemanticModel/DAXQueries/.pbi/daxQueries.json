@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "tabOrder": [
-    "Complete Function Tests",
+    "Assert.Tests",
     "BP.DAXExpressions.Tests",
     "BP.ErrorPrevention.Tests",
     "BP.Formatting.Tests",
