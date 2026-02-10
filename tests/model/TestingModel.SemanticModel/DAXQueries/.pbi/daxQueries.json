@@ -19,5 +19,5 @@
     "Col.Tests",
     "Tbl.Tests"
   ],
-  "defaultTab": "Col.Tests"
+  "defaultTab": "BP.Formatting.Tests"
 }
