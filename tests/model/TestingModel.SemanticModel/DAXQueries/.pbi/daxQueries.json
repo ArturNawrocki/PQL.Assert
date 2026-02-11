@@ -2,6 +2,7 @@
   "version": "1.0.0",
   "tabOrder": [
     "Assert.Tests",
+    "Assert.Discovery.Tests",
     "BP.DAXExpressions.Tests",
     "BP.ErrorPrevention.Tests",
     "BP.Formatting.Tests",
@@ -19,5 +20,5 @@
     "Col.Tests",
     "Tbl.Tests"
   ],
-  "defaultTab": "BP.Formatting.Tests"
+  "defaultTab": "Assert.Discovery.Tests"
 }

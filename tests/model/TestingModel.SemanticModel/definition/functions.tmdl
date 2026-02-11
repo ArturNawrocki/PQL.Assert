@@ -573,7 +573,7 @@ function 'PQL.Assert.RetrieveTestsByEnvironment' =
 					INFO.FUNCTIONS("ORIGIN", "2"),
 					(RIGHT([FUNCTION_NAME], 5) = ".Test" || RIGHT([FUNCTION_NAME], 6) = ".Tests")
 					&& (
-						ISBLANK(_EnvUpper)
+						ISBLANK(_EnvUpper) || _EnvUpper = ""
 						|| CONTAINSSTRING(UPPER([FUNCTION_NAME]), "." & _EnvUpper & ".")
 						|| CONTAINSSTRING(UPPER([FUNCTION_NAME]), ".ANY.")
 					)
@@ -2531,42 +2531,6 @@ function 'PQL.Assert.Col.DistinctCountShouldBeAtLeast' =
 
 	annotation DAXLIB_PackageVersion = 0.1.9
 
-/// Asserts that all text values in a column match the specified pattern.
-function 'PQL.Assert.Col.TextShouldMatchPattern' =
-		(testName : STRING, columnRef : ANYREF EXPR, pattern : STRING) =>
-			VAR _TotalCount = COUNTROWS(ALLNOBLANKROW(columnRef))
-			VAR _NonMatchCount = COUNTAX(ALLNOBLANKROW(columnRef), IF(NOT ISBLANK(columnRef) && NOT CONTAINSSTRING(FORMAT(columnRef, ""), pattern), 1, BLANK()))
-			VAR _Passed = _NonMatchCount = 0
-			RETURN ROW(
-				"TestName", testName,
-				"Expected", "All values match pattern '" & pattern & "'",
-				"Actual", IF(_Passed, "ALL MATCH (" & FORMAT(_TotalCount, "0") & " rows)", "NON-MATCHING VALUES (" & FORMAT(_NonMatchCount, "0") & " of " & FORMAT(_TotalCount, "0") & ")"),
-				"Passed", _Passed
-			)
-	lineageTag: 7d73311b-bd4d-4b68-a154-b0b7d414fcb9
-
-	annotation DAXLIB_PackageId = PQL.Assert
-
-	annotation DAXLIB_PackageVersion = 0.1.9
-
-/// Asserts that no text values in a column match the specified pattern.
-function 'PQL.Assert.Col.TextShouldNotMatchPattern' =
-		(testName : STRING, columnRef : ANYREF EXPR, pattern : STRING) =>
-			VAR _TotalCount = COUNTROWS(ALLNOBLANKROW(columnRef))
-			VAR _MatchCount = COUNTAX(ALLNOBLANKROW(columnRef), IF(NOT ISBLANK(columnRef) && CONTAINSSTRING(FORMAT(columnRef, ""), pattern), 1, BLANK()))
-			VAR _Passed = _MatchCount = 0
-			RETURN ROW(
-				"TestName", testName,
-				"Expected", "No values match pattern '" & pattern & "'",
-				"Actual", IF(_Passed, "NO MATCHES (" & FORMAT(_TotalCount, "0") & " rows)", "MATCHING VALUES FOUND (" & FORMAT(_MatchCount, "0") & " of " & FORMAT(_TotalCount, "0") & ")"),
-				"Passed", _Passed
-			)
-	lineageTag: 16aad748-5aa3-4a13-8b2a-eaef3eb21279
-
-	annotation DAXLIB_PackageId = PQL.Assert
-
-	annotation DAXLIB_PackageVersion = 0.1.9
-
 /// Asserts that no text values in a column have leading or trailing spaces.
 function 'PQL.Assert.Col.TextShouldHaveNoLeadingOrTrailingSpaces' =
 		(testName : STRING, columnRef : ANYREF EXPR) =>
@@ -2862,6 +2826,7 @@ function 'PQL.Assert.BP.ShouldHideFactTableColumns' = ```
 		        "RuleDescription", "It is a best practice to hide fact table columns that are used for aggregation in measures. Visible numeric columns referenced in SUM, COUNT, AVERAGE, MIN, MAX, DISTINCTCOUNT and other aggregation functions should be hidden to encourage users to use measures instead. Reference: https://blog.crossjoin.co.uk/2024/06/09/get-better-results-from-power-bi-copilot-with-linguistic-modelling/. Severity: High (3)."
 		    )
 		```
+	lineageTag: 2378a668-4b05-41ba-a552-4fff4f9e9341
 
 	annotation DAXLIB_PackageId = PQL.Assert
 

@@ -1,0 +1,85 @@
+DEFINE
+
+// ============================================
+// Test Discovery Function Test Suite
+// Tests for PQL.Assert.RetrieveTests and RetrieveTestsByEnvironment
+// ============================================
+
+// PQL.Assert.RetrieveTests
+// Should return all functions ending with .Test or .Tests
+VAR _AllTests = PQL.Assert.RetrieveTests()
+VAR _AllTestsCount = COUNTROWS(_AllTests)
+VAR _RetrieveTests_HasResults = 
+    ROW(
+        "TestName", "Discovery: RetrieveTests should return test functions",
+        "Expected", "Count > 0",
+        "Actual", "Count = " & FORMAT(_AllTestsCount, "0"),
+        "Passed", _AllTestsCount > 0
+    )
+
+// PQL.Assert.RetrieveTestsByEnvironment - DEV
+VAR _DevTests = PQL.Assert.RetrieveTestsByEnvironment("DEV")
+VAR _DevTestsCount = COUNTROWS(_DevTests)
+VAR _RetrieveTestsByEnvironment_DEV = 
+    ROW(
+        "TestName", "Discovery: RetrieveTestsByEnvironment('DEV') should return .DEV. and .ANY. tests",
+        "Expected", "Count > 0",
+        "Actual", "Count = " & FORMAT(_DevTestsCount, "0"),
+        "Passed", _DevTestsCount > 0
+    )
+
+// PQL.Assert.RetrieveTestsByEnvironment - TEST
+VAR _TestTests = PQL.Assert.RetrieveTestsByEnvironment("TEST")
+VAR _TestTestsCount = COUNTROWS(_TestTests)
+VAR _RetrieveTestsByEnvironment_TEST = 
+    ROW(
+        "TestName", "Discovery: RetrieveTestsByEnvironment('TEST') should return .TEST. and .ANY. tests",
+        "Expected", "Count > 0",
+        "Actual", "Count = " & FORMAT(_TestTestsCount, "0"),
+        "Passed", _TestTestsCount > 0
+    )
+
+// PQL.Assert.RetrieveTestsByEnvironment - PROD
+VAR _ProdTests = PQL.Assert.RetrieveTestsByEnvironment("PROD")
+VAR _ProdTestsCount = COUNTROWS(_ProdTests)
+VAR _RetrieveTestsByEnvironment_PROD = 
+    ROW(
+        "TestName", "Discovery: RetrieveTestsByEnvironment('PROD') should return .PROD. and .ANY. tests",
+        "Expected", "Count > 0",
+        "Actual", "Count = " & FORMAT(_ProdTestsCount, "0"),
+        "Passed", _ProdTestsCount > 0
+    )
+
+// PQL.Assert.RetrieveTestsByEnvironment - blank (should return all)
+VAR _BlankEnvTests = PQL.Assert.RetrieveTestsByEnvironment("")
+VAR _BlankEnvTestsCount = COUNTROWS(_BlankEnvTests)
+VAR _RetrieveTestsByEnvironment_Blank = 
+    ROW(
+        "TestName", "Discovery: RetrieveTestsByEnvironment('') should return all tests",
+        "Expected", "Count = " & FORMAT(_AllTestsCount, "0"),
+        "Actual", "Count = " & FORMAT(_BlankEnvTestsCount, "0"),
+        "Passed", _BlankEnvTestsCount = _AllTestsCount
+    )
+
+// PQL.Assert.RetrieveTestsByEnvironment - case insensitivity
+VAR _LowercaseDevTests = PQL.Assert.RetrieveTestsByEnvironment("dev")
+VAR _LowercaseDevTestsCount = COUNTROWS(_LowercaseDevTests)
+VAR _RetrieveTestsByEnvironment_CaseInsensitive = 
+    ROW(
+        "TestName", "Discovery: RetrieveTestsByEnvironment is case-insensitive",
+        "Expected", "'dev' should equal 'DEV'",
+        "Actual", "dev count = " & FORMAT(_LowercaseDevTestsCount, "0") & ", DEV count = " & FORMAT(_DevTestsCount, "0"),
+        "Passed", _LowercaseDevTestsCount = _DevTestsCount
+    )
+
+// Combine all test results
+VAR _AllDiscoveryTests = UNION(
+    _RetrieveTests_HasResults,
+    _RetrieveTestsByEnvironment_DEV,
+    _RetrieveTestsByEnvironment_TEST,
+    _RetrieveTestsByEnvironment_PROD,
+    _RetrieveTestsByEnvironment_Blank,
+    _RetrieveTestsByEnvironment_CaseInsensitive
+)
+
+EVALUATE _AllDiscoveryTests

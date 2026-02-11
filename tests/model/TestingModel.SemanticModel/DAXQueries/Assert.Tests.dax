@@ -237,14 +237,6 @@ VAR _DistAtMost_Fail = PQL.Assert.Col.DistinctCountShouldBeAtMost("Col.DistinctC
 VAR _DistAtLeast_Pass = PQL.Assert.Col.DistinctCountShouldBeAtLeast("Col.DistinctCountShouldBeAtLeast: Category >=2 should pass", 'TestData'[Category], 2)
 VAR _DistAtLeast_Fail = PQL.Assert.Col.DistinctCountShouldBeAtLeast("Col.DistinctCountShouldBeAtLeast: Category >=10 should fail", 'TestData'[Category], 10)
 
-// PQL.Assert.Col.TextShouldMatchPattern
-VAR _TextMatch_Pass = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'a' should fail", 'TestData'[Name], "a")
-VAR _TextMatch_Fail = PQL.Assert.Col.TextShouldMatchPattern("Col.TextShouldMatchPattern: Name contains 'xyz' should fail", 'TestData'[Name], "xyz")
-
-// PQL.Assert.Col.TextShouldNotMatchPattern
-VAR _TextNotMatch_Pass = PQL.Assert.Col.TextShouldNotMatchPattern("Col.TextShouldNotMatchPattern: Name not 'xyz' should pass", 'TestData'[Name], "xyz")
-VAR _TextNotMatch_Fail = PQL.Assert.Col.TextShouldNotMatchPattern("Col.TextShouldNotMatchPattern: Name not 'lpha' should fail", 'TestData'[Name], "lpha")
-
 // PQL.Assert.Col.TextShouldHaveNoLeadingOrTrailingSpaces
 VAR _NoSpaces_Pass = PQL.Assert.Col.TextShouldHaveNoLeadingOrTrailingSpaces("Col.TextShouldHaveNoLeadingOrTrailingSpaces: Name should pass", 'TestData'[Name])
 
@@ -445,10 +437,6 @@ VAR _AllTests = UNION(
     _DistAtMost_Fail,
     _DistAtLeast_Pass,
     _DistAtLeast_Fail,
-    _TextMatch_Pass,
-    _TextMatch_Fail,
-    _TextNotMatch_Pass,
-    _TextNotMatch_Fail,
     _NoSpaces_Pass,
     _Trimmed_Pass,
     _Upper_Pass,

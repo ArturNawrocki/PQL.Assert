@@ -296,7 +296,7 @@ createOrReplace
                         INFO.FUNCTIONS("ORIGIN", "2"),
                         (RIGHT([FUNCTION_NAME], 5) = ".Test" || RIGHT([FUNCTION_NAME], 6) = ".Tests")
                         && (
-                            ISBLANK(_EnvUpper)
+                            ISBLANK(_EnvUpper) || _EnvUpper = ""
                             || CONTAINSSTRING(UPPER([FUNCTION_NAME]), "." & _EnvUpper & ".")
                             || CONTAINSSTRING(UPPER([FUNCTION_NAME]), ".ANY.")
                         )
