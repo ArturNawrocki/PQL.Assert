@@ -20,5 +20,5 @@
     "Col.Tests",
     "Tbl.Tests"
   ],
-  "defaultTab": "Assert.Discovery.Tests"
+  "defaultTab": "Tbl.Tests"
 }

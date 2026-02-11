@@ -13,5 +13,5 @@
     "Load PQL.Col",
     "Load PQL.Tbl"
   ],
-  "defaultTab": "Load PQL.BP.Formatting"
+  "defaultTab": "Load PQL"
 }
