@@ -1,7 +1,8 @@
 {
   "version": "1.0.0",
   "tabOrder": [
-    "Complete Function Tests",
+    "Assert.Tests",
+    "Assert.Discovery.Tests",
     "BP.DAXExpressions.Tests",
     "BP.ErrorPrevention.Tests",
     "BP.Formatting.Tests",
@@ -15,7 +16,9 @@
     "Example.Myenv.Tests",
     "Retrieve Tests",
     "Example.prod.tests",
-    "Query 1"
+    "Query 1",
+    "Col.Tests",
+    "Tbl.Tests"
   ],
-  "defaultTab": "Query 1"
+  "defaultTab": "Tbl.Tests"
 }

@@ -53,21 +53,80 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 
 ### Column Assertions
 
+#### Null & Blank Checks
+
 - `PQL.Assert.Col.ShouldBeNull(testName, columnRef)` - Asserts all column values are NULL
 - `PQL.Assert.Col.ShouldNotBeNull(testName, columnRef)` - Asserts column has non-NULL values
 - `PQL.Assert.Col.ShouldBeBlank(testName, columnRef)` - Asserts all column values are empty strings
 - `PQL.Assert.Col.ShouldNotBeBlank(testName, columnRef)` - Asserts column has non-empty values
 - `PQL.Assert.Col.ShouldBeNullOrBlank(testName, columnRef)` - Asserts all values are NULL or empty
 - `PQL.Assert.Col.ShouldNotBeNullOrBlank(testName, columnRef)` - Asserts column has content
+
+#### Presence & Completeness Thresholds
+
+- `PQL.Assert.Col.NullRateShouldBeAtMost(testName, columnRef, maxNullPct)` - Asserts null rate is at most the specified percentage
+- `PQL.Assert.Col.BlankRateShouldBeAtMost(testName, columnRef, maxBlankPct)` - Asserts blank (empty string) rate is at most the specified percentage
+- `PQL.Assert.Col.NullOrBlankRateShouldBeAtMost(testName, columnRef, maxPct)` - Asserts null or blank rate is at most the specified percentage
+- `PQL.Assert.Col.PopulatedRateShouldBeAtLeast(testName, columnRef, minPct)` - Asserts populated (non-null, non-blank) rate is at least the specified percentage
+
+#### Uniqueness & Key-Like Behavior
+
 - `PQL.Assert.Col.ShouldBeDistinct(testName, columnRef)` - Asserts all column values are unique
+- `PQL.Assert.Col.ShouldNotContainDuplicates(testName, columnRef)` - Asserts column contains no duplicate values (alias for ShouldBeDistinct)
+- `PQL.Assert.Col.ShouldBeUniqueWithin(testName, columnRef, partitionByCol)` - Asserts column values are unique within partitions defined by another column
+- `PQL.Assert.Col.ComboShouldBeDistinct(testName, columnRef1, columnRef2)` - Asserts the combination of two columns forms a distinct composite key
+
+#### Range & Distribution Checks
+
+- `PQL.Assert.Col.ShouldBeInRange(testName, columnRef, minIncl, maxIncl)` - Asserts all numeric column values fall within the specified inclusive range
+- `PQL.Assert.Col.MinShouldBeAtLeast(testName, columnRef, minIncl)` - Asserts minimum value in column is at least the specified value
+- `PQL.Assert.Col.MaxShouldBeAtMost(testName, columnRef, maxIncl)` - Asserts maximum value in column is at most the specified value
+- `PQL.Assert.Col.MeanShouldBeInRange(testName, columnRef, minIncl, maxIncl)` - Asserts mean of column falls within the specified range
+- `PQL.Assert.Col.PctileShouldBeInRange(testName, columnRef, pct, minIncl, maxIncl)` - Asserts specified percentile of column falls within the given range
+- `PQL.Assert.Col.StdDevShouldBeAtMost(testName, columnRef, maxStdDev)` - Asserts standard deviation of column is at most the specified value
+- `PQL.Assert.Col.ShareOfZerosAtMost(testName, columnRef, maxPct)` - Asserts share of zero values is at most the specified percentage
+- `PQL.Assert.Col.ShareOfEvensAtLeast(testName, columnRef, minPct)` - Asserts share of even values is at least the specified percentage
+- `PQL.Assert.Col.ShareOfOddsAtLeast(testName, columnRef, minPct)` - Asserts share of odd values is at least the specified percentage
+
+#### Sign & Monotonicity
+
+- `PQL.Assert.Col.ShouldBeNonNegative(testName, columnRef)` - Asserts all values in column are non-negative (>= 0)
+- `PQL.Assert.Col.ShouldBePositive(testName, columnRef)` - Asserts all values in column are strictly positive (> 0)
+- `PQL.Assert.Col.ShouldBeNonZero(testName, columnRef)` - Asserts no values in column are zero
+- `PQL.Assert.Col.ShouldBeMonotonicIncreasing(testName, columnRef, orderedByCol)` - Asserts values monotonically strictly increase when ordered by another column
+- `PQL.Assert.Col.ShouldBeMonotonicNonDecreasing(testName, columnRef, orderedByCol)` - Asserts values monotonically non-decrease when ordered by another column
+- `PQL.Assert.Col.ShouldBeMonotonicDecreasing(testName, columnRef, orderedByCol)` - Asserts values monotonically strictly decrease when ordered by another column
+
+#### Categorical, Membership & Format
+
+- `PQL.Assert.Col.ValuesShouldBeInSet(testName, columnRef, allowedValues)` - Asserts all column values are in the specified allowed set (table)
+- `PQL.Assert.Col.ValuesShouldNotBeInSet(testName, columnRef, bannedValues)` - Asserts no column values are in the specified banned set (table)
+- `PQL.Assert.Col.DistinctCountShouldBeAtMost(testName, columnRef, maxDistinct)` - Asserts distinct count of values is at most the specified number
+- `PQL.Assert.Col.DistinctCountShouldBeAtLeast(testName, columnRef, minDistinct)` - Asserts distinct count of values is at least the specified number
+- `PQL.Assert.Col.TextShouldHaveNoLeadingOrTrailingSpaces(testName, columnRef)` - Asserts no text values have leading or trailing spaces
+- `PQL.Assert.Col.TextShouldBeTrimmed(testName, columnRef)` - Asserts all text values are trimmed (alias for TextShouldHaveNoLeadingOrTrailingSpaces)
+- `PQL.Assert.Col.TextCaseShouldBeUpper(testName, columnRef)` - Asserts all text values are uppercase
+- `PQL.Assert.Col.TextCaseShouldBeLower(testName, columnRef)` - Asserts all text values are lowercase
+- `PQL.Assert.Col.TextLengthShouldBeInRange(testName, columnRef, minLen, maxLen)` - Asserts text lengths fall within the specified range
+
+#### Schema & Existence
+
 - `PQL.Assert.Col.ShouldExist(testName, tableName, columnName)` - Asserts column exists
 
 ### Table Assertions
 
+#### Row Checks
+
 - `PQL.Assert.Tbl.ShouldHaveRows(testName, tableRef)` - Asserts table has at least one row
 - `PQL.Assert.Tbl.ShouldHaveRowCount(testName, tableRef, expectedRowCount)` - Asserts exact row count
 - `PQL.Assert.Tbl.ShouldHaveMoreRowsThan(testName, threshold, tableToCheck)` - Asserts row count > threshold
+
+#### Schema & Column Shape
+
 - `PQL.Assert.Tbl.ShouldExist(testName, tableName)` - Asserts table exists
+- `PQL.Assert.Tbl.ShouldHaveColumns(testName, tableRef, columnNamesList)` - Asserts table has all specified columns (comma-separated list)
+- `PQL.Assert.Tbl.ShouldNotHaveExtraColumns(testName, tableRef, allowedColumnNamesList)` - Asserts table does not have extra columns beyond the allowed list (comma-separated)
+- `PQL.Assert.Tbl.ColumnDataTypeShouldBe(testName, tableRef, columnName, expectedType)` - Asserts column has the expected data type
 
 ### Relationship Assertions
 
@@ -95,7 +154,7 @@ PQL.Assert includes built-in semantic model validation functions based on Best P
 - `PQL.Assert.BP.ShouldNotSummarizeNumericColumns()` - Validates that numeric columns have SummarizeBy set to None
 - `PQL.Assert.BP.ShouldMarkRowLabels()` - Validates that visible tables have at least one column marked as a row label (IsDefaultLabel = true), helping Power BI Copilot identify primary identifiers
 - `PQL.Assert.BP.ShouldMarkPrimaryKeys()` - Validates that columns on the "One" side of relationships have the IsKey property set to true
-- `PQL.Assert.BP.ShouldHideForeignKeys()` - Validates that foreign key columns (on the "Many" side of relationships) are hidden
+- `PQL.Assert.BP.ShouldHideFactTableColumns()` - Validates that numeric columns used in aggregation measures are hidden from end users
 - `PQL.Assert.BP.CheckFormatting()` - Runs all formatting checks
 
 #### DAX Expressions
