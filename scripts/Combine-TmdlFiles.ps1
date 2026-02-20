@@ -55,12 +55,17 @@ foreach ($file in $tmdlFiles) {
         
         # For other lines, remove one level of indentation (4 spaces or one tab)
         if ($line -match '^\t(.*)$') {
-            $processedLines += $matches[1]
+            $processedLines += $matches[1].TrimEnd()
         } elseif ($line -match '^    (.*)$') {
-            $processedLines += $matches[1]
+            $processedLines += $matches[1].TrimEnd()
         } else {
-            $processedLines += $line
+            $processedLines += $line.TrimEnd()
         }
+    }
+    
+    # Trim trailing blank lines from this file's content
+    while ($processedLines.Count -gt 0 -and $processedLines[-1] -match '^\s*$') {
+        $processedLines = $processedLines[0..($processedLines.Count - 2)]
     }
     
     # Join processed lines and add to combined content
@@ -79,7 +84,49 @@ if ($outputDir -and -not (Test-Path $outputDir)) {
     New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 }
 
-$combinedContent -join "`n" | Set-Content -Path $OutputFile -NoNewline
+$finalContent = $combinedContent -join "`n"
+
+# Sanitize: collapse any runs of 2+ consecutive blank lines down to exactly 1
+$finalContent = [regex]::Replace($finalContent, '(\n\s*){3,}', "`n`n")
+
+# Remove any leading blank lines
+$finalContent = $finalContent -replace '^(\s*\n)+', ''
+
+# Remove any trailing blank lines and ensure no trailing newline
+$finalContent = $finalContent -replace '(\n\s*)+$', ''
+
+$finalContent | Set-Content -Path $OutputFile -NoNewline
 
 Write-Host "Successfully combined files into: $OutputFile"
 Write-Host "Total size: $((Get-Item $OutputFile).Length) bytes"
+
+# --- Post-combination validation ---
+Write-Host "`nValidating combined output for consecutive blank lines..."
+$validationContent = Get-Content -Path $OutputFile -Raw
+$validationLines = $validationContent -split "`r?`n"
+$consecutiveBlankCount = 0
+$violations = @()
+
+for ($i = 0; $i -lt $validationLines.Count; $i++) {
+    if ($validationLines[$i] -match '^\s*$') {
+        $consecutiveBlankCount++
+        if ($consecutiveBlankCount -ge 2) {
+            $violations += "Line $($i + 1): consecutive blank line ($consecutiveBlankCount in a row)"
+        }
+    } else {
+        $consecutiveBlankCount = 0
+    }
+}
+
+# Check for leading blank line
+if ($validationLines.Count -gt 0 -and $validationLines[0] -match '^\s*$') {
+    $violations += "Line 1: file starts with a blank line"
+}
+
+if ($violations.Count -gt 0) {
+    Write-Error "TMDL validation failed! Found $($violations.Count) blank line violation(s):"
+    $violations | ForEach-Object { Write-Error "  $_" }
+    exit 1
+} else {
+    Write-Host "Validation passed: no consecutive blank lines found."
+}
