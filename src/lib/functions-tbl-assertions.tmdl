@@ -1,9 +1,7 @@
 createOrReplace
-
 	/// Table Assertions - PQL.Assert.Tbl namespace
 	/// Table-level assertion functions for schema and structure validation
 	/// Publisher: PQL (Power Query Lint)
-
 	/// Asserts that a table has at least one row.
 	function 'PQL.Assert.Tbl.ShouldHaveRows' =
 			(testName : STRING, tableRef : TABLE EXPR) =>
