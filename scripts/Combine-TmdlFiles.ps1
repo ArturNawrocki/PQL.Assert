@@ -71,11 +71,6 @@ foreach ($file in $tmdlFiles) {
     # Join processed lines and add to combined content
     $processedContent = $processedLines -join "`n"
     $combinedContent += $processedContent
-    
-    # Add a blank line separator between files (except for the last file)
-    if ($file -ne $tmdlFiles[-1]) {
-        $combinedContent += ""
-    }
 }
 
 # Write the combined content to the output file
@@ -86,8 +81,12 @@ if ($outputDir -and -not (Test-Path $outputDir)) {
 
 $finalContent = $combinedContent -join "`n"
 
-# Sanitize: collapse any runs of 2+ consecutive blank lines down to exactly 1
-$finalContent = [regex]::Replace($finalContent, '(\n\s*){3,}', "`n`n")
+# Sanitize: remove blank lines specifically after annotation lines and before doc comments
+# This pattern matches: annotation line, one or more blank lines, then a line starting with ///
+$finalContent = [regex]::Replace($finalContent, '(annotation\s+\w+\s*=\s*[^\n]+)\n\s*\n+(\s*///)', '$1`n$2')
+
+# Sanitize: collapse any remaining runs of 3+ consecutive blank lines down to 1 blank line
+$finalContent = [regex]::Replace($finalContent, '(\n\s*\n){3,}', "`n`n")
 
 # Remove any leading blank lines
 $finalContent = $finalContent -replace '^(\s*\n)+', ''
