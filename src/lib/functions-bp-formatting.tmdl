@@ -1,5 +1,4 @@
 createOrReplace
-
 	/// Formatting Best Practice Validation Functions
 	/// Publisher: PQL (Power Query Lint)
 	/// These functions validate semantic models against formatting best practices

@@ -1,9 +1,7 @@
 createOrReplace
-
 	/// Col Assertions - PQL.Assert.Col namespace
 	/// Column-level assertion functions for data quality validation
 	/// Publisher: PQL (Power Query Lint)
-
 	/// Asserts that all values in a column are NULL (DAX BLANK()).
 	function 'PQL.Assert.Col.ShouldBeNull' =
 			(testName : STRING, columnRef : ANYREF EXPR) =>
