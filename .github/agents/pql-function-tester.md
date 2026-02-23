@@ -38,11 +38,13 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     - MUST run tests after creating them and verify they pass
     - MUST NOT modify production model tables or relationships
     - MUST use the same indentation style as existing files
-    - SHOULD attempt parallel test execution first for efficiency
-    - MUST fall back to sequential execution if parallel execution fails
+    - MUST run tests sequentially (one at a time, never in parallel)
+    - MUST add a 2-3 second delay between test executions to prevent connection overload
+    - SHOULD limit individual test files to ~100 assertions to prevent query timeouts
     - MUST surface all connection errors clearly to the user in chat
     - MUST re-verify the connection before test execution
     - MUST execute TMDL scripts and function loads sequentially (not in parallel)
+    - MUST implement retry logic (up to 2 retries) for failed queries
     - Avoid generating report visuals
   }
 
@@ -259,6 +261,10 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
       4. check: if {testFileName}.dax already exists in DAX_QUERIES
       5. if exists:
            read: existing file
+           count: number of test assertions (count UNION rows in EVALUATE)
+           if count > 100:
+             warn: "Test file {testFileName} has {count} assertions. Consider splitting into multiple files for better reliability."
+             ask: "Continue adding to this file or create a new file?"
            append: new test VARs and add to UNION in EVALUATE
          else:
            create: new .dax file with:
@@ -296,8 +302,8 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
 
     // ─── Test Execution ──────────────────────────────────────
 
-    runTests(testFileName) => {
-      // Execute a single test file
+    runTests(testFileName, retryCount = 0, maxRetries = 2) => {
+      // Execute a single test file with retry logic
       1. ensureConnected()
       2. verify: connection is active via connection_operations GetConnection
          if connection error:
@@ -314,7 +320,16 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
            report to chat: "❌ Query Execution Error: {error.message}"
            if error is connection-related:
              report to chat: "The connection to Analysis Services was lost or timed out."
-           return: error state
+           
+           // Retry logic
+           if retryCount < maxRetries:
+             report to chat: "⚠️ Retrying ({retryCount + 1}/{maxRetries})..."
+             wait: 3 seconds
+             attempt: reconnect via connectToTestingModel()
+             return: runTests(testFileName, retryCount + 1, maxRetries)
+           else:
+             report to chat: "❌ Max retries reached. Skipping this test file."
+             return: error state
          }
       5. parse: results into TestResult[]
       6. summarize:
@@ -332,58 +347,41 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     }
 
     runAllTests() => {
-      // Strategy: Try parallel execution first for speed, fall back to sequential if errors occur
+      // Strategy: Always run tests sequentially for reliability and clear progress reporting
       1. ensureConnected()
       2. scan: DAX_QUERIES for all *.Tests.dax and *.Test.dax files
       3. build: ordered list of test files
-      4. report to chat: "Found {n} test files. Attempting parallel execution..."
+      4. report to chat: "Found {n} test files. Running sequentially..."
       
-      // PHASE 1: Attempt Parallel Execution
-      5. try {
-           a. read: all test .dax files in parallel
-           b. execute: ALL DAX queries via dax_query_operations in parallel batch
-           c. wait: for all queries to complete
-           d. parse: all results into TestResult[]
-           e. report to chat: "✓ Parallel execution successful. {n} test files completed."
-           f. aggregate: total pass/fail across all files
-           g. return: aggregated results
-         }
+      5. re-verify connection via connection_operations GetConnection
+      6. if connection lost or error:
+           report to chat: "❌ Connection Error: {error.details}"
+           attempt: reconnect via connectToTestingModel()
+           if reconnect fails:
+             report to chat: "❌ Cannot reconnect to TestingModel. Ensure Power BI Desktop is open."
+             halt: return error state
+           report to chat: "✓ Reconnected successfully"
       
-      // PHASE 2: Fall back to Sequential on Error
-      6. catch (any error including connection errors) {
-           a. report to chat: "⚠ Parallel execution failed: {error.message}"
-           b. report to chat: "Falling back to sequential execution..."
-           
-           c. re-verify connection via connection_operations GetConnection
-           d. if connection lost or error:
-                report to chat: "❌ Connection Error: {error.details}"
+      7. for each file IN SEQUENCE (one at a time):
+           a. if i > 1:
+                wait: 2-3 seconds (to prevent connection overload)
+           b. report to chat: "Running test file {i}/{n}: {fileName}..."
+           c. verify connection is still active via connection_operations GetConnection
+           d. if connection error:
+                report to chat: "❌ Connection lost during test execution"
                 attempt: reconnect via connectToTestingModel()
-                if reconnect fails:
-                  report to chat: "❌ Cannot reconnect to TestingModel. Ensure Power BI Desktop is open."
-                  halt: return error state
-                report to chat: "✓ Reconnected successfully"
-           
-           e. for each file IN SEQUENCE (one at a time):
-                i.   report to chat: "Running test file {i}/{n}: {fileName}..."
-                ii.  verify connection is still active via connection_operations GetConnection
-                iii. if connection error:
-                       report to chat: "❌ Connection lost during test execution"
-                       attempt: reconnect via connectToTestingModel()
-                       if reconnect fails: halt
-                iv.  read: the test .dax file
-                v.   execute: DAX query via dax_query_operations (single query, wait for result)
-                vi.  if query fails:
-                       report to chat: "❌ Test file {fileName} failed: {error.message}"
-                       store: error for this file
-                       continue: to next file
-                vii. parse: results into TestResult[]
-                viii.store: results for this file
-                ix.  report to chat: "✓ {fileName}: {passed}/{total} tests passed"
-           
-           f. report to chat: "Sequential execution completed."
-           g. aggregate: total pass/fail across all files (including any errors)
-           h. return: aggregated results with error summary
-         }
+                if reconnect fails: halt
+           e. call: runTests(fileName) with retry logic
+           f. if runTests returns error:
+                report to chat: "❌ Test file {fileName} failed after retries"
+                store: error for this file
+                continue: to next file
+           g. store: results for this file
+           h. report to chat: "✓ {fileName}: {passed}/{total} tests passed ({executionTime}ms)"
+      
+      8. report to chat: "Sequential execution completed."
+      9. aggregate: total pass/fail across all files (including any errors)
+      10. return: aggregated results with error summary
     }
 
     // ─── Environment ─────────────────────────────────────────
