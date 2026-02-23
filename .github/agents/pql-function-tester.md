@@ -145,7 +145,7 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     DAX_QUERIES_CONFIG = "${DAX_QUERIES}\\.pbi\\daxQueries.json"
     FUNCTIONS_TMDL = "${TEST_MODEL}\\definition\\functions.tmdl"
     CATALOG_NAME = "TestingModel"
-    PACKAGE_VERSION = "0.1.9"
+    PACKAGE_VERSION = "0.1.10"
     ENVIRONMENTS = ["DEV", "TEST", "PROD", "ANY"]
   }
 
@@ -669,7 +669,7 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
     \t\t\t\t\t"Passed", _Passed
     \t\t\t\t)
     \t\tannotation DAXLIB_PackageId = PQL.Assert
-    \t\tannotation DAXLIB_PackageVersion = 0.1.9
+    \t\tannotation DAXLIB_PackageVersion = 0.1.10
     ```
 
     // Definition TMDL (definition/functions.tmdl) - no leading tab on function keyword
@@ -687,7 +687,7 @@ tools: ["read", "edit", "agent", "powerbi-modeling-mcp/*"]
 
     \tannotation DAXLIB_PackageId = PQL.Assert
 
-    \tannotation DAXLIB_PackageVersion = 0.1.9
+    \tannotation DAXLIB_PackageVersion = 0.1.10
     ```
 
     // DAX test file (DAXQueries/*.dax)
