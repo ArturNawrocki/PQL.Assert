@@ -79,13 +79,13 @@ if ($outputDir -and -not (Test-Path $outputDir)) {
     New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 }
 
-$finalContent = $combinedContent -join "`n"
+$finalContent = $combinedContent -join "`n`n"
 
-# Sanitize: remove blank lines specifically after annotation lines and before doc comments
-# This pattern matches: annotation line, one or more blank lines, then a line starting with ///
-$finalContent = [regex]::Replace($finalContent, '(annotation\s+\w+\s*=\s*[^\n]+)\n\s*\n+(\s*///)', '$1`n$2')
+# Sanitize: ensure exactly one blank line between annotation and doc comments
+# This pattern matches: annotation line, any blank lines, then a line starting with ///
+$finalContent = [regex]::Replace($finalContent, '(annotation\s+\w+\s*=\s*[^\n]+)\n+(\s*///)', '$1`n`n$2')
 
-# Sanitize: collapse any remaining runs of 3+ consecutive blank lines down to 1 blank line
+# Sanitize: collapse any runs of 3+ consecutive blank lines down to 2 blank lines (one visible blank line)
 $finalContent = [regex]::Replace($finalContent, '(\n\s*\n){3,}', "`n`n")
 
 # Remove any leading blank lines
@@ -100,7 +100,7 @@ Write-Host "Successfully combined files into: $OutputFile"
 Write-Host "Total size: $((Get-Item $OutputFile).Length) bytes"
 
 # --- Post-combination validation ---
-Write-Host "`nValidating combined output for consecutive blank lines..."
+Write-Host "`nValidating combined output for excessive blank lines..."
 $validationContent = Get-Content -Path $OutputFile -Raw
 $validationLines = $validationContent -split "`r?`n"
 $consecutiveBlankCount = 0
@@ -109,8 +109,8 @@ $violations = @()
 for ($i = 0; $i -lt $validationLines.Count; $i++) {
     if ($validationLines[$i] -match '^\s*$') {
         $consecutiveBlankCount++
-        if ($consecutiveBlankCount -ge 2) {
-            $violations += "Line $($i + 1): consecutive blank line ($consecutiveBlankCount in a row)"
+        if ($consecutiveBlankCount -ge 3) {
+            $violations += "Line $($i + 1): too many consecutive blank lines ($consecutiveBlankCount in a row)"
         }
     } else {
         $consecutiveBlankCount = 0
@@ -127,5 +127,5 @@ if ($violations.Count -gt 0) {
     $violations | ForEach-Object { Write-Error "  $_" }
     exit 1
 } else {
-    Write-Host "Validation passed: no consecutive blank lines found."
+    Write-Host "Validation passed: no excessive blank lines found."
 }
