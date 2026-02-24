@@ -156,12 +156,12 @@ VAR _MonoDec_Fail = PQL.Assert.Col.ShouldBeMonotonicDecreasing("Col.ShouldBeMono
 
 // PQL.Assert.Col.ValuesShouldBeInSet
 // TestData Category: A, B, C
-VAR _ValuesInSet_Pass = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B,C} should pass", 'TestData'[Category], {"A", "B", "C"})
-VAR _ValuesInSet_Fail = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B} should fail", 'TestData'[Category], {"A", "B"})
+VAR _ValuesInSet_Pass = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B,C} should pass", 'TestData'[Category], {"A", "B", "C"}, [Value])
+VAR _ValuesInSet_Fail = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B} should fail", 'TestData'[Category], {"A", "B"}, [Value])
 
 // PQL.Assert.Col.ValuesShouldNotBeInSet
-VAR _ValuesNotInSet_Pass = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {X,Y} should pass", 'TestData'[Category], {"X", "Y"})
-VAR _ValuesNotInSet_Fail = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {A,X} should fail", 'TestData'[Category], {"A", "X"})
+VAR _ValuesNotInSet_Pass = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {X,Y} should pass", 'TestData'[Category], {"X", "Y"}, [Value])
+VAR _ValuesNotInSet_Fail = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {A,X} should fail", 'TestData'[Category], {"A", "X"}, [Value])
 
 // PQL.Assert.Col.DistinctCountShouldBeAtMost
 // TestData Category: 3 distinct (A, B, C)
