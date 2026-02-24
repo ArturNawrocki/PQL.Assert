@@ -222,12 +222,12 @@ VAR _Positive_Pass = PQL.Assert.Col.ShouldBePositive("Col.ShouldBePositive: Valu
 VAR _NonZero_Pass = PQL.Assert.Col.ShouldBeNonZero("Col.ShouldBeNonZero: Value should pass", 'TestData'[Value])
 
 // PQL.Assert.Col.ValuesShouldBeInSet
-VAR _ValuesInSet_Pass = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B,C} should pass", 'TestData'[Category], {"A", "B", "C"})
-VAR _ValuesInSet_Fail = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B} should fail", 'TestData'[Category], {"A", "B"})
+VAR _ValuesInSet_Pass = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B,C} should pass", 'TestData'[Category], {"A", "B", "C"}, [Value])
+VAR _ValuesInSet_Fail = PQL.Assert.Col.ValuesShouldBeInSet("Col.ValuesShouldBeInSet: Category in {A,B} should fail", 'TestData'[Category], {"A", "B"}, [Value])
 
 // PQL.Assert.Col.ValuesShouldNotBeInSet
-VAR _ValuesNotInSet_Pass = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {X,Y} should pass", 'TestData'[Category], {"X", "Y"})
-VAR _ValuesNotInSet_Fail = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {A,X} should fail", 'TestData'[Category], {"A", "X"})
+VAR _ValuesNotInSet_Pass = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {X,Y} should pass", 'TestData'[Category], {"X", "Y"}, [Value])
+VAR _ValuesNotInSet_Fail = PQL.Assert.Col.ValuesShouldNotBeInSet("Col.ValuesShouldNotBeInSet: Category not in {A,X} should fail", 'TestData'[Category], {"A", "X"}, [Value])
 
 // PQL.Assert.Col.DistinctCountShouldBeAtMost
 VAR _DistAtMost_Pass = PQL.Assert.Col.DistinctCountShouldBeAtMost("Col.DistinctCountShouldBeAtMost: Category <=5 should pass", 'TestData'[Category], 5)
