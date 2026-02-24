@@ -83,7 +83,7 @@ $finalContent = $combinedContent -join "`n`n"
 
 # Sanitize: ensure exactly one blank line between annotation and doc comments
 # This pattern matches: annotation line, any blank lines, then a line starting with ///
-$finalContent = [regex]::Replace($finalContent, '(annotation\s+\w+\s*=\s*[^\n]+)\n+(\s*///)', '$1`n`n$2')
+$finalContent = [regex]::Replace($finalContent, '(annotation\s+\w+\s*=\s*[^\n]+)\n+(\s*///)', "`$1`n`n`$2")
 
 # Sanitize: collapse any runs of 3+ consecutive blank lines down to 2 blank lines (one visible blank line)
 $finalContent = [regex]::Replace($finalContent, '(\n\s*\n){3,}', "`n`n")
