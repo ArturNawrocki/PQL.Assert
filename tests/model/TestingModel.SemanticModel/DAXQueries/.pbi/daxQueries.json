@@ -18,7 +18,8 @@
     "Example.prod.tests",
     "Query 1",
     "Col.Tests",
-    "Tbl.Tests"
+    "Tbl.Tests",
+    "Query 2"
   ],
-  "defaultTab": "Tbl.Tests"
+  "defaultTab": "Retrieve Tests"
 }
