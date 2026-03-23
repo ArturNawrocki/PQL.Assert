@@ -11,7 +11,9 @@
     "Load PQL.BP.Performance",
     "Load PQL.BP.Maintenance",
     "Load PQL.Col",
-    "Load PQL.Tbl"
+    "Load PQL.Tbl",
+    "Script 1",
+    "Script 2"
   ],
   "defaultTab": "Load PQL"
 }

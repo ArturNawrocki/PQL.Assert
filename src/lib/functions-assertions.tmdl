@@ -34,7 +34,7 @@ createOrReplace
                 RETURN ROW(
                     "TestName", testName,
                     "Expected", "NULL",
-                    "Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
+                    "Actual", IF(ISBLANK(actualValue), "NULL", IF(EXACT(actualValue, ""), "BLANK (empty string)", "HAS VALUE")),
                     "Passed", _Passed
                 )
         annotation DAXLIB_PackageId = PQL.Assert
@@ -48,7 +48,7 @@ createOrReplace
                 RETURN ROW(
                     "TestName", testName,
                     "Expected", "NOT NULL",
-                    "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
+                    "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(EXACT(_ActualResult, ""), "BLANK (empty string)", "HAS VALUE")),
                     "Passed", _Passed
                 )
         annotation DAXLIB_PackageId = PQL.Assert
@@ -57,11 +57,11 @@ createOrReplace
     /// Asserts that a value is BLANK (empty string "").
     function 'PQL.Assert.ShouldBeBlank' =
             (testName : STRING, actualValue : VARIANT) =>
-                VAR _Passed = NOT ISBLANK(actualValue) && actualValue = ""
+                VAR _Passed = NOT ISBLANK(actualValue) && EXACT(actualValue, "")
                 RETURN ROW(
                     "TestName", testName,
                     "Expected", "BLANK (empty string)",
-                    "Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
+                    "Actual", IF(ISBLANK(actualValue), "NULL", IF(EXACT(actualValue, ""), "BLANK (empty string)", "HAS VALUE")),
                     "Passed", _Passed
                 )
         annotation DAXLIB_PackageId = PQL.Assert
@@ -71,11 +71,11 @@ createOrReplace
     function 'PQL.Assert.ShouldNotBeBlank' =
             (testName : STRING, actualValue : SCALAR VARIANT EXPR) =>
                 VAR _ActualResult = actualValue
-                VAR _Passed = ISBLANK(_ActualResult) || _ActualResult <> ""
+                VAR _Passed = ISBLANK(_ActualResult) || NOT EXACT(_ActualResult, "")
                 RETURN ROW(
                     "TestName", testName,
                     "Expected", "NOT BLANK (not empty string)",
-                    "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
+                    "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(EXACT(_ActualResult, ""), "BLANK (empty string)", "HAS VALUE")),
                     "Passed", _Passed
                 )
         annotation DAXLIB_PackageId = PQL.Assert
@@ -84,11 +84,11 @@ createOrReplace
     /// Asserts that a value is NULL or BLANK (BLANK() or empty string "").
     function 'PQL.Assert.ShouldBeNullOrBlank' =
             (testName : STRING, actualValue : VARIANT) =>
-                VAR _Passed = ISBLANK(actualValue) || actualValue = ""
+                VAR _Passed = ISBLANK(actualValue) || EXACT(actualValue, "")
                 RETURN ROW(
                     "TestName", testName,
                     "Expected", "NULL OR BLANK",
-                    "Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
+                    "Actual", IF(ISBLANK(actualValue), "NULL", IF(EXACT(actualValue, ""), "BLANK (empty string)", "HAS VALUE")),
                     "Passed", _Passed
                 )
 
@@ -99,11 +99,11 @@ createOrReplace
     function 'PQL.Assert.ShouldNotBeNullOrBlank' =
             (testName : STRING, actualValue : SCALAR VARIANT EXPR) =>
                 VAR _ActualResult = actualValue
-                VAR _Passed = NOT ISBLANK(_ActualResult) && _ActualResult <> ""
+                VAR _Passed = NOT ISBLANK(_ActualResult) && NOT EXACT(_ActualResult, "")
                 RETURN ROW(
                     "TestName", testName,
                     "Expected", "NOT NULL AND NOT BLANK",
-                    "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
+                    "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(EXACT(_ActualResult, ""), "BLANK (empty string)", "HAS VALUE")),
                     "Passed", _Passed
                 )
         annotation DAXLIB_PackageId = PQL.Assert
@@ -111,7 +111,9 @@ createOrReplace
 
     function 'PQL.Assert.ShouldEqual' =
             (testName : STRING, expected : VARIANT, actual : VARIANT) =>
-                VAR _Passed = expected = actual
+                VAR _ExpType = SWITCH(TRUE(), ISBLANK(expected), 0, ISLOGICAL(expected), 1, ISTEXT(expected), 2, ISNUMBER(expected), 3, 4)
+                VAR _ActType = SWITCH(TRUE(), ISBLANK(actual), 0, ISLOGICAL(actual), 1, ISTEXT(actual), 2, ISNUMBER(actual), 3, 4)
+                VAR _Passed = _ExpType = _ActType && FORMAT(expected, "") = FORMAT(actual, "")
                 RETURN ROW(
                     "TestName", testName,
                     "Expected", FORMAT(expected, ""),
@@ -123,7 +125,9 @@ createOrReplace
 
     function 'PQL.Assert.ShouldNotEqual' =
             (testName : STRING, notExpected : VARIANT, actual : VARIANT) =>
-                VAR _Passed = notExpected <> actual
+                VAR _ExpType = SWITCH(TRUE(), ISBLANK(notExpected), 0, ISLOGICAL(notExpected), 1, ISTEXT(notExpected), 2, ISNUMBER(notExpected), 3, 4)
+                VAR _ActType = SWITCH(TRUE(), ISBLANK(actual), 0, ISLOGICAL(actual), 1, ISTEXT(actual), 2, ISNUMBER(actual), 3, 4)
+                VAR _Passed = NOT(_ExpType = _ActType && FORMAT(notExpected, "") = FORMAT(actual, ""))
                 RETURN ROW(
                     "TestName", testName,
                     "Expected", "NOT " & FORMAT(notExpected, ""),
@@ -288,29 +292,17 @@ createOrReplace
                         "Name",        [Name],
                         "Description", [Description]
                     )
-                VAR _PkgId =
-                    SELECTCOLUMNS(
-                        FILTER(INFO.ANNOTATIONS(), [Name] = "DAXLIB_PackageId"),
-                        "ID",        [ObjectID],
-                        "PackageId", [Value]
-                    )
-                VAR _PkgVer =
-                    SELECTCOLUMNS(
-                        FILTER(INFO.ANNOTATIONS(), [Name] = "DAXLIB_PackageVersion"),
-                        "ID",             [ObjectID],
-                        "PackageVersion", [Value]
-                    )
                 VAR _ImpersonatedUser =
                     SELECTCOLUMNS(
-                        FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_UserImpersonationName"),
+                        FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_ImpersonatedUserName"),
                         "ID",               [ObjectID],
-                        "ImpersonatedUserName", [Value]
+                        "PQLAssert_ImpersonatedUserName", [Value]
                     )
                 VAR _AllFunctions =
                     NATURALLEFTOUTERJOIN(
                         NATURALLEFTOUTERJOIN(
-                            NATURALLEFTOUTERJOIN(_Functions, _PkgId),
-                            _PkgVer
+                            _Functions,
+                            _ImpersonatedUser
                         ),
                         _ImpersonatedUser
                     )
@@ -335,29 +327,17 @@ createOrReplace
                         "Name",        [Name],
                         "Description", [Description]
                     )
-                VAR _PkgId =
-                    SELECTCOLUMNS(
-                        FILTER(INFO.ANNOTATIONS(), [Name] = "DAXLIB_PackageId"),
-                        "ID",        [ObjectID],
-                        "PackageId", [Value]
-                    )
-                VAR _PkgVer =
-                    SELECTCOLUMNS(
-                        FILTER(INFO.ANNOTATIONS(), [Name] = "DAXLIB_PackageVersion"),
-                        "ID",             [ObjectID],
-                        "PackageVersion", [Value]
-                    )
                 VAR _ImpersonatedUser =
                     SELECTCOLUMNS(
-                        FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_UserImpersonationName"),
+                        FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_ImpersonatedUserName"),
                         "ID",               [ObjectID],
-                        "ImpersonatedUserName", [Value]
+                        "PQLAssert_ImpersonatedUserName", [Value]
                     )
                 VAR _AllFunctions =
                     NATURALLEFTOUTERJOIN(
                         NATURALLEFTOUTERJOIN(
-                            NATURALLEFTOUTERJOIN(_Functions, _PkgId),
-                            _PkgVer
+                            _Functions,
+                            _ImpersonatedUser
                         ),
                         _ImpersonatedUser
                     )

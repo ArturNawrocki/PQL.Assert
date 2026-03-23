@@ -72,6 +72,26 @@ VAR _RetrieveTestsByEnvironment_CaseInsensitive =
         "Passed", _LowercaseDevTestsCount = _DevTestsCount
     )
 
+// PQL.Assert.RetrieveTests - RLS.ANY.Tests presence and ImpersonatedUserName
+VAR _RLSAnyTests = FILTER(_AllTests, [Name] = "RLS.ANY.Tests")
+VAR _RLSAnyTestsCount = COUNTROWS(_RLSAnyTests)
+VAR _RetrieveTests_RLSAnyTests_Present =
+    ROW(
+        "TestName", "Discovery: RetrieveTests should include RLS.ANY.Tests",
+        "Expected", "Count = 1",
+        "Actual", "Count = " & FORMAT(_RLSAnyTestsCount, "0"),
+        "Passed", _RLSAnyTestsCount = 1
+    )
+
+VAR _RLSImpersonatedUser = MAXX(_RLSAnyTests, [PQLAssert_ImpersonatedUserName])
+VAR _RetrieveTests_ImpersonatedUser_lbarker =
+    ROW(
+        "TestName", "Discovery: RLS.ANY.Tests ImpersonatedUserName should be lbarker@cftechnologiesllc.com",
+        "Expected", "lbarker@cftechnologiesllc.com",
+        "Actual", IF(ISBLANK(_RLSImpersonatedUser), "(blank)", _RLSImpersonatedUser),
+        "Passed", _RLSImpersonatedUser = "lbarker@cftechnologiesllc.com"
+    )
+
 // Combine all test results
 VAR _AllDiscoveryTests = UNION(
     _RetrieveTests_HasResults,
@@ -79,7 +99,9 @@ VAR _AllDiscoveryTests = UNION(
     _RetrieveTestsByEnvironment_TEST,
     _RetrieveTestsByEnvironment_PROD,
     _RetrieveTestsByEnvironment_Blank,
-    _RetrieveTestsByEnvironment_CaseInsensitive
+    _RetrieveTestsByEnvironment_CaseInsensitive,
+    _RetrieveTests_RLSAnyTests_Present,
+    _RetrieveTests_ImpersonatedUser_lbarker
 )
 
 EVALUATE _AllDiscoveryTests

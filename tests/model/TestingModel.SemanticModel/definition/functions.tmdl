@@ -11,7 +11,7 @@ function 'PQL.Assert.ShouldBeTrue' =
 		        "Actual", IF(actualCondition, "TRUE", "FALSE"),
 		        "Passed", _Passed
 		    )
-	lineageTag: 59ebbc07-0c3d-4837-b376-e57eb8d51942
+	lineageTag: 442e062c-eb5d-4422-92d1-f8b1cf54eed3
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -26,7 +26,7 @@ function 'PQL.Assert.ShouldBeFalse' =
 		        "Actual", IF(actualCondition, "TRUE", "FALSE"),
 		        "Passed", _Passed
 		    )
-	lineageTag: 78a22272-357d-47d2-bfd7-46ab1054b232
+	lineageTag: c1597083-498d-41e5-b8e9-78ec0a92502a
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -39,10 +39,10 @@ function 'PQL.Assert.ShouldBeNull' =
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", "NULL",
-		        "Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
+		        "Actual", IF(ISBLANK(actualValue), "NULL", IF(EXACT(actualValue, ""), "BLANK (empty string)", "HAS VALUE")),
 		        "Passed", _Passed
 		    )
-	lineageTag: cfae51dd-012e-4eae-bedc-a4c74dd6c5c4
+	lineageTag: d0cde6d6-6bb8-4da6-93d2-f3fe1ca1326b
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -56,10 +56,10 @@ function 'PQL.Assert.ShouldNotBeNull' =
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", "NOT NULL",
-		        "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
+		        "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(EXACT(_ActualResult, ""), "BLANK (empty string)", "HAS VALUE")),
 		        "Passed", _Passed
 		    )
-	lineageTag: 5e544929-6f5c-474c-b752-cb77fcc20406
+	lineageTag: 42e1567f-ad7d-401d-92fa-1b2bff050616
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -68,14 +68,14 @@ function 'PQL.Assert.ShouldNotBeNull' =
 /// Asserts that a value is BLANK (empty string "").
 function 'PQL.Assert.ShouldBeBlank' =
 		(testName : STRING, actualValue : VARIANT) =>
-		    VAR _Passed = NOT ISBLANK(actualValue) && actualValue = ""
+		    VAR _Passed = NOT ISBLANK(actualValue) && EXACT(actualValue, "")
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", "BLANK (empty string)",
-		        "Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
+		        "Actual", IF(ISBLANK(actualValue), "NULL", IF(EXACT(actualValue, ""), "BLANK (empty string)", "HAS VALUE")),
 		        "Passed", _Passed
 		    )
-	lineageTag: 7c128888-cd4b-4046-acba-868d4ad01b0b
+	lineageTag: ae43a0f2-f44a-430b-97ee-b23f8868cad5
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -85,14 +85,14 @@ function 'PQL.Assert.ShouldBeBlank' =
 function 'PQL.Assert.ShouldNotBeBlank' =
 		(testName : STRING, actualValue : SCALAR VARIANT EXPR) =>
 		    VAR _ActualResult = actualValue
-		    VAR _Passed = ISBLANK(_ActualResult) || _ActualResult <> ""
+		    VAR _Passed = ISBLANK(_ActualResult) || NOT EXACT(_ActualResult, "")
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", "NOT BLANK (not empty string)",
-		        "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
+		        "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(EXACT(_ActualResult, ""), "BLANK (empty string)", "HAS VALUE")),
 		        "Passed", _Passed
 		    )
-	lineageTag: d18e37b7-daa3-4fae-9b5d-2ef97a94fce4
+	lineageTag: b52ac9cf-17ac-4757-8371-45cefffabe27
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -101,14 +101,14 @@ function 'PQL.Assert.ShouldNotBeBlank' =
 /// Asserts that a value is NULL or BLANK (BLANK() or empty string "").
 function 'PQL.Assert.ShouldBeNullOrBlank' =
 		(testName : STRING, actualValue : VARIANT) =>
-		    VAR _Passed = ISBLANK(actualValue) || actualValue = ""
+		    VAR _Passed = ISBLANK(actualValue) || EXACT(actualValue, "")
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", "NULL OR BLANK",
-		        "Actual", IF(ISBLANK(actualValue), "NULL", IF(actualValue = "", "BLANK (empty string)", "HAS VALUE")),
+		        "Actual", IF(ISBLANK(actualValue), "NULL", IF(EXACT(actualValue, ""), "BLANK (empty string)", "HAS VALUE")),
 		        "Passed", _Passed
 		    )
-	lineageTag: 66212dc3-4511-4a59-a5a0-8589697565e2
+	lineageTag: 2bbbbf8c-84cb-4477-84bf-b7ab82b5ef0f
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -118,14 +118,14 @@ function 'PQL.Assert.ShouldBeNullOrBlank' =
 function 'PQL.Assert.ShouldNotBeNullOrBlank' =
 		(testName : STRING, actualValue : SCALAR VARIANT EXPR) =>
 		    VAR _ActualResult = actualValue
-		    VAR _Passed = NOT ISBLANK(_ActualResult) && _ActualResult <> ""
+		    VAR _Passed = NOT ISBLANK(_ActualResult) && NOT EXACT(_ActualResult, "")
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", "NOT NULL AND NOT BLANK",
-		        "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(_ActualResult = "", "BLANK (empty string)", "HAS VALUE")),
+		        "Actual", IF(ISBLANK(_ActualResult), "NULL", IF(EXACT(_ActualResult, ""), "BLANK (empty string)", "HAS VALUE")),
 		        "Passed", _Passed
 		    )
-	lineageTag: dca2d311-3b4a-44d7-b0c6-a04a7515c006
+	lineageTag: 5e9fb95b-cec7-415a-b84b-1eee5d8fdd75
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -133,14 +133,16 @@ function 'PQL.Assert.ShouldNotBeNullOrBlank' =
 
 function 'PQL.Assert.ShouldEqual' =
 		(testName : STRING, expected : VARIANT, actual : VARIANT) =>
-		    VAR _Passed = expected = actual
+		    VAR _ExpType = SWITCH(TRUE(), ISBLANK(expected), 0, ISLOGICAL(expected), 1, ISTEXT(expected), 2, ISNUMBER(expected), 3, 4)
+		    VAR _ActType = SWITCH(TRUE(), ISBLANK(actual), 0, ISLOGICAL(actual), 1, ISTEXT(actual), 2, ISNUMBER(actual), 3, 4)
+		    VAR _Passed = _ExpType = _ActType && FORMAT(expected, "") = FORMAT(actual, "")
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", FORMAT(expected, ""),
 		        "Actual", FORMAT(actual, ""),
 		        "Passed", _Passed
 		    )
-	lineageTag: c14fd5dc-f045-4214-950f-8f2288de76b6
+	lineageTag: 6cadf37d-e8d0-4759-adc6-cf3f2d7276c2
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -148,14 +150,16 @@ function 'PQL.Assert.ShouldEqual' =
 
 function 'PQL.Assert.ShouldNotEqual' =
 		(testName : STRING, notExpected : VARIANT, actual : VARIANT) =>
-		    VAR _Passed = notExpected <> actual
+		    VAR _ExpType = SWITCH(TRUE(), ISBLANK(notExpected), 0, ISLOGICAL(notExpected), 1, ISTEXT(notExpected), 2, ISNUMBER(notExpected), 3, 4)
+		    VAR _ActType = SWITCH(TRUE(), ISBLANK(actual), 0, ISLOGICAL(actual), 1, ISTEXT(actual), 2, ISNUMBER(actual), 3, 4)
+		    VAR _Passed = NOT(_ExpType = _ActType && FORMAT(notExpected, "") = FORMAT(actual, ""))
 		    RETURN ROW(
 		        "TestName", testName,
 		        "Expected", "NOT " & FORMAT(notExpected, ""),
 		        "Actual", FORMAT(actual, ""),
 		        "Passed", _Passed
 		    )
-	lineageTag: 2664b53d-4abc-4396-b526-3d3d9d763e58
+	lineageTag: 44f9650e-9a9a-49c7-a800-d97397afc40e
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -171,7 +175,7 @@ function 'PQL.Assert.ShouldEqualExactly' =
 		        "Actual", actual,
 		        "Passed", _Passed
 		    )
-	lineageTag: 00d69486-aef1-458d-b4a4-ad9f97f1bfe6
+	lineageTag: 3af82364-0149-41b0-b07c-c5e17998f429
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -186,7 +190,7 @@ function 'PQL.Assert.ShouldBeGreaterThan' =
 		        "Actual", FORMAT(actual, ""),
 		        "Passed", _Passed
 		    )
-	lineageTag: 66360c31-66e7-4741-b999-cb37c635d731
+	lineageTag: d8d896f8-a3b7-43fa-abb1-c8a8a8cf297f
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -201,7 +205,7 @@ function 'PQL.Assert.ShouldBeLessThan' =
 		        "Actual", FORMAT(actual, ""),
 		        "Passed", _Passed
 		    )
-	lineageTag: 18f77197-12c1-4fe7-9b9d-b6b38f28fef1
+	lineageTag: be0a45d8-9244-4e1b-a2c8-33f2e4641271
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -217,7 +221,7 @@ function 'PQL.Assert.ShouldBeGreaterOrEqual' =
 		        "Actual", FORMAT(actual, ""),
 		        "Passed", _Passed
 		    )
-	lineageTag: ea9b5754-a104-4784-a785-33c26033e60a
+	lineageTag: 634d7f47-6c65-43a3-aa4d-1a55343c06f0
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -233,7 +237,7 @@ function 'PQL.Assert.ShouldBeLessOrEqual' =
 		        "Actual", FORMAT(actual, ""),
 		        "Passed", _Passed
 		    )
-	lineageTag: a498d5cb-76cd-4cb0-8652-f7b11094831b
+	lineageTag: b02bb57e-4127-4473-9b56-aad7d3e87fe4
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -248,7 +252,7 @@ function 'PQL.Assert.ShouldBeBetween' =
 		        "Actual", FORMAT(actual, ""),
 		        "Passed", _Passed
 		    )
-	lineageTag: bbab9866-e266-4d48-93d9-bc0fea015331
+	lineageTag: af576cdc-1aac-4337-8afc-9d0c8444d9b3
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -265,7 +269,7 @@ function 'PQL.Assert.ShouldStartWith' =
 		        "Actual", actual,
 		        "Passed", _Passed
 		    )
-	lineageTag: e0c1c2e5-c96e-495d-b00a-cf25aa735be8
+	lineageTag: b58f938c-44f0-45a7-ae31-a7b90f3e4e07
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -281,7 +285,7 @@ function 'PQL.Assert.ShouldEndWith' =
 		        "Actual", actual,
 		        "Passed", _Passed
 		    )
-	lineageTag: 85ab4d0b-b865-4459-b99d-a80792e1cd3e
+	lineageTag: 2c5dfe34-bd89-4a9e-b10f-bfd71374577b
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -297,7 +301,7 @@ function 'PQL.Assert.ShouldContainString' =
 		        "Actual", actual,
 		        "Passed", _Passed
 		    )
-	lineageTag: e95d5508-06c5-4ecf-b5cd-b178da9b8a57
+	lineageTag: 8885a5f7-c070-4006-a8f4-82a780fcd5b5
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -313,7 +317,7 @@ function 'PQL.Assert.ShouldMatch' =
 		        "Actual", actual,
 		        "Passed", _Passed
 		    )
-	lineageTag: d7a23d32-e829-40bf-9ea9-67fdddd4f2dd
+	lineageTag: 118a18a6-7a5d-469b-a81a-679284f8d82e
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -553,7 +557,7 @@ function 'PQL.Assert.Relationship.ShouldExist' =
 		        "Actual", IF(_Found, "EXISTS", "NOT FOUND"),
 		        "Passed", _Found
 		    )
-	lineageTag: cb67cc90-0370-40f6-8520-b0a924889672
+	lineageTag: 31f31647-a03b-4e39-afec-19503b5f8117
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -569,29 +573,17 @@ function 'PQL.Assert.RetrieveTests' =
 		            "Name",        [Name],
 		            "Description", [Description]
 		        )
-		    VAR _PkgId =
-		        SELECTCOLUMNS(
-		            FILTER(INFO.ANNOTATIONS(), [Name] = "DAXLIB_PackageId"),
-		            "ID",        [ObjectID],
-		            "PackageId", [Value]
-		        )
-		    VAR _PkgVer =
-		        SELECTCOLUMNS(
-		            FILTER(INFO.ANNOTATIONS(), [Name] = "DAXLIB_PackageVersion"),
-		            "ID",             [ObjectID],
-		            "PackageVersion", [Value]
-		        )
 		    VAR _ImpersonatedUser =
 		        SELECTCOLUMNS(
-		            FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_UserImpersonationName"),
+		            FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_ImpersonatedUserName"),
 		            "ID",               [ObjectID],
-		            "ImpersonatedUser", [Value]
+		            "PQLAssert_ImpersonatedUserName", [Value]
 		        )
 		    VAR _AllFunctions =
 		        NATURALLEFTOUTERJOIN(
 		            NATURALLEFTOUTERJOIN(
-		                NATURALLEFTOUTERJOIN(_Functions, _PkgId),
-		                _PkgVer
+		                _Functions,
+		                _ImpersonatedUser
 		            ),
 		            _ImpersonatedUser
 		        )
@@ -600,7 +592,7 @@ function 'PQL.Assert.RetrieveTests' =
 		            _AllFunctions,
 		            OR(RIGHT([Name], 5) = ".Test", RIGHT([Name], 6) = ".Tests")
 		        )
-	lineageTag: a313bca7-cc2c-4d8d-96bb-acc589bb9836
+	lineageTag: b081aede-5bf0-4bd8-86a7-73201a7afa24
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -619,29 +611,17 @@ function 'PQL.Assert.RetrieveTestsByEnvironment' =
 		            "Name",        [Name],
 		            "Description", [Description]
 		        )
-		    VAR _PkgId =
-		        SELECTCOLUMNS(
-		            FILTER(INFO.ANNOTATIONS(), [Name] = "DAXLIB_PackageId"),
-		            "ID",        [ObjectID],
-		            "PackageId", [Value]
-		        )
-		    VAR _PkgVer =
-		        SELECTCOLUMNS(
-		            FILTER(INFO.ANNOTATIONS(), [Name] = "DAXLIB_PackageVersion"),
-		            "ID",             [ObjectID],
-		            "PackageVersion", [Value]
-		        )
 		    VAR _ImpersonatedUser =
 		        SELECTCOLUMNS(
-		            FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_UserImpersonationName"),
+		            FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_ImpersonatedUserName"),
 		            "ID",               [ObjectID],
-		            "ImpersonatedUser", [Value]
+		            "PQLAssert_ImpersonatedUserName", [Value]
 		        )
 		    VAR _AllFunctions =
 		        NATURALLEFTOUTERJOIN(
 		            NATURALLEFTOUTERJOIN(
-		                NATURALLEFTOUTERJOIN(_Functions, _PkgId),
-		                _PkgVer
+		                _Functions,
+		                _ImpersonatedUser
 		            ),
 		            _ImpersonatedUser
 		        )
@@ -655,7 +635,7 @@ function 'PQL.Assert.RetrieveTestsByEnvironment' =
 		                || CONTAINSSTRING(UPPER([Name]), ".ANY.")
 		            )
 		        )
-	lineageTag: ef54432e-2ecd-4db3-9a44-15d0facbe657
+	lineageTag: 966fa55e-573b-4f9e-b044-1259cc37802d
 
 	annotation DAXLIB_PackageId = PQL.Assert
 
@@ -2924,4 +2904,11 @@ function 'PQL.Assert.BP.ShouldHideFactTableColumns' =
 	annotation DAXLIB_PackageId = PQL.Assert
 
 	annotation DAXLIB_PackageVersion = 0.2.0
+
+function 'RLS.ANY.Tests' =
+		() =>
+				PQL.Assert.ShouldEqualExactly("West Security Group Should Not See Other Groups",0,COUNTROWS(FILTER('Groups',Groups[Group Name]<>"West"))+0)
+	lineageTag: de968091-8b67-454c-bfa9-61fa543cbdad
+
+	annotation PQLAssert_ImpersonatedUserName = lbarker@cftechnologiesllc.com
 

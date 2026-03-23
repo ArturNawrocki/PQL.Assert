@@ -6,9 +6,13 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
+queryGroup RLS
+
+	annotation PBI_QueryGroupOrder = 0
+
 annotation PBI_ProTooling = ["TMDLView_Desktop","DaxQueryView_Desktop","DevMode","TMDL-Extension","MCP-PBIModeling"]
 
-annotation PBI_QueryOrder = ["TestData","TestData-Fact","Calendar","Mock-Fact"]
+annotation PBI_QueryOrder = ["TestData","TestData-Fact","Calendar","Mock-Fact","Users","Users_To_Group_Bridge","Groups","_Measures","Group Fact"]
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
@@ -24,6 +28,14 @@ ref table LargeTableOneMillion
 ref table LargeTableOneMillionOne
 ref table LargeTable-Dimension
 ref table LargeTableOneMillionOne-2
+ref table Users
+ref table Users_To_Group_Bridge
+ref table Groups
+ref table _Measures
+ref table 'Group Fact'
+
+ref role Dynamic
+ref role West
 
 ref cultureInfo en-US
 

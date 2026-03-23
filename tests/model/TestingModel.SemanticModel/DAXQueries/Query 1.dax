@@ -1,17 +1,25 @@
-DEFINE 
-
-
-
-	FUNCTION MeasuresX.DEV.Tests = () =>
-    VAR __DS0FilterTable = 
-        TREATAS({TRUE}, 'TestData'[IsActive])
-
-    VAR _Test1 =
-        SUMMARIZECOLUMNS(
-            __DS0FilterTable,
-            "CountID", IGNORE(CALCULATE(COUNTA('TestData'[ID])))
-        )
-
-	RETURN PQL.Assert.ShouldEqual("ShouldBeEqual to 3", 3, _Test1)
-
-EVALUATE MeasuresX.DEV.Tests()
+DEFINE             
+			    VAR _Functions =
+                    SELECTCOLUMNS(
+                        INFO.USERDEFINEDFUNCTIONS(),
+                        "ID",          [ID],
+                        "Name",        [Name],
+                        "Description", [Description]
+                    )
+                VAR _ImpersonatedUser =
+                    SELECTCOLUMNS(
+                        FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_ImpersonatedUserName"),
+                        "ID",               [ObjectID],
+                        "PQLAssert_ImpersonatedUserName", [Value]
+                    )
+                VAR _AllFunctions =
+                    NATURALLEFTOUTERJOIN(
+                        NATURALLEFTOUTERJOIN(
+                            _Functions,
+                            _ImpersonatedUser
+                        ),
+                        _ImpersonatedUser
+                    )
+					
+                EVALUATE
+                    FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_ImpersonatedUserName")
