@@ -2,71 +2,78 @@ DEFINE
 
 // ============================================
 // Test Discovery Function Test Suite
-// Tests for PQL.Assert.RetrieveTests and RetrieveTestsByEnvironment
+// Tests for PQL.Assert.RetrieveTests/RetrieveTestsByEnvironment (V1/PA)
+// and RetrieveTestsV2/RetrieveTestsByEnvironmentV2 (Full Metadata)
 // ============================================
 
-// PQL.Assert.RetrieveTests
+// ============================================
+// V2 TESTS - Full Metadata Path
+// Uses RetrieveTestsV2 / RetrieveTestsByEnvironmentV2
+// Includes Description and PQLAssert_ImpersonatedUserName columns
+// ============================================
+
+// PQL.Assert.RetrieveTestsV2
 // Should return all functions ending with .Test or .Tests
-VAR _AllTests = PQL.Assert.RetrieveTests(FALSE)
+VAR _AllTests = PQL.Assert.RetrieveTestsV2()
 VAR _AllTestsCount = COUNTROWS(_AllTests)
 VAR _RetrieveTests_HasResults = 
     ROW(
-        "TestName", "Discovery: RetrieveTests should return test functions",
+        "TestName", "Discovery: RetrieveTestsV2 should return test functions",
         "Expected", "Count > 0",
         "Actual", "Count = " & FORMAT(_AllTestsCount, "0"),
         "Passed", _AllTestsCount > 0
     )
 
-// PQL.Assert.RetrieveTestsByEnvironment - DEV
-VAR _DevTests = PQL.Assert.RetrieveTestsByEnvironment("DEV", FALSE)
+// PQL.Assert.RetrieveTestsByEnvironmentV2 - DEV
+VAR _DevTests = PQL.Assert.RetrieveTestsByEnvironmentV2("DEV")
 VAR _DevTestsCount = COUNTROWS(_DevTests)
 VAR _RetrieveTestsByEnvironment_DEV = 
     ROW(
-        "TestName", "Discovery: RetrieveTestsByEnvironment('DEV') should return .DEV. and .ANY. tests",
+        "TestName", "Discovery: RetrieveTestsByEnvironmentV2('DEV') should return .DEV. and .ANY. tests",
         "Expected", "Count > 0",
         "Actual", "Count = " & FORMAT(_DevTestsCount, "0"),
         "Passed", _DevTestsCount > 0
     )
 
-// PQL.Assert.RetrieveTestsByEnvironment - TEST
-VAR _TestTests = PQL.Assert.RetrieveTestsByEnvironment("TEST", FALSE)
+// PQL.Assert.RetrieveTestsByEnvironmentV2 - TEST
+VAR _TestTests = PQL.Assert.RetrieveTestsByEnvironmentV2("TEST")
 VAR _TestTestsCount = COUNTROWS(_TestTests)
 VAR _RetrieveTestsByEnvironment_TEST = 
     ROW(
-        "TestName", "Discovery: RetrieveTestsByEnvironment('TEST') should return .TEST. and .ANY. tests",
+        "TestName", "Discovery: RetrieveTestsByEnvironmentV2('TEST') should return .TEST. and .ANY. tests",
         "Expected", "Count > 0",
         "Actual", "Count = " & FORMAT(_TestTestsCount, "0"),
         "Passed", _TestTestsCount > 0
     )
 
-// PQL.Assert.RetrieveTestsByEnvironment - PROD
-VAR _ProdTests = PQL.Assert.RetrieveTestsByEnvironment("PROD", FALSE)
+// PQL.Assert.RetrieveTestsByEnvironmentV2 - PROD
+VAR _ProdTests = PQL.Assert.RetrieveTestsByEnvironmentV2("PROD")
 VAR _ProdTestsCount = COUNTROWS(_ProdTests)
 VAR _RetrieveTestsByEnvironment_PROD = 
     ROW(
-        "TestName", "Discovery: RetrieveTestsByEnvironment('PROD') should return .PROD. and .ANY. tests",
+        "TestName", "Discovery: RetrieveTestsByEnvironmentV2('PROD') should return .PROD. and .ANY. tests",
         "Expected", "Count > 0",
         "Actual", "Count = " & FORMAT(_ProdTestsCount, "0"),
         "Passed", _ProdTestsCount > 0
     )
 
-// PQL.Assert.RetrieveTestsByEnvironment - blank (should return all)
-VAR _BlankEnvTests = PQL.Assert.RetrieveTestsByEnvironment("", FALSE)
+// PQL.Assert.RetrieveTestsByEnvironmentV2 - blank (should return all)
+VAR _BlankEnvTests = PQL.Assert.RetrieveTestsByEnvironmentV2("")
 VAR _BlankEnvTestsCount = COUNTROWS(_BlankEnvTests)
 VAR _RetrieveTestsByEnvironment_Blank = 
     ROW(
-        "TestName", "Discovery: RetrieveTestsByEnvironment('') should return all tests",
+        "TestName", "Discovery: RetrieveTestsByEnvironmentV2('') should return all tests",
         "Expected", "Count = " & FORMAT(_AllTestsCount, "0"),
         "Actual", "Count = " & FORMAT(_BlankEnvTestsCount, "0"),
         "Passed", _BlankEnvTestsCount = _AllTestsCount
     )
 
-// PQL.Assert.RetrieveTestsByEnvironment - case insensitivity
-VAR _LowercaseDevTests = PQL.Assert.RetrieveTestsByEnvironment("dev", FALSE)
+// PQL.Assert.RetrieveTestsByEnvironmentV2 - case insensitivity
+VAR _LowercaseDevTests = PQL.Assert.RetrieveTestsByEnvironmentV2("dev")
 VAR _LowercaseDevTestsCount = COUNTROWS(_LowercaseDevTests)
 VAR _RetrieveTestsByEnvironment_CaseInsensitive = 
     ROW(
-        "TestName", "Discovery: RetrieveTestsByEnvironment is case-insensitive",
+        "TestName", "Discovery: RetrieveTestsByEnvironmentV2 is case-insensitive",
         "Expected", "'dev' should equal 'DEV'",
         "Actual", "dev count = " & FORMAT(_LowercaseDevTestsCount, "0") & ", DEV count = " & FORMAT(_DevTestsCount, "0"),
         "Passed", _LowercaseDevTestsCount = _DevTestsCount
@@ -77,7 +84,7 @@ VAR _RLSAnyTests = FILTER(_AllTests, [Name] = "RLS.ANY.Tests")
 VAR _RLSAnyTestsCount = COUNTROWS(_RLSAnyTests)
 VAR _RetrieveTests_RLSAnyTests_Present =
     ROW(
-        "TestName", "Discovery: RetrieveTests should include RLS.ANY.Tests",
+        "TestName", "Discovery: RetrieveTestsV2 should include RLS.ANY.Tests",
         "Expected", "Count = 1",
         "Actual", "Count = " & FORMAT(_RLSAnyTestsCount, "0"),
         "Passed", _RLSAnyTestsCount = 1
@@ -93,91 +100,92 @@ VAR _RetrieveTests_ImpersonatedUser_lbarker =
     )
 
 // ============================================
-// callFromPowerAutomate = TRUE tests
-// Verifies the Power Automate-compatible path:
-//   - Returns results (uses INFO.FUNCTIONS)
-//   - Description column is always BLANK()
-//   - PQLAssert_ImpersonatedUserName column is always BLANK()
+// V1 / POWER AUTOMATE COMPATIBLE TESTS
+// Uses RetrieveTests / RetrieveTestsByEnvironment (no boolean param)
+// Returns only Name column - compatible with Power Automate REST API
 // ============================================
 
-// RetrieveTests(TRUE) - should return results
-VAR _PATests = PQL.Assert.RetrieveTests(TRUE)
+// RetrieveTests() - should return results
+VAR _PATests = PQL.Assert.RetrieveTests()
 VAR _PATestsCount = COUNTROWS(_PATests)
 VAR _RetrieveTests_PA_HasResults =
     ROW(
-        "TestName", "Discovery [PA=TRUE]: RetrieveTests should return test functions",
+        "TestName", "Discovery [PA]: RetrieveTests should return test functions",
         "Expected", "Count > 0",
         "Actual", "Count = " & FORMAT(_PATestsCount, "0"),
         "Passed", _PATestsCount > 0
     )
 
-// RetrieveTests(TRUE) - same count as FALSE path
+// RetrieveTests() - same count as V2 path
 VAR _RetrieveTests_PA_SameCount =
     ROW(
-        "TestName", "Discovery [PA=TRUE]: RetrieveTests count should match PA=FALSE count",
+        "TestName", "Discovery [PA]: RetrieveTests count should match RetrieveTestsV2 count",
         "Expected", "Count = " & FORMAT(_AllTestsCount, "0"),
         "Actual", "Count = " & FORMAT(_PATestsCount, "0"),
         "Passed", _PATestsCount = _AllTestsCount
     )
 
-// RetrieveTests(TRUE) - Description should be blank
-VAR _PATestsWithDescription = FILTER(_PATests, NOT ISBLANK([Description]))
-VAR _RetrieveTests_PA_DescriptionBlank =
+// RetrieveTests() - Name column has no blanks (validates schema)
+VAR _PATestsWithBlankName = FILTER(_PATests, ISBLANK([Name]))
+VAR _RetrieveTests_PA_NoBlankNames =
     ROW(
-        "TestName", "Discovery [PA=TRUE]: RetrieveTests Description should be BLANK",
-        "Expected", "0 rows with non-blank Description",
-        "Actual", FORMAT(COUNTROWS(_PATestsWithDescription), "0") & " rows with non-blank Description",
-        "Passed", COUNTROWS(_PATestsWithDescription) = 0
+        "TestName", "Discovery [PA]: RetrieveTests Name column should have no blanks",
+        "Expected", "0 rows with blank Name",
+        "Actual", FORMAT(COUNTROWS(_PATestsWithBlankName), "0") & " rows with blank Name",
+        "Passed", COUNTROWS(_PATestsWithBlankName) = 0
     )
 
-// RetrieveTests(TRUE) - PQLAssert_ImpersonatedUserName should be blank
-VAR _PATestsWithImpersonation = FILTER(_PATests, NOT ISBLANK([PQLAssert_ImpersonatedUserName]))
-VAR _RetrieveTests_PA_ImpersonationBlank =
-    ROW(
-        "TestName", "Discovery [PA=TRUE]: RetrieveTests PQLAssert_ImpersonatedUserName should be BLANK",
-        "Expected", "0 rows with non-blank PQLAssert_ImpersonatedUserName",
-        "Actual", FORMAT(COUNTROWS(_PATestsWithImpersonation), "0") & " rows with non-blank PQLAssert_ImpersonatedUserName",
-        "Passed", COUNTROWS(_PATestsWithImpersonation) = 0
-    )
-
-// RetrieveTestsByEnvironment(TRUE) - should return results for DEV
-VAR _PADevTests = PQL.Assert.RetrieveTestsByEnvironment("DEV", TRUE)
+// RetrieveTestsByEnvironment("DEV") - should return results
+VAR _PADevTests = PQL.Assert.RetrieveTestsByEnvironment("DEV")
 VAR _PADevTestsCount = COUNTROWS(_PADevTests)
 VAR _RetrieveTestsByEnv_PA_DEV =
     ROW(
-        "TestName", "Discovery [PA=TRUE]: RetrieveTestsByEnvironment('DEV') should return .DEV. and .ANY. tests",
+        "TestName", "Discovery [PA]: RetrieveTestsByEnvironment('DEV') should return .DEV. and .ANY. tests",
         "Expected", "Count > 0",
         "Actual", "Count = " & FORMAT(_PADevTestsCount, "0"),
         "Passed", _PADevTestsCount > 0
     )
 
-// RetrieveTestsByEnvironment(TRUE) - DEV count matches FALSE path
+// RetrieveTestsByEnvironment("DEV") - count matches V2
 VAR _RetrieveTestsByEnv_PA_DEV_SameCount =
     ROW(
-        "TestName", "Discovery [PA=TRUE]: RetrieveTestsByEnvironment('DEV') count should match PA=FALSE count",
+        "TestName", "Discovery [PA]: RetrieveTestsByEnvironment('DEV') count should match RetrieveTestsByEnvironmentV2 count",
         "Expected", "Count = " & FORMAT(_DevTestsCount, "0"),
         "Actual", "Count = " & FORMAT(_PADevTestsCount, "0"),
         "Passed", _PADevTestsCount = _DevTestsCount
     )
 
-// RetrieveTestsByEnvironment(TRUE) - Description should be blank
-VAR _PADevTestsWithDescription = FILTER(_PADevTests, NOT ISBLANK([Description]))
-VAR _RetrieveTestsByEnv_PA_DescriptionBlank =
+// RetrieveTestsByEnvironment("TEST") - should return results
+VAR _PATestTests = PQL.Assert.RetrieveTestsByEnvironment("TEST")
+VAR _PATestTestsCount = COUNTROWS(_PATestTests)
+VAR _RetrieveTestsByEnv_PA_TEST =
     ROW(
-        "TestName", "Discovery [PA=TRUE]: RetrieveTestsByEnvironment Description should be BLANK",
-        "Expected", "0 rows with non-blank Description",
-        "Actual", FORMAT(COUNTROWS(_PADevTestsWithDescription), "0") & " rows with non-blank Description",
-        "Passed", COUNTROWS(_PADevTestsWithDescription) = 0
+        "TestName", "Discovery [PA]: RetrieveTestsByEnvironment('TEST') should return .TEST. and .ANY. tests",
+        "Expected", "Count > 0",
+        "Actual", "Count = " & FORMAT(_PATestTestsCount, "0"),
+        "Passed", _PATestTestsCount > 0
     )
 
-// RetrieveTestsByEnvironment(TRUE) - PQLAssert_ImpersonatedUserName should be blank
-VAR _PADevTestsWithImpersonation = FILTER(_PADevTests, NOT ISBLANK([PQLAssert_ImpersonatedUserName]))
-VAR _RetrieveTestsByEnv_PA_ImpersonationBlank =
+// RetrieveTestsByEnvironment - case insensitivity
+VAR _PALowercaseDev = PQL.Assert.RetrieveTestsByEnvironment("dev")
+VAR _PALowercaseDevCount = COUNTROWS(_PALowercaseDev)
+VAR _RetrieveTestsByEnv_PA_CaseInsensitive =
     ROW(
-        "TestName", "Discovery [PA=TRUE]: RetrieveTestsByEnvironment PQLAssert_ImpersonatedUserName should be BLANK",
-        "Expected", "0 rows with non-blank PQLAssert_ImpersonatedUserName",
-        "Actual", FORMAT(COUNTROWS(_PADevTestsWithImpersonation), "0") & " rows with non-blank PQLAssert_ImpersonatedUserName",
-        "Passed", COUNTROWS(_PADevTestsWithImpersonation) = 0
+        "TestName", "Discovery [PA]: RetrieveTestsByEnvironment is case-insensitive",
+        "Expected", "'dev' should equal 'DEV'",
+        "Actual", "dev count = " & FORMAT(_PALowercaseDevCount, "0") & ", DEV count = " & FORMAT(_PADevTestsCount, "0"),
+        "Passed", _PALowercaseDevCount = _PADevTestsCount
+    )
+
+// RetrieveTestsByEnvironment("") - should return all tests
+VAR _PABlankEnvTests = PQL.Assert.RetrieveTestsByEnvironment("")
+VAR _PABlankEnvTestsCount = COUNTROWS(_PABlankEnvTests)
+VAR _RetrieveTestsByEnv_PA_Blank =
+    ROW(
+        "TestName", "Discovery [PA]: RetrieveTestsByEnvironment('') should return all tests",
+        "Expected", "Count = " & FORMAT(_PATestsCount, "0"),
+        "Actual", "Count = " & FORMAT(_PABlankEnvTestsCount, "0"),
+        "Passed", _PABlankEnvTestsCount = _PATestsCount
     )
 
 // Combine all test results
@@ -192,12 +200,12 @@ VAR _AllDiscoveryTests = UNION(
     _RetrieveTests_ImpersonatedUser_lbarker,
     _RetrieveTests_PA_HasResults,
     _RetrieveTests_PA_SameCount,
-    _RetrieveTests_PA_DescriptionBlank,
-    _RetrieveTests_PA_ImpersonationBlank,
+    _RetrieveTests_PA_NoBlankNames,
     _RetrieveTestsByEnv_PA_DEV,
     _RetrieveTestsByEnv_PA_DEV_SameCount,
-    _RetrieveTestsByEnv_PA_DescriptionBlank,
-    _RetrieveTestsByEnv_PA_ImpersonationBlank
+    _RetrieveTestsByEnv_PA_TEST,
+    _RetrieveTestsByEnv_PA_CaseInsensitive,
+    _RetrieveTestsByEnv_PA_Blank
 )
 
 EVALUATE _AllDiscoveryTests

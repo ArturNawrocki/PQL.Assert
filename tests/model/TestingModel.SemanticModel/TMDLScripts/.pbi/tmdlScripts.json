@@ -13,7 +13,8 @@
     "Load PQL.Col",
     "Load PQL.Tbl",
     "Script 1",
-    "Script 2"
+    "Script 2",
+    "Script 3"
   ],
-  "defaultTab": "Script 2"
+  "defaultTab": "Script 3"
 }
