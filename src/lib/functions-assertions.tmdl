@@ -292,19 +292,26 @@ createOrReplace
                         "Name",        [Name],
                         "Description", [Description]
                     )
-                VAR _ImpersonatedUser =
-                    SELECTCOLUMNS(
-                        FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_ImpersonatedUserName"),
-                        "ID",               [ObjectID],
-                        "PQLAssert_ImpersonatedUserName", [Value]
-                    )
+                // INFO.ANNOTATIONS() is unavailable via the Power BI REST API (e.g. Power Automate).
+                // IFERROR wraps a scalar (MAXX result), catching the restricted-context error and
+                // returning BLANK() — so PQLAssert_ImpersonatedUserName is blank in service context.
                 VAR _AllFunctions =
-                    NATURALLEFTOUTERJOIN(
-                        NATURALLEFTOUTERJOIN(
-                            _Functions,
-                            _ImpersonatedUser
-                        ),
-                        _ImpersonatedUser
+                    ADDCOLUMNS(
+                        _Functions,
+                        "PQLAssert_ImpersonatedUserName",
+                        VAR _currentID = [ID]
+                        RETURN
+                        IFERROR(
+                            MAXX(
+                                FILTER(
+                                    INFO.ANNOTATIONS(),
+                                    [Name] = "PQLAssert_ImpersonatedUserName"
+                                        && [ObjectID] = _currentID
+                                ),
+                                [Value]
+                            ),
+                            BLANK()
+                        )
                     )
                 RETURN
                     FILTER(
@@ -327,19 +334,26 @@ createOrReplace
                         "Name",        [Name],
                         "Description", [Description]
                     )
-                VAR _ImpersonatedUser =
-                    SELECTCOLUMNS(
-                        FILTER(INFO.ANNOTATIONS(), [Name] = "PQLAssert_ImpersonatedUserName"),
-                        "ID",               [ObjectID],
-                        "PQLAssert_ImpersonatedUserName", [Value]
-                    )
+                // INFO.ANNOTATIONS() is unavailable via the Power BI REST API (e.g. Power Automate).
+                // IFERROR wraps a scalar (MAXX result), catching the restricted-context error and
+                // returning BLANK() — so PQLAssert_ImpersonatedUserName is blank in service context.
                 VAR _AllFunctions =
-                    NATURALLEFTOUTERJOIN(
-                        NATURALLEFTOUTERJOIN(
-                            _Functions,
-                            _ImpersonatedUser
-                        ),
-                        _ImpersonatedUser
+                    ADDCOLUMNS(
+                        _Functions,
+                        "PQLAssert_ImpersonatedUserName",
+                        VAR _currentID = [ID]
+                        RETURN
+                        IFERROR(
+                            MAXX(
+                                FILTER(
+                                    INFO.ANNOTATIONS(),
+                                    [Name] = "PQLAssert_ImpersonatedUserName"
+                                        && [ObjectID] = _currentID
+                                ),
+                                [Value]
+                            ),
+                            BLANK()
+                        )
                     )
                 RETURN
                     FILTER(
