@@ -140,8 +140,19 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 
 ### Test Discovery
 
-- `PQL.Assert.RetrieveTests()` - Returns all test functions (ending with .Test or .Tests)
-- `PQL.Assert.RetrieveTestsByEnvironment(environment)` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Returns all tests if environment is blank.
+PQL.Assert provides two pairs of test discovery functions. The **V1 functions** are designed for use with Power Automate and any caller that does not support `INFO` DAX functions. The **V2 functions** return full metadata but require a context where `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS` are supported (e.g., DAX Query View, the Power BI MCP).
+
+> ⚠️ **Power Automate compatibility:** The `V2` functions use `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS`, which are **not supported** in the Power Automate **Execute Dataset Query** action. Use the V1 functions (`RetrieveTests` / `RetrieveTestsByEnvironment`) when calling from Power Automate.
+
+#### V1 — Power Automate compatible
+
+- `PQL.Assert.RetrieveTests()` - Returns all test functions (ending with .Test or .Tests) as a single `[Name]` column. Uses only `INFO.FUNCTIONS`; safe for Power Automate.
+- `PQL.Assert.RetrieveTestsByEnvironment(environment)` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Returns all tests if environment is blank. Uses only `INFO.FUNCTIONS`; safe for Power Automate.
+
+#### V2 — Full metadata (not for Power Automate)
+
+- `PQL.Assert.RetrieveTestsV2()` - Returns all test functions with full metadata columns (`[Name]`, `[Description]`, `[PQLAssert_ImpersonatedUserName]`). Uses `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS`. **Not compatible with Power Automate.**
+- `PQL.Assert.RetrieveTestsByEnvironmentV2(environment)` - Returns tests filtered by environment with full metadata. Case-insensitive. Returns all tests if environment is blank. **Not compatible with Power Automate.**
 
 ### Best Practice Validations
 
@@ -334,20 +345,27 @@ EVALUATE Measures.DEV.Tests()
 
 ### Discovering Tests
 
-Use the test discovery functions to find all available test functions:
+Use the test discovery functions to find all available test functions.
+
+> ⚠️ **Power Automate compatibility:** Use the **V1 functions** (`RetrieveTests` / `RetrieveTestsByEnvironment`) when calling from Power Automate. The V2 functions rely on `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS`, which are **not supported** in the Power Automate **Execute Dataset Query** action.
 
 ```dax
-// Find all test functions
+// V1 — Power Automate compatible (returns [Name] column only)
 EVALUATE PQL.Assert.RetrieveTests()
-
-// Find tests by environment (recommended approach)
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("DEV")   // Returns .DEV. and .ANY. tests
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("TEST")  // Returns .TEST. and .ANY. tests
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("PROD")  // Returns .PROD. and .ANY. tests
 
-// Case-insensitive - these are equivalent
+// V2 — Full metadata: [Name], [Description], [PQLAssert_ImpersonatedUserName]
+// NOT compatible with Power Automate
+EVALUATE PQL.Assert.RetrieveTestsV2()
+EVALUATE PQL.Assert.RetrieveTestsByEnvironmentV2("DEV")
+EVALUATE PQL.Assert.RetrieveTestsByEnvironmentV2("TEST")
+EVALUATE PQL.Assert.RetrieveTestsByEnvironmentV2("PROD")
+
+// Case-insensitive - these are equivalent for both V1 and V2
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("dev")
-EVALUATE PQL.Assert.RetrieveTestsByEnvironment("Dev")
+EVALUATE PQL.Assert.RetrieveTestsByEnvironmentV2("dev")```
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("DEV")
 
 // Custom environments are supported

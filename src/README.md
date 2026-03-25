@@ -134,8 +134,19 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 
 ### Test Discovery
 
-- `PQL.Assert.RetrieveTests()` - Returns all test functions (ending with .Test or .Tests)
-- `PQL.Assert.RetrieveTestsByEnvironment(environment)` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Returns all tests if environment is blank.
+PQL.Assert provides two pairs of test discovery functions. The **V1 functions** are designed for use with Power Automate and any caller that does not support `INFO` DAX functions. The **V2 functions** return full metadata but require a context where `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS` are supported (e.g., DAX Query View, the Power BI MCP).
+
+> ⚠️ **Power Automate compatibility:** The `V2` functions use `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS`, which are **not supported** in the Power Automate **Execute Dataset Query** action. Use the V1 functions (`RetrieveTests` / `RetrieveTestsByEnvironment`) when calling from Power Automate.
+
+#### V1 — Power Automate compatible
+
+- `PQL.Assert.RetrieveTests()` - Returns all test functions (ending with .Test or .Tests) as a single `[Name]` column. Uses only `INFO.FUNCTIONS`; safe for Power Automate.
+- `PQL.Assert.RetrieveTestsByEnvironment(environment)` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Returns all tests if environment is blank. Uses only `INFO.FUNCTIONS`; safe for Power Automate.
+
+#### V2 — Full metadata (not for Power Automate)
+
+- `PQL.Assert.RetrieveTestsV2()` - Returns all test functions with full metadata columns (`[Name]`, `[Description]`, `[PQLAssert_ImpersonatedUserName]`). Uses `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS`. **Not compatible with Power Automate.**
+- `PQL.Assert.RetrieveTestsByEnvironmentV2(environment)` - Returns tests filtered by environment with full metadata. Case-insensitive. Returns all tests if environment is blank. **Not compatible with Power Automate.**
 
 ### Best Practice Validations
 
