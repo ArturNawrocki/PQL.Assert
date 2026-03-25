@@ -1,5 +1,5 @@
 
-EVALUATE PQL.Assert.RetrieveTests()
+EVALUATE PQL.Assert.RetrieveTests(FALSE)
 
 
 EVALUATE INFO.USERDEFINEDFUNCTIONS()

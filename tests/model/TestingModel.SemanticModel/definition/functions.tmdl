@@ -564,40 +564,55 @@ function 'PQL.Assert.Relationship.ShouldExist' =
 	annotation DAXLIB_PackageVersion = 0.2.0
 
 /// Test Discovery Functions - PQL.Assert namespace
+/// When callFromPowerAutomate is TRUE, uses INFO.FUNCTIONS only (compatible with Power Automate REST API).
+/// When FALSE, enriches results with Description and RLS ImpersonatedUserName via INFO.USERDEFINEDFUNCTIONS and INFO.ANNOTATIONS.
 function 'PQL.Assert.RetrieveTests' =
-		() =>
-		    VAR _Functions =
+		(callFromPowerAutomate: BOOLEAN) =>
+		    VAR _BaseFunctions =
 		        SELECTCOLUMNS(
-		            INFO.USERDEFINEDFUNCTIONS(),
-		            "ID",          [ID],
-		            "Name",        [Name],
-		            "Description", [Description]
-		        )
-		    // INFO.ANNOTATIONS() is unavailable via the Power BI REST API (e.g. Power Automate).
-		    // IFERROR wraps a scalar (MAXX result), catching the restricted-context error and
-		    // returning BLANK() — so PQLAssert_ImpersonatedUserName is blank in service context.
-		    VAR _AllFunctions =
-		        ADDCOLUMNS(
-		            _Functions,
-		            "PQLAssert_ImpersonatedUserName",
-		            VAR _currentID = [ID]
-		            RETURN
-		            IFERROR(
-		                MAXX(
-		                    FILTER(
-		                        INFO.ANNOTATIONS(),
-		                        [Name] = "PQLAssert_ImpersonatedUserName"
-		                            && [ObjectID] = _currentID
-		                    ),
-		                    [Value]
-		                ),
-		                BLANK()
-		            )
+		            FILTER(
+		                INFO.FUNCTIONS("ORIGIN", "2"),
+		                OR(RIGHT([FUNCTION_NAME], 5) = ".Test", RIGHT([FUNCTION_NAME], 6) = ".Tests")
+		            ),
+		            "Name", [FUNCTION_NAME]
 		        )
 		    RETURN
-		        FILTER(
-		            _AllFunctions,
-		            OR(RIGHT([Name], 5) = ".Test", RIGHT([Name], 6) = ".Tests")
+		        ADDCOLUMNS(
+		            _BaseFunctions,
+		            "Description",
+		            IF(
+		                callFromPowerAutomate,
+		                BLANK(),
+		                VAR _funcName = [Name]
+		                RETURN
+		                IFERROR(
+		                    MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [Description]),
+		                    BLANK()
+		                )
+		            ),
+		            "PQLAssert_ImpersonatedUserName",
+		            IF(
+		                callFromPowerAutomate,
+		                BLANK(),
+		                VAR _funcName = [Name]
+		                VAR _funcID =
+		                    IFERROR(
+		                        MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [ID]),
+		                        BLANK()
+		                    )
+		                RETURN
+		                IFERROR(
+		                    MAXX(
+		                        FILTER(
+		                            INFO.ANNOTATIONS(),
+		                            [Name] = "PQLAssert_ImpersonatedUserName"
+		                                && [ObjectID] = _funcID
+		                        ),
+		                        [Value]
+		                    ),
+		                    BLANK()
+		                )
+		            )
 		        )
 	lineageTag: b081aede-5bf0-4bd8-86a7-73201a7afa24
 
@@ -608,45 +623,60 @@ function 'PQL.Assert.RetrieveTests' =
 /// Retrieves tests filtered by environment. Looks for .{ENV}. or .ANY. in function names.
 /// If environment is blank, returns all tests.
 /// Supports any custom environment naming convention (DEV, TEST, PROD, UAT, STAGING, etc.)
+/// When callFromPowerAutomate is TRUE, uses INFO.FUNCTIONS only (compatible with Power Automate REST API).
+/// When FALSE, enriches results with Description and RLS ImpersonatedUserName via INFO.USERDEFINEDFUNCTIONS and INFO.ANNOTATIONS.
 function 'PQL.Assert.RetrieveTestsByEnvironment' =
-		(environment: STRING) =>
+		(environment: STRING, callFromPowerAutomate: BOOLEAN) =>
 		    VAR _EnvUpper = UPPER(environment)
-		    VAR _Functions =
+		    VAR _BaseFunctions =
 		        SELECTCOLUMNS(
-		            INFO.USERDEFINEDFUNCTIONS(),
-		            "ID",          [ID],
-		            "Name",        [Name],
-		            "Description", [Description]
-		        )
-		    // INFO.ANNOTATIONS() is unavailable via the Power BI REST API (e.g. Power Automate).
-		    // IFERROR wraps a scalar (MAXX result), catching the restricted-context error and
-		    // returning BLANK() — so PQLAssert_ImpersonatedUserName is blank in service context.
-		    VAR _AllFunctions =
-		        ADDCOLUMNS(
-		            _Functions,
-		            "PQLAssert_ImpersonatedUserName",
-		            VAR _currentID = [ID]
-		            RETURN
-		            IFERROR(
-		                MAXX(
-		                    FILTER(
-		                        INFO.ANNOTATIONS(),
-		                        [Name] = "PQLAssert_ImpersonatedUserName"
-		                            && [ObjectID] = _currentID
-		                    ),
-		                    [Value]
-		                ),
-		                BLANK()
-		            )
+		            FILTER(
+		                INFO.FUNCTIONS("ORIGIN", "2"),
+		                (RIGHT([FUNCTION_NAME], 5) = ".Test" || RIGHT([FUNCTION_NAME], 6) = ".Tests")
+		                && (
+		                    ISBLANK(_EnvUpper) || _EnvUpper = ""
+		                    || CONTAINSSTRING(UPPER([FUNCTION_NAME]), "." & _EnvUpper & ".")
+		                    || CONTAINSSTRING(UPPER([FUNCTION_NAME]), ".ANY.")
+		                )
+		            ),
+		            "Name", [FUNCTION_NAME]
 		        )
 		    RETURN
-		        FILTER(
-		            _AllFunctions,
-		            (RIGHT([Name], 5) = ".Test" || RIGHT([Name], 6) = ".Tests")
-		            && (
-		                ISBLANK(_EnvUpper) || _EnvUpper = ""
-		                || CONTAINSSTRING(UPPER([Name]), "." & _EnvUpper & ".")
-		                || CONTAINSSTRING(UPPER([Name]), ".ANY.")
+		        ADDCOLUMNS(
+		            _BaseFunctions,
+		            "Description",
+		            IF(
+		                callFromPowerAutomate,
+		                BLANK(),
+		                VAR _funcName = [Name]
+		                RETURN
+		                IFERROR(
+		                    MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [Description]),
+		                    BLANK()
+		                )
+		            ),
+		            "PQLAssert_ImpersonatedUserName",
+		            IF(
+		                callFromPowerAutomate,
+		                BLANK(),
+		                VAR _funcName = [Name]
+		                VAR _funcID =
+		                    IFERROR(
+		                        MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [ID]),
+		                        BLANK()
+		                    )
+		                RETURN
+		                IFERROR(
+		                    MAXX(
+		                        FILTER(
+		                            INFO.ANNOTATIONS(),
+		                            [Name] = "PQLAssert_ImpersonatedUserName"
+		                                && [ObjectID] = _funcID
+		                        ),
+		                        [Value]
+		                    ),
+		                    BLANK()
+		                )
 		            )
 		        )
 	lineageTag: 966fa55e-573b-4f9e-b044-1259cc37802d
