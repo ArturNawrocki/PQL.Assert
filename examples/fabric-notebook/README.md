@@ -16,7 +16,7 @@ For each workspace GUID
        └─ For each semantic model
             ├─ Discover tests      (PQL.Assert.RetrieveTestsByEnvironmentV2)
             └─ For each test
-                 ├─ With impersonation  → Power BI executeQueries REST API
+                 ├─ With impersonation  → sempy_labs.evaluate_dax_impersonation
                  └─ Without            → sempy.fabric.evaluate_dax (XMLA)
 
 Output: combined DataFrame with WorkspaceName, SemanticModelName,
@@ -30,7 +30,7 @@ Output: combined DataFrame with WorkspaceName, SemanticModelName,
    - Add the contents of `src/lib/functions.tmdl` to the model's TMDL definition and refresh.
    - See the [main README](../../src/README.md) for full installation instructions.
 3. **Permissions** – the notebook identity must have at least **Build** access on every target workspace.
-4. **RLS / impersonation** – for tests that carry a `PQLAssert_ImpersonatedUserName` annotation the notebook calls the Power BI `executeQueries` REST API with the `impersonatedUserName` field.  The semantic model must have RLS roles defined and the target user must exist in the tenant.
+4. **RLS / impersonation** – for tests that carry a `PQLAssert_ImpersonatedUserName` annotation the notebook calls `sempy_labs.evaluate_dax_impersonation`.  The semantic model must have RLS roles defined and the target user must exist in the tenant.
 
 ## Quickstart
 
@@ -68,4 +68,4 @@ Output: combined DataFrame with WorkspaceName, SemanticModelName,
 
 - `PQL.Assert.RetrieveTestsByEnvironmentV2` uses `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS` which require the XMLA endpoint. This function **cannot** be called via the Power Automate *Execute Dataset Query* action — use `PQL.Assert.RetrieveTestsByEnvironment` (V1) for Power Automate flows instead. The XMLA endpoint used by `sempy.fabric.evaluate_dax` in a Fabric Notebook supports these INFO functions without restriction.
 - Tests without an impersonated user are executed via `sempy.fabric.evaluate_dax` (XMLA endpoint).
-- Tests with an impersonated user are executed via the Power BI `executeQueries` REST API (`POST v1.0/myorg/groups/{workspaceId}/datasets/{datasetId}/executeQueries`) with the `impersonatedUserName` field set to the UPN stored in the `PQLAssert_ImpersonatedUserName` annotation.
+- Tests with an impersonated user are executed via `sempy_labs.evaluate_dax_impersonation`, which wraps the Power BI `executeQueries` REST API with the `impersonatedUserName` field set to the UPN stored in the `PQLAssert_ImpersonatedUserName` annotation.
