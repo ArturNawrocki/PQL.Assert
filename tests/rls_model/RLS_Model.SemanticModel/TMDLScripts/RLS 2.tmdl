@@ -1,8 +1,0 @@
-createOrReplace
-
-	function 'RLS2.ANY.Tests' =
-			() =>
-					PQL.Assert.ShouldEqualExactly("East Security Group Should Not See Other Groups",0,COUNTROWS(FILTER('Groups',Groups[Group Name]<>"East"))+0)
-		lineageTag: 1299b921-7f7f-4a0d-be4e-df754a971e30
-
-		annotation PQLAssert_ImpersonatedUserName = jkerski@cftechnologiesllc.com
