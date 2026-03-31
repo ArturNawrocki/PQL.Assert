@@ -5,20 +5,21 @@
 # META {
 # META   "kernel_info": {
 # META     "name": "synapse_pyspark"
-# META   }
+# META   },
+# META   "dependencies": {}
 # META }
 
 # MARKDOWN ********************
 
 # # PQL.Assert – Multi-Workspace Test Runner
 # 
-# This notebook iterates through a configurable list of Microsoft Fabric workspace GUIDs, discovers all semantic models in each workspace using **semantic-link-labs**, retrieves the PQL.Assert test functions defined in each model using `PQL.Assert.RetrieveTestsByEnvironmentV2`, and executes every test—applying user impersonation where specified by the `PQLAssert_ImpersonatedUserName` annotation.
+# This notebook iterates through a configurable list of Microsoft Fabric workspace GUIDs, discovers all semantic models in each workspace using **semantic-link**, retrieves the PQL.Assert test functions defined in each model using `PQL.Assert.RetrieveTestsByEnvironmentV2`, and executes every test—applying user impersonation where specified by the `PQLAssert_ImpersonatedUserName` annotation.
 # 
 # All test results are collected into a single output table that includes the workspace name, semantic model name, test function name, and the standard PQL.Assert columns (`TestName`, `Expected`, `Actual`, `Passed`).
 # 
 # ## Requirements
 # - Run this notebook inside a **Microsoft Fabric** environment (Lakehouse or Warehouse attached, or standalone notebook)
-# - The `semantic-link-labs` package (installed in Cell 2)
+# - The `semantic-link-labs` package (installed in Step 2)
 # - The **PQL.Assert** library loaded into every target semantic model (`functions.tmdl` imported and model refreshed)
 # - The notebook identity (or the capacity admin token) must have **at least Build access** on each target workspace
 # - For impersonated tests the workspace must use **Row-Level Security (RLS)** and the target user must exist in the tenant
@@ -26,7 +27,7 @@
 
 # MARKDOWN ********************
 
-# ## Cell 1 – Install dependencies
+# ## Step 1 – Install dependencies
 
 # CELL ********************
 
@@ -42,7 +43,7 @@
 
 # MARKDOWN ********************
 
-# ## Cell 2 – Imports
+# ## Step 2 – Imports
 
 # CELL ********************
 
@@ -59,7 +60,7 @@ import pandas as pd
 
 # MARKDOWN ********************
 
-# ## Cell 3 – Configuration
+# ## Step 3 – Configuration
 # 
 # Replace the placeholder GUIDs with the real workspace GUIDs you want to scan, and set `ENVIRONMENT` to the test environment you want to run (`DEV`, `TEST`, `PROD`, `ANY`, or `""` for all tests).
 
@@ -86,17 +87,17 @@ ENVIRONMENT: str = "ANY"
 
 # MARKDOWN ********************
 
-# ## Cell 4 – Helper functions
+# ## Step 4 – Helper functions
 
 # CELL ********************
 
 def _retrieve_tests(workspace_id: str, dataset_id: str, environment: str) -> pd.DataFrame:
     """Call PQL.Assert.RetrieveTestsByEnvironmentV2 via XMLA (sempy.fabric.evaluate_dax).
 
-    Returns a DataFrame with columns:
-        Name                        – function name (e.g. "DataQuality.ANY.Tests")
-        Description                 – optional description annotation
-        PQLAssert_ImpersonatedUserName – UPN to impersonate for RLS tests (may be blank)
+    Returns a DataFrame with columns (with brackets):
+        [Name]                           – function name (e.g. "DataQuality.ANY.Tests")
+        [Description]                    – optional description annotation
+        [PQLAssert_ImpersonatedUserName] – UPN to impersonate for RLS tests (may be blank)
 
     Note: RetrieveTestsByEnvironmentV2 uses INFO.USERDEFINEDFUNCTIONS and
     INFO.ANNOTATIONS which require the XMLA endpoint. This is NOT compatible
@@ -155,7 +156,7 @@ def _execute_test_as_user(
 
 # MARKDOWN ********************
 
-# ## Cell 5 – Iterate workspaces, discover and execute tests
+# ## Step 5 – Iterate workspaces, discover and execute tests
 
 # CELL ********************
 
@@ -171,9 +172,13 @@ for workspace_id in WORKSPACE_GUIDS:
 
     print(f"\n🗂  Workspace: {workspace_name} ({workspace_id})")
 
-    # ── List semantic models using semantic-link-labs ─────────────────────────
+    # ── List semantic models using semantic-link (REST API) ───────────────────
     try:
-        semantic_models: pd.DataFrame = labs.list_datasets(workspace=workspace_id)
+        semantic_models: pd.DataFrame = fabric.list_datasets(
+            workspace=workspace_id, 
+            mode='rest', 
+            endpoint='fabric'
+        )
     except Exception as exc:
         print(f"  ⚠  Could not list datasets: {exc}")
         continue
@@ -203,17 +208,17 @@ for workspace_id in WORKSPACE_GUIDS:
 
         # ── Execute each test ─────────────────────────────────────────────────
         for _, test_row in tests_df.iterrows():
-            # Column names returned by evaluate_dax match the SELECTCOLUMNS
-            # aliases in the function definition: "Name", "Description",
-            # "PQLAssert_ImpersonatedUserName"
-            test_name: str = str(test_row.get("Name", test_row.iloc[0]))
+            # Column names returned by evaluate_dax include brackets around them
+            test_name: str = str(test_row.get("[Name]", test_row.iloc[0]))
 
-            raw_user = test_row.get("PQLAssert_ImpersonatedUserName", "")
-            impersonated_user: str = (
-                ""
-                if (raw_user is None or (isinstance(raw_user, float) and pd.isna(raw_user)))
-                else str(raw_user).strip()
-            )
+            # Get impersonated user, handling pandas NA values properly
+            raw_user = test_row.get("[PQLAssert_ImpersonatedUserName]", "")
+            
+            # Check if it's actually a valid username (not None, not NA, not empty)
+            if pd.isna(raw_user) or raw_user is None or str(raw_user).strip() in ("", "<NA>"):
+                impersonated_user = ""
+            else:
+                impersonated_user = str(raw_user).strip()
 
             try:
                 if impersonated_user:
@@ -229,14 +234,24 @@ for workspace_id in WORKSPACE_GUIDS:
                     result_df = _execute_test(workspace_id, dataset_id, test_name)
             except Exception as exc:
                 print(f"    ✗ Error executing '{test_name}': {exc}")
-                continue
+                # Create a failed test result for the error
+                result_df = pd.DataFrame({
+                    "[TestName]": [test_name],
+                    "[Expected]": ["Success"],
+                    "[Actual]": [f"Error: {str(exc)}"],
+                    "[Passed]": [False]
+                })
 
             # Annotate results with workspace / model context
+            result_df.insert(0, "ImpersonatedUser", impersonated_user if impersonated_user else "")
             result_df.insert(0, "TestFunctionName", test_name)
             result_df.insert(0, "SemanticModelName", dataset_name)
             result_df.insert(0, "SemanticModelId", dataset_id)
             result_df.insert(0, "WorkspaceName", workspace_name)
             result_df.insert(0, "WorkspaceId", workspace_id)
+            
+            # Ensure ImpersonatedUser column stays as string type (not NA)
+            result_df["ImpersonatedUser"] = result_df["ImpersonatedUser"].fillna("")
 
             all_results.append(result_df)
 
@@ -251,7 +266,7 @@ print("\n✅ Test execution complete.")
 
 # MARKDOWN ********************
 
-# ## Cell 6 – Display results
+# ## Step 6 – Display results
 # 
 # All results are combined into a single DataFrame. The summary line shows totals for passed and failed tests across all workspaces and models.
 
@@ -268,9 +283,11 @@ if not all_results:
 else:
     results_df = pd.concat(all_results, ignore_index=True)
 
-    # Summary
+
+    # Summary - check for column name with or without brackets
     total = len(results_df)
-    passed = int(results_df["Passed"].sum()) if "Passed" in results_df.columns else 0
+    passed_col = "[Passed]" if "[Passed]" in results_df.columns else "Passed"
+    passed = int(results_df[passed_col].sum()) if passed_col in results_df.columns else 0
     failed = total - passed
     print(f"Results  |  Total: {total}  |  ✅ Passed: {passed}  |  ❌ Failed: {failed}")
     print()
