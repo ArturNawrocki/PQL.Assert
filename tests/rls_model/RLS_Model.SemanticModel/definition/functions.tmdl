@@ -609,48 +609,6 @@ function 'PQL.Assert.RetrieveTestsByEnvironment' =
 
 	annotation DAXLIB_PackageVersion = 0.2.0
 
-function 'Example.prod.test' =
-		() =>
-				UNION (
-					PQL.Assert.ShouldNotBeNull("ShouldNotBeNull: DISTINCTCOUNTNOBLANK expression should pass", DISTINCTCOUNTNOBLANK('TestData'[ID])),
-					PQL.Assert.Col.ShouldNotBeNull("Col.ShouldNotBeNull: ID has values", 'TestData'[ID]),
-					PQL.Assert.Col.ShouldNotBeNull("Col.ShouldNotBeNull: NullableField should have values", 'TestData'[NullableField])
-				)
-	lineageTag: ad2608c4-4c55-4fbc-bdf3-b412bd6fe00d
-
-function 'ShouldFailSchema.DEV.Tests' =
-		() =>
-			DATATABLE("Test",TEXT,{{"HI"}})
-	lineageTag: e1d24d78-a5c5-4895-bdc4-b1d2f5e02be8
-
-function 'ShouldFail.TEST.Tests' =
-		() =>
-			PQL.Assert.ShouldBeLessThan("Failed Test",4,4)
-	lineageTag: 9ad3077c-9087-4b1f-a310-a5b73f8c93df
-
-function 'Tbl.DEV.Tests' =
-		() =>
-			PQL.Assert.Tbl.ShouldHaveMoreRowsThan("Test Date should have more rows that 1",1,TestData)
-	lineageTag: 4f100628-2e92-435a-8b83-a0b0e9243f2b
-
-function 'Example.ANY.Tests' =
-		() =>
-			UNION (
-				PQL.Assert.ShouldNotBeNull("ShouldNotBeNull: DISTINCTCOUNTNOBLANK expression should pass", DISTINCTCOUNTNOBLANK('TestData'[ID])),
-				PQL.Assert.Col.ShouldNotBeNull("Col.ShouldNotBeNull: ID has values", 'TestData'[ID]),
-				PQL.Assert.Col.ShouldNotBeNull("Col.ShouldNotBeNull: NullableField should have values", 'TestData'[NullableField])
-			)
-	lineageTag: 05c02d7e-b93e-4810-8c4c-0e6e59cb6f85
-
-function 'Example.MYenv.Tests' =
-		() =>
-				UNION (
-					PQL.Assert.ShouldNotBeNull("ShouldNotBeNull: DISTINCTCOUNTNOBLANK expression should pass", DISTINCTCOUNTNOBLANK('TestData'[ID])),
-					PQL.Assert.Col.ShouldNotBeNull("Col.ShouldNotBeNull: ID has values", 'TestData'[ID]),
-					PQL.Assert.Col.ShouldNotBeNull("Col.ShouldNotBeNull: NullableField should have values", 'TestData'[NullableField])
-				)
-	lineageTag: 1a735110-499e-4100-bb5c-1c6ec52f6d02
-
 /// DAX Best Practice Validation Functions
 /// Publisher: PQL (Power Query Lint)
 /// These functions validate semantic models against best practices and performance recommendations
