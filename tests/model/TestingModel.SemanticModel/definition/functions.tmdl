@@ -609,111 +609,6 @@ function 'PQL.Assert.RetrieveTestsByEnvironment' =
 
 	annotation DAXLIB_PackageVersion = 0.2.0
 
-/// Retrieves all test functions with full metadata (Description, RLS ImpersonatedUserName).
-/// Uses INFO.USERDEFINEDFUNCTIONS and INFO.ANNOTATIONS - NOT compatible with Power Automate REST API.
-/// Use RetrieveTests for Power Automate compatibility.
-function 'PQL.Assert.RetrieveTestsV2' =
-		() =>
-		    VAR _BaseFunctions =
-		        SELECTCOLUMNS(
-		            FILTER(
-		                INFO.FUNCTIONS("ORIGIN", "2"),
-		                OR(RIGHT([FUNCTION_NAME], 5) = ".Test", RIGHT([FUNCTION_NAME], 6) = ".Tests")
-		            ),
-		            "Name", [FUNCTION_NAME]
-		        )
-		    RETURN
-		        ADDCOLUMNS(
-		            _BaseFunctions,
-		            "Description",
-		            VAR _funcName = [Name]
-		            RETURN
-		            IFERROR(
-		                MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [Description]),
-		                BLANK()
-		            ),
-		            "PQLAssert_ImpersonatedUserName",
-		            VAR _funcName = [Name]
-		            VAR _funcID =
-		                IFERROR(
-		                    MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [ID]),
-		                    BLANK()
-		                )
-		            RETURN
-		            IFERROR(
-		                MAXX(
-		                    FILTER(
-		                        INFO.ANNOTATIONS(),
-		                        [Name] = "PQLAssert_ImpersonatedUserName"
-		                            && [ObjectID] = _funcID
-		                    ),
-		                    [Value]
-		                ),
-		                BLANK()
-		            )
-		        )
-	lineageTag: f5e29a3c-8b14-4d7e-a62f-1c9053d87b40
-
-	annotation DAXLIB_PackageId = PQL.Assert
-
-	annotation DAXLIB_PackageVersion = 0.2.0
-
-/// Retrieves tests filtered by environment with full metadata (Description, RLS ImpersonatedUserName).
-/// Looks for .{ENV}. or .ANY. in function names. If environment is blank, returns all tests.
-/// Uses INFO.USERDEFINEDFUNCTIONS and INFO.ANNOTATIONS - NOT compatible with Power Automate REST API.
-/// Use RetrieveTestsByEnvironment for Power Automate compatibility.
-function 'PQL.Assert.RetrieveTestsByEnvironmentV2' =
-		(environment: STRING) =>
-		    VAR _EnvUpper = UPPER(environment)
-		    VAR _BaseFunctions =
-		        SELECTCOLUMNS(
-		            FILTER(
-		                INFO.FUNCTIONS("ORIGIN", "2"),
-		                (RIGHT([FUNCTION_NAME], 5) = ".Test" || RIGHT([FUNCTION_NAME], 6) = ".Tests")
-		                && (
-		                    ISBLANK(_EnvUpper) || _EnvUpper = ""
-		                    || CONTAINSSTRING(UPPER([FUNCTION_NAME]), "." & _EnvUpper & ".")
-		                    || CONTAINSSTRING(UPPER([FUNCTION_NAME]), ".ANY.")
-		                )
-		            ),
-		            "Name", [FUNCTION_NAME]
-		        )
-		    RETURN
-		        ADDCOLUMNS(
-		            _BaseFunctions,
-		            "Description",
-		            VAR _funcName = [Name]
-		            RETURN
-		            IFERROR(
-		                MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [Description]),
-		                BLANK()
-		            ),
-		            "PQLAssert_ImpersonatedUserName",
-		            VAR _funcName = [Name]
-		            VAR _funcID =
-		                IFERROR(
-		                    MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [ID]),
-		                    BLANK()
-		                )
-		            RETURN
-		            IFERROR(
-		                MAXX(
-		                    FILTER(
-		                        INFO.ANNOTATIONS(),
-		                        [Name] = "PQLAssert_ImpersonatedUserName"
-		                            && [ObjectID] = _funcID
-		                    ),
-		                    [Value]
-		                ),
-		                BLANK()
-		            )
-		        )
-	lineageTag: 9c7f1d2e-4a83-4b5c-8d6f-2e30917ca5b8
-
-	annotation DAXLIB_PackageId = PQL.Assert
-
-	annotation DAXLIB_PackageVersion = 0.2.0
-
 function 'Example.prod.test' =
 		() =>
 				UNION (
@@ -2795,5 +2690,110 @@ function 'RLS.ANY.Tests' =
 				PQL.Assert.ShouldEqualExactly("West Security Group Should Not See Other Groups",0,COUNTROWS(FILTER('Groups',Groups[Group Name]<>"West"))+0)
 	lineageTag: de968091-8b67-454c-bfa9-61fa543cbdad
 
-	annotation PQLAssert_ImpersonatedUserName = lbarker@cftechnologiesllc.com
+	annotation PQLAssert_ImpersonatedUserName = atlas.kerski@cftechnologiesllc.com
+
+/// Retrieves all test functions with full metadata (Description, RLS ImpersonatedUserName).
+/// Uses INFO.USERDEFINEDFUNCTIONS and INFO.ANNOTATIONS - NOT compatible with Power Automate REST API.
+/// Use RetrieveTests for Power Automate compatibility.
+function 'PQL.Assert.RetrieveTestsV2' =
+		() =>
+		    VAR _BaseFunctions =
+		        SELECTCOLUMNS(
+		            FILTER(
+		                INFO.FUNCTIONS("ORIGIN", "2"),
+		                OR(RIGHT([FUNCTION_NAME], 5) = ".Test", RIGHT([FUNCTION_NAME], 6) = ".Tests")
+		            ),
+		            "Name", [FUNCTION_NAME]
+		        )
+		    RETURN
+		        ADDCOLUMNS(
+		            _BaseFunctions,
+		            "Description",
+		            VAR _funcName = [Name]
+		            RETURN
+		            IFERROR(
+		                MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [Description]),
+		                BLANK()
+		            ),
+		            "PQLAssert_ImpersonatedUserName",
+		            VAR _funcName = [Name]
+		            VAR _funcID =
+		                IFERROR(
+		                    MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [ID]),
+		                    BLANK()
+		                )
+		            RETURN
+		            IFERROR(
+		                MAXX(
+		                    FILTER(
+		                        INFO.ANNOTATIONS(),
+		                        [Name] = "PQLAssert_ImpersonatedUserName"
+		                            && [ObjectID] = _funcID
+		                    ),
+		                    [Value]
+		                ),
+		                BLANK()
+		            )
+		        )
+	lineageTag: f5e29a3c-8b14-4d7e-a62f-1c9053d87b40
+
+	annotation DAXLIB_PackageId = PQL.Assert
+
+	annotation DAXLIB_PackageVersion = 0.2.0
+
+/// Retrieves tests filtered by environment with full metadata (Description, RLS ImpersonatedUserName).
+/// Looks for .{ENV}. or .ANY. in function names. If environment is blank, returns all tests.
+/// Uses INFO.USERDEFINEDFUNCTIONS and INFO.ANNOTATIONS - NOT compatible with Power Automate REST API.
+/// Use RetrieveTestsByEnvironment for Power Automate compatibility.
+function 'PQL.Assert.RetrieveTestsByEnvironmentV2' =
+		(environment: STRING) =>
+		    VAR _EnvUpper = UPPER(environment)
+		    VAR _BaseFunctions =
+		        SELECTCOLUMNS(
+		            FILTER(
+		                INFO.FUNCTIONS("ORIGIN", "2"),
+		                (RIGHT([FUNCTION_NAME], 5) = ".Test" || RIGHT([FUNCTION_NAME], 6) = ".Tests")
+		                && (
+		                    ISBLANK(_EnvUpper) || _EnvUpper = ""
+		                    || CONTAINSSTRING(UPPER([FUNCTION_NAME]), "." & _EnvUpper & ".")
+		                    || CONTAINSSTRING(UPPER([FUNCTION_NAME]), ".ANY.")
+		                )
+		            ),
+		            "Name", [FUNCTION_NAME]
+		        )
+		    RETURN
+		        ADDCOLUMNS(
+		            _BaseFunctions,
+		            "Description",
+		            VAR _funcName = [Name]
+		            RETURN
+		            IFERROR(
+		                MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [Description]),
+		                BLANK()
+		            ),
+		            "PQLAssert_ImpersonatedUserName",
+		            VAR _funcName = [Name]
+		            VAR _funcID =
+		                IFERROR(
+		                    MAXX(FILTER(INFO.USERDEFINEDFUNCTIONS(), [Name] = _funcName), [ID]),
+		                    BLANK()
+		                )
+		            RETURN
+		            IFERROR(
+		                MAXX(
+		                    FILTER(
+		                        INFO.ANNOTATIONS(),
+		                        [Name] = "PQLAssert_ImpersonatedUserName"
+		                            && [ObjectID] = _funcID
+		                    ),
+		                    [Value]
+		                ),
+		                BLANK()
+		            )
+		        )
+	lineageTag: 9c7f1d2e-4a83-4b5c-8d6f-2e30917ca5b8
+
+	annotation DAXLIB_PackageId = PQL.Assert
+
+	annotation DAXLIB_PackageVersion = 0.2.0
 
