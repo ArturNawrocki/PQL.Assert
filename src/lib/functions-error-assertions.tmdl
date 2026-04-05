@@ -19,7 +19,7 @@ createOrReplace
 					"Passed", _IsError
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.2.0
+		annotation DAXLIB_PackageVersion = 0.3.0
 
 	/// Asserts that an expression does not throw an error.
 	/// Use this to verify that a table or column is accessible
@@ -34,4 +34,4 @@ createOrReplace
 					"Passed", NOT _IsError
 				)
 		annotation DAXLIB_PackageId = PQL.Assert
-		annotation DAXLIB_PackageVersion = 0.2.0
+		annotation DAXLIB_PackageVersion = 0.3.0
