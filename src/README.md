@@ -132,6 +132,33 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 
 - `PQL.Assert.Relationship.ShouldExist(testName, fromTable, fromColumn, toTable, toColumn)` - Asserts relationship exists
 
+### Error & Security Assertions
+
+These functions test whether an expression throws an error, which is essential for validating **Object Level Security (OLS)**. When OLS is applied to a table or column, any query that accesses that object will result in an error. Use these assertions to confirm that security is properly enforced.
+
+- `PQL.Assert.ShouldThrow(testName, expression)` - Asserts that an expression throws an error. The test passes when the expression results in an error (e.g., accessing an OLS-secured table or column). Uses `ISERROR` internally to capture evaluation errors without propagating them.
+- `PQL.Assert.ShouldNotThrow(testName, expression)` - Asserts that an expression does not throw an error. The test passes when the expression evaluates successfully (i.e., the object is accessible).
+
+**OLS Testing Example:**
+```dax
+DEFINE
+    FUNCTION Security.ANY.Tests = () =>
+    UNION(
+        // Verify that a secured table is inaccessible (OLS applied)
+        PQL.Assert.ShouldThrow(
+            "SensitiveTable should be blocked by OLS",
+            COUNTROWS('SensitiveTable')
+        ),
+        // Verify that a public table is accessible
+        PQL.Assert.ShouldNotThrow(
+            "PublicTable should be accessible",
+            COUNTROWS('PublicTable')
+        )
+    )
+
+EVALUATE Security.ANY.Tests()
+```
+
 ### Test Discovery
 
 PQL.Assert provides two pairs of test discovery functions. The **V1 functions** are designed for use with Power Automate and any caller that does not support `INFO` DAX functions. The **V2 functions** return full metadata but require a context where `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS` are supported (e.g., DAX Query View, the Power BI MCP).

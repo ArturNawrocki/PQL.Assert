@@ -1,0 +1,37 @@
+createOrReplace
+	/// Error Assertion Functions - PQL.Assert namespace
+	/// Publisher: PQL (Power Query Lint)
+	/// These functions allow testing that expressions throw or do not throw errors.
+	/// Useful for validating Object Level Security (OLS): when security is applied,
+	/// querying a secured table or column should throw an error.
+	/// Use ISERROR to capture evaluation errors without propagating them.
+
+	/// Asserts that an expression throws an error.
+	/// Use this to verify that Object Level Security (OLS) is properly applied -
+	/// accessing a secured table or column should throw an error when queried.
+	function 'PQL.Assert.ShouldThrow' =
+			(testName : STRING, expression : SCALAR VARIANT EXPR) =>
+				VAR _IsError = ISERROR(expression)
+				RETURN ROW(
+					"TestName", testName,
+					"Expected", "Expression should throw an error",
+					"Actual", IF(_IsError, "ERROR THROWN (as expected)", "NO ERROR THROWN"),
+					"Passed", _IsError
+				)
+		annotation DAXLIB_PackageId = PQL.Assert
+		annotation DAXLIB_PackageVersion = 0.2.0
+
+	/// Asserts that an expression does not throw an error.
+	/// Use this to verify that a table or column is accessible
+	/// (not blocked by Object Level Security or other access controls).
+	function 'PQL.Assert.ShouldNotThrow' =
+			(testName : STRING, expression : SCALAR VARIANT EXPR) =>
+				VAR _IsError = ISERROR(expression)
+				RETURN ROW(
+					"TestName", testName,
+					"Expected", "Expression should not throw an error",
+					"Actual", IF(_IsError, "ERROR THROWN", "NO ERROR THROWN (as expected)"),
+					"Passed", NOT _IsError
+				)
+		annotation DAXLIB_PackageId = PQL.Assert
+		annotation DAXLIB_PackageVersion = 0.2.0
