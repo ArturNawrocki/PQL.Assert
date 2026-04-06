@@ -132,6 +132,48 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 
 - `PQL.Assert.Relationship.ShouldExist(testName, fromTable, fromColumn, toTable, toColumn)` - Asserts relationship exists
 
+### Object Level Security (OLS) Assertions
+
+PQL.Assert provides dedicated functions for testing Object Level Security at both the table and column level. These functions use `INFO.VIEW.TABLES()` and `INFO.VIEW.COLUMNS()` to verify metadata visibility based on role permissions.
+
+**Note:** OLS testing requires running tests with "View as" role context in Power BI Desktop. When a role has `metadataPermission: none` on a table or `columnPermission: none` on a column, the object will not appear in metadata queries.
+
+##### Table-Level OLS
+
+- `PQL.Assert.OLS.TableShouldBeHidden(testName, tableName)` - Asserts that a table is hidden from metadata (OLS `metadataPermission: none`). Use this when a role should NOT have access to view or query a table. The test passes when the table does not appear in `INFO.VIEW.TABLES()`.
+- `PQL.Assert.OLS.TableShouldBeVisible(testName, tableName)` - Asserts that a table is visible in metadata (OLS allows access). Use this when a role SHOULD have access to view or query a table. The test passes when the table appears in `INFO.VIEW.TABLES()`.
+
+##### Column-Level OLS
+
+- `PQL.Assert.OLS.ColumnShouldBeHidden(testName, tableName, columnName)` - Asserts that a column is hidden from metadata (OLS `columnPermission: none`). Use this when a role should NOT have access to view or query a column. The test passes when the column does not appear in `INFO.VIEW.COLUMNS()`.
+- `PQL.Assert.OLS.ColumnShouldBeVisible(testName, tableName, columnName)` - Asserts that a column is visible in metadata (OLS allows access). Use this when a role SHOULD have access to view or query a column. The test passes when the column appears in `INFO.VIEW.COLUMNS()`.
+
+**OLS Testing Example:**
+```dax
+// Test OLS for West role (metadataPermission: none on Admin Table)
+// Run with: Modeling tab → Security → View as → West
+DEFINE
+    FUNCTION OLS_West.ANY.Tests = () =>
+    UNION(
+        PQL.Assert.OLS.TableShouldBeHidden("West: Admin Table should be hidden", "Admin Table"),
+        PQL.Assert.OLS.ColumnShouldBeHidden("West: Hidden Column should be hidden", "Hidden Column Table", "Hidden Column"),
+        PQL.Assert.OLS.TableShouldBeVisible("West: Groups table should be visible", "Groups")
+    )
+
+EVALUATE OLS_West.ANY.Tests()
+```
+
+**OLS Configuration Example (TMDL):**
+```tmdl
+role West
+    modelPermission: read
+    
+    tablePermission Admin Table = none
+    
+    tablePermission 'Hidden Column Table' = read
+        columnPermission 'Hidden Column' = none
+```
+
 ### Test Discovery
 
 PQL.Assert provides two pairs of test discovery functions. The **V1 functions** are designed for use with Power Automate and any caller that does not support `INFO` DAX functions. The **V2 functions** return full metadata but require a context where `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS` are supported (e.g., DAX Query View, the Power BI MCP).

@@ -1,7 +1,10 @@
 {
   "version": "1.0.0",
   "tabOrder": [
-    "RLS 1"
+    "RLS 1",
+    "OLS_West",
+    "OLS_East",
+    "OLS Admin"
   ],
-  "defaultTab": "RLS 1"
+  "defaultTab": "OLS_East"
 }

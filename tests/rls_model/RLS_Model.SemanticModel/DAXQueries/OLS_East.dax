@@ -1,0 +1,9 @@
+DEFINE
+    FUNCTION OLS_East.ANY.Tests = () =>
+	UNION(
+		PQL.Assert.OLS.TableShouldBeHidden("East: Admin Table should be hidden", "Admin Table"),
+		PQL.Assert.OLS.ColumnShouldBeHidden("East: Hidden Column should be hidden", "Hidden Column Table", "Hidden Column"),
+		PQL.Assert.OLS.TableShouldBeVisible("East: Groups table should be visible", "Groups")
+	)
+
+EVALUATE OLS_East.ANY.Tests()
