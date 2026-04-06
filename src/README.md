@@ -132,31 +132,46 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 
 - `PQL.Assert.Relationship.ShouldExist(testName, fromTable, fromColumn, toTable, toColumn)` - Asserts relationship exists
 
-### Error & Security Assertions
+### Object Level Security (OLS) Assertions
 
-These functions test whether an expression throws an error, which is essential for validating **Object Level Security (OLS)**. When OLS is applied to a table or column, any query that accesses that object will result in an error. Use these assertions to confirm that security is properly enforced.
+PQL.Assert provides dedicated functions for testing Object Level Security at both the table and column level. These functions use `INFO.VIEW.TABLES()` and `INFO.VIEW.COLUMNS()` to verify metadata visibility based on role permissions.
 
-- `PQL.Assert.ShouldThrow(testName, expression)` - Asserts that an expression throws an error. The test passes when the expression results in an error (e.g., accessing an OLS-secured table or column). Uses `ISERROR` internally to capture evaluation errors without propagating them.
-- `PQL.Assert.ShouldNotThrow(testName, expression)` - Asserts that an expression does not throw an error. The test passes when the expression evaluates successfully (i.e., the object is accessible).
+**Note:** OLS testing requires running tests with "View as" role context in Power BI Desktop. When a role has `metadataPermission: none` on a table or `columnPermission: none` on a column, the object will not appear in metadata queries.
+
+##### Table-Level OLS
+
+- `PQL.Assert.OLS.TableShouldBeHidden(testName, tableName)` - Asserts that a table is hidden from metadata (OLS `metadataPermission: none`). Use this when a role should NOT have access to view or query a table. The test passes when the table does not appear in `INFO.VIEW.TABLES()`.
+- `PQL.Assert.OLS.TableShouldBeVisible(testName, tableName)` - Asserts that a table is visible in metadata (OLS allows access). Use this when a role SHOULD have access to view or query a table. The test passes when the table appears in `INFO.VIEW.TABLES()`.
+
+##### Column-Level OLS
+
+- `PQL.Assert.OLS.ColumnShouldBeHidden(testName, tableName, columnName)` - Asserts that a column is hidden from metadata (OLS `columnPermission: none`). Use this when a role should NOT have access to view or query a column. The test passes when the column does not appear in `INFO.VIEW.COLUMNS()`.
+- `PQL.Assert.OLS.ColumnShouldBeVisible(testName, tableName, columnName)` - Asserts that a column is visible in metadata (OLS allows access). Use this when a role SHOULD have access to view or query a column. The test passes when the column appears in `INFO.VIEW.COLUMNS()`.
 
 **OLS Testing Example:**
 ```dax
+// Test OLS for West role (metadataPermission: none on Admin Table)
+// Run with: Modeling tab → Security → View as → West
 DEFINE
-    FUNCTION Security.ANY.Tests = () =>
+    FUNCTION OLS_West.ANY.Tests = () =>
     UNION(
-        // Verify that a secured table is inaccessible (OLS applied)
-        PQL.Assert.ShouldThrow(
-            "SensitiveTable should be blocked by OLS",
-            COUNTROWS('SensitiveTable')
-        ),
-        // Verify that a public table is accessible
-        PQL.Assert.ShouldNotThrow(
-            "PublicTable should be accessible",
-            COUNTROWS('PublicTable')
-        )
+        PQL.Assert.OLS.TableShouldBeHidden("West: Admin Table should be hidden", "Admin Table"),
+        PQL.Assert.OLS.ColumnShouldBeHidden("West: Hidden Column should be hidden", "Hidden Column Table", "Hidden Column"),
+        PQL.Assert.OLS.TableShouldBeVisible("West: Groups table should be visible", "Groups")
     )
 
-EVALUATE Security.ANY.Tests()
+EVALUATE OLS_West.ANY.Tests()
+```
+
+**OLS Configuration Example (TMDL):**
+```tmdl
+role West
+    modelPermission: read
+    
+    tablePermission Admin Table = none
+    
+    tablePermission 'Hidden Column Table' = read
+        columnPermission 'Hidden Column' = none
 ```
 
 ### Test Discovery

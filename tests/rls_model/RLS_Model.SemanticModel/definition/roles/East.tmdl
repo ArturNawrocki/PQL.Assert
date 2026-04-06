@@ -3,5 +3,12 @@ role East
 
 	tablePermission Groups = [Group Name] == "East"
 
+	tablePermission 'Admin Table'
+		metadataPermission: none
+
+	tablePermission 'Hidden Column Table'
+
+		columnPermission 'Hidden Column' = none
+
 	annotation PBI_Id = 2efe7eb399ba46e086c3b43df8819fdd
 
