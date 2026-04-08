@@ -154,7 +154,7 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
     RLS_FUNCTIONS_TMDL = "${RLS_MODEL}\\definition\\functions.tmdl"
     CATALOG_NAME = "TestingModel"
     RLS_CATALOG_NAME = "RLS_Model"
-    PACKAGE_VERSION = "0.2.0"
+    PACKAGE_VERSION = "0.3.0"
     ENVIRONMENTS = ["DEV", "TEST", "PROD", "ANY"]
   }
 
@@ -468,7 +468,7 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
     bumpVersion() => {
       1. read: current PACKAGE_VERSION from src/manifest.daxlib
       2. display: "Current version is {currentVersion}"
-      3. ask: "What should the new version number be? (e.g., 0.2.0)"
+      3. ask: "What should the new version number be? (e.g., 0.3.0)"
       4. validate: new version follows semver format (X.Y.Z)
       5. confirm: "Update version from {currentVersion} to {newVersion} across all files?"
 
@@ -773,7 +773,7 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
     \t\t\t\t\t"Passed", _Passed
     \t\t\t\t)
     \t\tannotation DAXLIB_PackageId = PQL.Assert
-    \t\tannotation DAXLIB_PackageVersion = 0.2.0
+    \t\tannotation DAXLIB_PackageVersion = 0.3.0
     ```
 
     // Definition TMDL (definition/functions.tmdl) - no leading tab on function keyword
@@ -791,7 +791,7 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
 
     \tannotation DAXLIB_PackageId = PQL.Assert
 
-    \tannotation DAXLIB_PackageVersion = 0.2.0
+    \tannotation DAXLIB_PackageVersion = 0.3.0
     ```
 
     // DAX test file (DAXQueries/*.dax)
