@@ -91,12 +91,21 @@ VAR _RetrieveTests_RLSAnyTests_Present =
     )
 
 VAR _RLSImpersonatedUser = MAXX(_RLSAnyTests, [PQLAssert_ImpersonatedUserName])
-VAR _RetrieveTests_ImpersonatedUser_lbarker =
+VAR _RetrieveTests_ImpersonatedUser_Atlas =
     ROW(
-        "TestName", "Discovery: RLS.ANY.Tests ImpersonatedUserName should be lbarker@cftechnologiesllc.com",
-        "Expected", "lbarker@cftechnologiesllc.com",
+        "TestName", "Discovery: RLS.ANY.Tests ImpersonatedUserName should be atlas.kerski@cftechnologiesllc.com",
+        "Expected", "atlas.kerski@cftechnologiesllc.com",
         "Actual", IF(ISBLANK(_RLSImpersonatedUser), "(blank)", _RLSImpersonatedUser),
-        "Passed", _RLSImpersonatedUser = "lbarker@cftechnologiesllc.com"
+        "Passed", _RLSImpersonatedUser = "atlas.kerski@cftechnologiesllc.com"
+    )
+
+VAR _RLSRoleName = MAXX(_RLSAnyTests, [PQLAssert_RoleName])
+VAR _RetrieveTests_RoleName_WestSales =
+    ROW(
+        "TestName", "Discovery: RLS.ANY.Tests RoleName should be WestSales",
+        "Expected", "WestSales",
+        "Actual", IF(ISBLANK(_RLSRoleName), "(blank)", _RLSRoleName),
+        "Passed", _RLSRoleName = "WestSales"
     )
 
 // ============================================
@@ -197,7 +206,8 @@ VAR _AllDiscoveryTests = UNION(
     _RetrieveTestsByEnvironment_Blank,
     _RetrieveTestsByEnvironment_CaseInsensitive,
     _RetrieveTests_RLSAnyTests_Present,
-    _RetrieveTests_ImpersonatedUser_lbarker,
+    _RetrieveTests_ImpersonatedUser_Atlas,
+    _RetrieveTests_RoleName_WestSales,
     _RetrieveTests_PA_HasResults,
     _RetrieveTests_PA_SameCount,
     _RetrieveTests_PA_NoBlankNames,
