@@ -68,6 +68,26 @@ VAR _RetrieveTestsByEnvironment_Blank =
         "Passed", _BlankEnvTestsCount = _AllTestsCount
     )
 
+// PQL.Assert.RetrieveTestsByEnvironmentV2 - OPTIONAL PARAMETER TEST (no parameter)
+VAR _NoParamTests = PQL.Assert.RetrieveTestsByEnvironmentV2()
+VAR _NoParamTestsCount = COUNTROWS(_NoParamTests)
+VAR _RetrieveTestsByEnvironment_NoParam = 
+    ROW(
+        "TestName", "Discovery: RetrieveTestsByEnvironmentV2() with no parameter should return all tests",
+        "Expected", "Count = " & FORMAT(_AllTestsCount, "0"),
+        "Actual", "Count = " & FORMAT(_NoParamTestsCount, "0"),
+        "Passed", _NoParamTestsCount = _AllTestsCount
+    )
+
+// PQL.Assert.RetrieveTestsByEnvironmentV2 - No param should equal blank string
+VAR _RetrieveTestsByEnvironment_NoParam_EqualsBlank = 
+    ROW(
+        "TestName", "Discovery: RetrieveTestsByEnvironmentV2() should equal RetrieveTestsByEnvironmentV2('')",
+        "Expected", "Counts equal",
+        "Actual", "No param: " & FORMAT(_NoParamTestsCount, "0") & ", Blank: " & FORMAT(_BlankEnvTestsCount, "0"),
+        "Passed", _NoParamTestsCount = _BlankEnvTestsCount
+    )
+
 // PQL.Assert.RetrieveTestsByEnvironmentV2 - case insensitivity
 VAR _LowercaseDevTests = PQL.Assert.RetrieveTestsByEnvironmentV2("dev")
 VAR _LowercaseDevTestsCount = COUNTROWS(_LowercaseDevTests)
@@ -197,6 +217,26 @@ VAR _RetrieveTestsByEnv_PA_Blank =
         "Passed", _PABlankEnvTestsCount = _PATestsCount
     )
 
+// RetrieveTestsByEnvironment() - OPTIONAL PARAMETER TEST (no parameter)
+VAR _PANoParamTests = PQL.Assert.RetrieveTestsByEnvironment()
+VAR _PANoParamTestsCount = COUNTROWS(_PANoParamTests)
+VAR _RetrieveTestsByEnv_PA_NoParam =
+    ROW(
+        "TestName", "Discovery [PA]: RetrieveTestsByEnvironment() with no parameter should return all tests",
+        "Expected", "Count = " & FORMAT(_PATestsCount, "0"),
+        "Actual", "Count = " & FORMAT(_PANoParamTestsCount, "0"),
+        "Passed", _PANoParamTestsCount = _PATestsCount
+    )
+
+// RetrieveTestsByEnvironment - No param should equal blank string
+VAR _RetrieveTestsByEnv_PA_NoParam_EqualsBlank =
+    ROW(
+        "TestName", "Discovery [PA]: RetrieveTestsByEnvironment() should equal RetrieveTestsByEnvironment('')",
+        "Expected", "Counts equal",
+        "Actual", "No param: " & FORMAT(_PANoParamTestsCount, "0") & ", Blank: " & FORMAT(_PABlankEnvTestsCount, "0"),
+        "Passed", _PANoParamTestsCount = _PABlankEnvTestsCount
+    )
+
 // Combine all test results
 VAR _AllDiscoveryTests = UNION(
     _RetrieveTests_HasResults,
@@ -204,6 +244,8 @@ VAR _AllDiscoveryTests = UNION(
     _RetrieveTestsByEnvironment_TEST,
     _RetrieveTestsByEnvironment_PROD,
     _RetrieveTestsByEnvironment_Blank,
+    _RetrieveTestsByEnvironment_NoParam,
+    _RetrieveTestsByEnvironment_NoParam_EqualsBlank,
     _RetrieveTestsByEnvironment_CaseInsensitive,
     _RetrieveTests_RLSAnyTests_Present,
     _RetrieveTests_ImpersonatedUser_Atlas,
@@ -215,7 +257,9 @@ VAR _AllDiscoveryTests = UNION(
     _RetrieveTestsByEnv_PA_DEV_SameCount,
     _RetrieveTestsByEnv_PA_TEST,
     _RetrieveTestsByEnv_PA_CaseInsensitive,
-    _RetrieveTestsByEnv_PA_Blank
+    _RetrieveTestsByEnv_PA_Blank,
+    _RetrieveTestsByEnv_PA_NoParam,
+    _RetrieveTestsByEnv_PA_NoParam_EqualsBlank
 )
 
 EVALUATE _AllDiscoveryTests

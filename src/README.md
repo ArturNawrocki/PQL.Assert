@@ -183,12 +183,12 @@ PQL.Assert provides two pairs of test discovery functions. The **V1 functions** 
 #### V1 — Power Automate compatible
 
 - `PQL.Assert.RetrieveTests()` - Returns all test functions (ending with .Test or .Tests) as a single `[Name]` column. Uses only `INFO.FUNCTIONS`; safe for Power Automate.
-- `PQL.Assert.RetrieveTestsByEnvironment(environment)` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Returns all tests if environment is blank. Uses only `INFO.FUNCTIONS`; safe for Power Automate.
+- `PQL.Assert.RetrieveTestsByEnvironment([environment])` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Optional `environment` parameter defaults to `""` (returns all tests if omitted or blank). Uses only `INFO.FUNCTIONS`; safe for Power Automate.
 
 #### V2 — Full metadata (not for Power Automate)
 
 - `PQL.Assert.RetrieveTestsV2()` - Returns all test functions with full metadata columns (`[Name]`, `[Description]`, `[PQLAssert_ImpersonatedUserName]`, `[PQLAssert_RoleName]`). Uses `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS`. **Not compatible with Power Automate.**
-- `PQL.Assert.RetrieveTestsByEnvironmentV2(environment)` - Returns tests filtered by environment with full metadata. Case-insensitive. Returns all tests if environment is blank. **Not compatible with Power Automate.**
+- `PQL.Assert.RetrieveTestsByEnvironmentV2([environment])` - Returns tests filtered by environment with full metadata. Case-insensitive. Optional `environment` parameter defaults to `""` (returns all tests if omitted or blank). **Not compatible with Power Automate.**
 
 ### Best Practice Validations
 
@@ -384,6 +384,10 @@ EVALUATE PQL.Assert.RetrieveTestsByEnvironment("DEV")   // Returns .DEV. and .AN
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("TEST")  // Returns .TEST. and .ANY. tests
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("PROD")  // Returns .PROD. and .ANY. tests
 
+// Optional parameter - omit to get all tests
+EVALUATE PQL.Assert.RetrieveTestsByEnvironment()        // Returns all tests (same as RetrieveTests)
+EVALUATE PQL.Assert.RetrieveTestsByEnvironment("")      // Returns all tests (same as RetrieveTests)
+
 // Case-insensitive - these are equivalent
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("dev")
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("Dev")
@@ -392,9 +396,6 @@ EVALUATE PQL.Assert.RetrieveTestsByEnvironment("DEV")
 // Custom environments are supported
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("UAT")      // Returns .UAT. and .ANY. tests
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("STAGING")  // Returns .STAGING. and .ANY. tests
-
-// Blank returns all tests (same as RetrieveTests)
-EVALUATE PQL.Assert.RetrieveTestsByEnvironment("")
 
 // Manual filtering (alternative approach)
 EVALUATE FILTER(PQL.Assert.RetrieveTests(), CONTAINSSTRING([FUNCTION_NAME], ".DEV."))
