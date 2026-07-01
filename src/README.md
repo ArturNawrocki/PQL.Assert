@@ -132,6 +132,115 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 
 - `PQL.Assert.Relationship.ShouldExist(testName, fromTable, fromColumn, toTable, toColumn)` - Asserts relationship exists
 
+### Partition Assertions
+
+PQL.Assert provides functions for validating partition configurations in semantic models, useful for incremental refresh scenarios and data quality monitoring.
+
+- `PQL.Assert.Partitions.ShouldBe(testName, tableName, expectedCount, [startDate], [endDate])` - Asserts that a table has the expected number of partitions. Optional date parameters filter partitions by `RangeStart` and `RangeEnd` for targeted testing of time-based partition strategies.
+- `PQL.Assert.Partitions.ShouldExist(testName, tableName, [startDate], [endDate])` - Asserts that at least one partition exists for a table (or within the filtered date window).
+- `PQL.Assert.Partitions.ShouldBeAtLeast(testName, tableName, minimumCount, [startDate], [endDate])` - Asserts that a table has at least a minimum number of partitions. Useful for validating incremental refresh partition growth.
+
+**Example Usage:**
+```dax
+// Basic partition count validation
+EVALUATE PQL.Assert.Partitions.ShouldBe(
+    "Sales table should have 12 monthly partitions",
+    "Sales",
+    12
+)
+
+// Partition count with date range filtering
+EVALUATE PQL.Assert.Partitions.ShouldBe(
+    "Sales partitions for 2024 should be complete",
+    "Sales",
+    12,
+    DATE(2024, 1, 1),
+    DATE(2024, 12, 31)
+)
+
+// Partition count should be at least a minimum threshold
+EVALUATE PQL.Assert.Partitions.ShouldBeAtLeast(
+    "Sales should have at least 10 partitions",
+    "Sales",
+    10
+)
+
+// Partition existence validation
+EVALUATE PQL.Assert.Partitions.ShouldExist(
+    "Sales should have at least one partition",
+    "Sales"
+)
+```
+
+### Perspective Assertions
+
+PQL.Assert provides functions for validating perspective configurations and membership, ensuring that perspectives contain the expected tables, columns, and measures.
+
+- `PQL.Assert.Perspective.ShouldExist(testName, perspectiveName)` - Asserts that a perspective exists in the semantic model
+- `PQL.Assert.Perspective.ShouldContain(testName, perspectiveName, [expectedTables], [expectedColumns], [expectedMeasures])` - Asserts that a perspective contains expected objects. Tables, columns, and measures are validated using DATATABLE structures with a `[Name]` column.
+- `PQL.Assert.Perspective.ShouldMatchSchema(testName, perspectiveName, expectedTablesList, expectedColumnsList, expectedMeasuresList)` - Asserts exact perspective schema using comma-separated lists (consistent with other schema checks like `Tbl.ShouldHaveColumns` and `Tbl.ShouldNotHaveExtraColumns`). This validates both missing expected objects and unexpected extra objects.
+
+**Example Usage:**
+```dax
+// Check if perspective exists
+EVALUATE PQL.Assert.Perspective.ShouldExist(
+    "Finance perspective should exist",
+    "Finance"
+)
+
+// Validate perspective contains expected tables
+VAR _ExpectedTables = DATATABLE(
+    "Name", STRING,
+    {
+        {"Sales"},
+        {"Customers"},
+        {"Products"}
+    }
+)
+
+EVALUATE PQL.Assert.Perspective.ShouldContain(
+    "Finance perspective should contain core tables",
+    "Finance",
+    _ExpectedTables,
+    BLANK(),
+    BLANK()
+)
+
+// Validate with columns and measures
+VAR _ExpectedColumns = DATATABLE(
+    "Name", STRING,
+    {
+        {"Sales[Amount]"},
+        {"Sales[OrderDate]"}
+    }
+)
+
+VAR _ExpectedMeasures = DATATABLE(
+    "Name", STRING,
+    {
+        {"Sales[Total Sales]"},
+        {"Sales[YTD Sales]"}
+    }
+)
+
+EVALUATE PQL.Assert.Perspective.ShouldContain(
+    "Finance perspective should contain specific columns and measures",
+    "Finance",
+    BLANK(),
+    _ExpectedColumns,
+    _ExpectedMeasures
+)
+
+// Simplified exact schema validation using comma-separated lists
+EVALUATE PQL.Assert.Perspective.ShouldMatchSchema(
+    "Finance perspective should match expected schema",
+    "Finance",
+    "Sales,Customers,Products",
+    "Sales[Amount],Sales[OrderDate],Customers[CustomerName]",
+    "Sales[Total Sales],Sales[YTD Sales]"
+)
+```
+
 ### Object Level Security (OLS) Assertions
 
 PQL.Assert provides dedicated functions for testing Object Level Security at both the table and column level. These functions use `INFO.VIEW.TABLES()` and `INFO.VIEW.COLUMNS()` to verify metadata visibility based on role permissions.
@@ -183,12 +292,12 @@ PQL.Assert provides two pairs of test discovery functions. The **V1 functions** 
 #### V1 — Power Automate compatible
 
 - `PQL.Assert.RetrieveTests()` - Returns all test functions (ending with .Test or .Tests) as a single `[Name]` column. Uses only `INFO.FUNCTIONS`; safe for Power Automate.
-- `PQL.Assert.RetrieveTestsByEnvironment(environment)` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Returns all tests if environment is blank. Uses only `INFO.FUNCTIONS`; safe for Power Automate.
+- `PQL.Assert.RetrieveTestsByEnvironment([environment])` - Returns tests filtered by environment (e.g., "DEV", "TEST", "PROD") matching `.{ENV}.` or `.ANY.` in function names. Case-insensitive. Optional `environment` parameter defaults to `""` (returns all tests if omitted or blank). Uses only `INFO.FUNCTIONS`; safe for Power Automate.
 
 #### V2 — Full metadata (not for Power Automate)
 
 - `PQL.Assert.RetrieveTestsV2()` - Returns all test functions with full metadata columns (`[Name]`, `[Description]`, `[PQLAssert_ImpersonatedUserName]`, `[PQLAssert_RoleName]`). Uses `INFO.USERDEFINEDFUNCTIONS` and `INFO.ANNOTATIONS`. **Not compatible with Power Automate.**
-- `PQL.Assert.RetrieveTestsByEnvironmentV2(environment)` - Returns tests filtered by environment with full metadata. Case-insensitive. Returns all tests if environment is blank. **Not compatible with Power Automate.**
+- `PQL.Assert.RetrieveTestsByEnvironmentV2([environment])` - Returns tests filtered by environment with full metadata. Case-insensitive. Optional `environment` parameter defaults to `""` (returns all tests if omitted or blank). **Not compatible with Power Automate.**
 
 ### Best Practice Validations
 
@@ -384,6 +493,10 @@ EVALUATE PQL.Assert.RetrieveTestsByEnvironment("DEV")   // Returns .DEV. and .AN
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("TEST")  // Returns .TEST. and .ANY. tests
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("PROD")  // Returns .PROD. and .ANY. tests
 
+// Optional parameter - omit to get all tests
+EVALUATE PQL.Assert.RetrieveTestsByEnvironment()        // Returns all tests (same as RetrieveTests)
+EVALUATE PQL.Assert.RetrieveTestsByEnvironment("")      // Returns all tests (same as RetrieveTests)
+
 // Case-insensitive - these are equivalent
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("dev")
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("Dev")
@@ -392,9 +505,6 @@ EVALUATE PQL.Assert.RetrieveTestsByEnvironment("DEV")
 // Custom environments are supported
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("UAT")      // Returns .UAT. and .ANY. tests
 EVALUATE PQL.Assert.RetrieveTestsByEnvironment("STAGING")  // Returns .STAGING. and .ANY. tests
-
-// Blank returns all tests (same as RetrieveTests)
-EVALUATE PQL.Assert.RetrieveTestsByEnvironment("")
 
 // Manual filtering (alternative approach)
 EVALUATE FILTER(PQL.Assert.RetrieveTests(), CONTAINSSTRING([FUNCTION_NAME], ".DEV."))

@@ -15,7 +15,11 @@
     "Script 1",
     "Script 2",
     "Script 3",
-    "Script 4"
+    "Script 4",
+    "Incremental",
+    "Load PQL.Partition",
+    "Script 5",
+    "Load PQL Perspectives"
   ],
-  "defaultTab": "Script 4"
+  "defaultTab": "Load PQL Perspectives"
 }

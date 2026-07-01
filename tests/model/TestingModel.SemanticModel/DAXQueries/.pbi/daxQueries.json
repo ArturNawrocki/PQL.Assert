@@ -19,7 +19,9 @@
     "Tbl.Tests",
     "Col.Tests",
     "RLS.Tests",
+    "Partition.Tests",
+    "Perspective.Tests",
     "Query 1"
   ],
-  "defaultTab": "Retrieve Tests"
+  "defaultTab": "Perspective.Tests"
 }
