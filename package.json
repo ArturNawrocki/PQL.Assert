@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@microsoft/powerbi-desktop-bridge-cli": "^0.1.1"
+  }
+}
