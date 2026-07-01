@@ -1,7 +1,6 @@
 createOrReplace
     /// Perspective Assertions - PQL.Assert.Perspective namespace
     /// These functions validate perspective configurations and membership in semantic models
-
     /// Asserts that a perspective exists and contains expected tables, columns, and measures.
     /// Uses INFO.PERSPECTIVES() and related DMV functions to validate perspective membership.
     /// @param {STRING} testName - Description of the test being performed

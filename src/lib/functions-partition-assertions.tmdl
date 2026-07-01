@@ -1,7 +1,6 @@
 createOrReplace
     /// Partition Assertions - PQL.Assert.Partition namespace
     /// These functions validate partition configurations in semantic models
-
     /// Asserts that a table has the expected number of partitions, with optional date range filtering.
     /// Uses INFO.PARTITIONS() to check partition counts for data quality and model structure validation.
     /// @param {STRING} testName - Description of the test being performed
