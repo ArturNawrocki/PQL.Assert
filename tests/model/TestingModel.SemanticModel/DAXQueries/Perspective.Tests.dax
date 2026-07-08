@@ -13,8 +13,17 @@ FUNCTION Perspective.ANY.Tests = () =>
         "Just SharePoint"
     )
 
-    // Test 2: Perspective exact schema via CSV lists (aligned with schema-check style assertions)
-    VAR _Test2 = PQL.Assert.Perspective.ShouldMatchSchema(
+    // Test 2: Perspective contains expected objects using ShouldContain (model-independent with STRING params)
+    VAR _Test2 = PQL.Assert.Perspective.ShouldContain(
+        "Perspective.ShouldContain: 'Just SharePoint' contains expected objects",
+        "Just SharePoint",
+        "Test Import 1 & 3,Mock-Fact",
+        "Test Import 1 & 3[project_name],Mock-Fact[Date ID]",
+        "Test Import 1 & 3[Row Count]"
+    )
+
+    // Test 3: Perspective exact schema via CSV lists (aligned with schema-check style assertions)
+    VAR _Test3 = PQL.Assert.Perspective.ShouldMatchSchema(
         "Perspective.ShouldMatchSchema: 'Just SharePoint' should match expected schema",
         "Just SharePoint",
         "Test Import 1 & 3,Mock-Fact",
@@ -24,7 +33,8 @@ FUNCTION Perspective.ANY.Tests = () =>
 
     RETURN UNION(
         _Test1,
-        _Test2
+        _Test2,
+        _Test3
     )
 
 EVALUATE Perspective.ANY.Tests()
