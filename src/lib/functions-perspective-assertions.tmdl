@@ -3,13 +3,14 @@ createOrReplace
     /// These functions validate perspective configurations and membership in semantic models
     /// Asserts that a perspective exists and contains expected tables, columns, and measures.
     /// Uses INFO.PERSPECTIVES() and related DMV functions to validate perspective membership.
+    /// Model-independent: accepts comma-separated string lists instead of TABLE parameters.
     /// @param {STRING} testName - Description of the test being performed
     /// @param {STRING} perspectiveName - Name of the perspective to validate
-    /// @param {TABLE} [expectedTables] - Optional table with [Name] column containing expected table names
-    /// @param {TABLE} [expectedColumns] - Optional table with [Name] column containing expected column references (Table[Column] format)
-    /// @param {TABLE} [expectedMeasures] - Optional table with [Name] column containing expected measure references (Table[Measure] format)
+    /// @param {STRING} expectedTablesList - Comma-separated table names (empty string for no tables)
+    /// @param {STRING} expectedColumnsList - Comma-separated column references in Table[Column] format (empty string for no columns)
+    /// @param {STRING} expectedMeasuresList - Comma-separated measure references in Table[Measure] format (empty string for no measures)
     function 'PQL.Assert.Perspective.ShouldContain' =
-            (testName: STRING, perspectiveName: STRING, expectedTables: TABLE, expectedColumns: TABLE, expectedMeasures: TABLE) =>
+            (testName: STRING, perspectiveName: STRING, expectedTablesList: STRING, expectedColumnsList: STRING, expectedMeasuresList: STRING) =>
                 VAR _Perspective =
                     FILTER(
                         INFO.PERSPECTIVES(),
@@ -23,18 +24,7 @@ createOrReplace
                         [PerspectiveID] = _PerspectiveID
                     )
                 
-                // Tables
-                VAR _EmptyNameTable =
-                    FILTER(
-                        DATATABLE(
-                            "Name", STRING,
-                            {
-                                {"__EMPTY__"}
-                            }
-                        ),
-                        FALSE()
-                    )
-
+                // Get actual tables in perspective
                 VAR _ActualTables =
                     IF(
                         _PerspectiveExists,
@@ -52,12 +42,13 @@ createOrReplace
                             ),
                             "Name", [Name]
                         ),
-                        _EmptyNameTable
+                        FILTER(
+                            DATATABLE("Name", STRING, {{"__EMPTY__"}}),
+                            FALSE()
+                        )
                     )
-                VAR _MissingTables =
-                    EXCEPT(expectedTables, _ActualTables)
                 
-                // Columns
+                // Get actual columns in perspective
                 VAR _ActualColumns =
                     IF(
                         _PerspectiveExists,
@@ -90,12 +81,13 @@ createOrReplace
                             ),
                             "Name", [TableName] & "[" & [ColumnName] & "]"
                         ),
-                        _EmptyNameTable
+                        FILTER(
+                            DATATABLE("Name", STRING, {{"__EMPTY__"}}),
+                            FALSE()
+                        )
                     )
-                VAR _MissingColumns =
-                    EXCEPT(expectedColumns, _ActualColumns)
                 
-                // Measures
+                // Get actual measures in perspective
                 VAR _ActualMeasures =
                     IF(
                         _PerspectiveExists,
@@ -128,27 +120,73 @@ createOrReplace
                             ),
                             "Name", [TableName] & "[" & [MeasureName] & "]"
                         ),
-                        _EmptyNameTable
+                        FILTER(
+                            DATATABLE("Name", STRING, {{"__EMPTY__"}}),
+                            FALSE()
+                        )
                     )
-                VAR _MissingMeasures =
-                    EXCEPT(expectedMeasures, _ActualMeasures)
                 
-                VAR _ExpectedCount =
-                    COUNTROWS(expectedTables) +
-                    COUNTROWS(expectedColumns) +
-                    COUNTROWS(expectedMeasures)
+                // Calculate expected counts from comma-separated lists
+                VAR _ExpectedTablesCount =
+                    IF(
+                        LEN(TRIM(expectedTablesList)) = 0,
+                        0,
+                        LEN(expectedTablesList) - LEN(SUBSTITUTE(expectedTablesList, ",", "")) + 1
+                    )
+                VAR _ExpectedColumnsCount =
+                    IF(
+                        LEN(TRIM(expectedColumnsList)) = 0,
+                        0,
+                        LEN(expectedColumnsList) - LEN(SUBSTITUTE(expectedColumnsList, ",", "")) + 1
+                    )
+                VAR _ExpectedMeasuresCount =
+                    IF(
+                        LEN(TRIM(expectedMeasuresList)) = 0,
+                        0,
+                        LEN(expectedMeasuresList) - LEN(SUBSTITUTE(expectedMeasuresList, ",", "")) + 1
+                    )
+                
+                // Prepare for case-insensitive string matching
+                VAR _ExpectedTablesUpper = "," & UPPER(expectedTablesList) & ","
+                VAR _ExpectedColumnsUpper = "," & UPPER(expectedColumnsList) & ","
+                VAR _ExpectedMeasuresUpper = "," & UPPER(expectedMeasuresList) & ","
+                
+                // Count matched items using string matching
+                VAR _MatchedTablesCount =
+                    COUNTROWS(
+                        FILTER(
+                            _ActualTables,
+                            CONTAINSSTRING(_ExpectedTablesUpper, "," & TRIM(UPPER([Name])) & ",")
+                        )
+                    )
+                VAR _MatchedColumnsCount =
+                    COUNTROWS(
+                        FILTER(
+                            _ActualColumns,
+                            CONTAINSSTRING(_ExpectedColumnsUpper, "," & TRIM(UPPER([Name])) & ",")
+                        )
+                    )
+                VAR _MatchedMeasuresCount =
+                    COUNTROWS(
+                        FILTER(
+                            _ActualMeasures,
+                            CONTAINSSTRING(_ExpectedMeasuresUpper, "," & TRIM(UPPER([Name])) & ",")
+                        )
+                    )
+                
+                // Calculate missing counts
+                VAR _MissingTablesCount = COALESCE(MAX(0, _ExpectedTablesCount - _MatchedTablesCount), 0)
+                VAR _MissingColumnsCount = COALESCE(MAX(0, _ExpectedColumnsCount - _MatchedColumnsCount), 0)
+                VAR _MissingMeasuresCount = COALESCE(MAX(0, _ExpectedMeasuresCount - _MatchedMeasuresCount), 0)
+                
+                VAR _ExpectedCount = _ExpectedTablesCount + _ExpectedColumnsCount + _ExpectedMeasuresCount
                 VAR _ActualCount =
                     IF(
                         _PerspectiveExists,
-                        COUNTROWS(_ActualTables) +
-                        COUNTROWS(_ActualColumns) +
-                        COUNTROWS(_ActualMeasures),
+                        COUNTROWS(_ActualTables) + COUNTROWS(_ActualColumns) + COUNTROWS(_ActualMeasures),
                         0
                     )
-                VAR _MissingCount =
-                    COUNTROWS(_MissingTables) +
-                    COUNTROWS(_MissingColumns) +
-                    COUNTROWS(_MissingMeasures)
+                VAR _MissingCount = _MissingTablesCount + _MissingColumnsCount + _MissingMeasuresCount
                 
                 VAR _Passed = _PerspectiveExists && _MissingCount = 0
                 VAR _Details =
