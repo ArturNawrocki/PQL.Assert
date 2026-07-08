@@ -27,104 +27,83 @@ createOrReplace
                 
                 // Get actual tables in perspective
                 VAR _ActualTables =
-                    IF(
-                        _PerspectiveExists,
-                        SELECTCOLUMNS(
-                            NATURALINNERJOIN(
-                                SELECTCOLUMNS(
-                                    _PerspectiveTables,
-                                    "TableID", [TableID]
-                                ),
-                                SELECTCOLUMNS(
-                                    INFO.TABLES(),
-                                    "TableID", [ID],
-                                    "Name", [Name]
-                                )
+                    SELECTCOLUMNS(
+                        NATURALINNERJOIN(
+                            SELECTCOLUMNS(
+                                _PerspectiveTables,
+                                "TableID", [TableID]
                             ),
-                            "Name", [Name]
+                            SELECTCOLUMNS(
+                                INFO.TABLES(),
+                                "TableID", [ID],
+                                "Name", [Name]
+                            )
                         ),
-                        FILTER(
-                            DATATABLE("Name", STRING, {{"__EMPTY__"}}),
-                            FALSE()
-                        )
+                        "Name", [Name]
                     )
                 
                 // Get actual columns in perspective
                 VAR _ActualColumns =
-                    IF(
-                        _PerspectiveExists,
-                        SELECTCOLUMNS(
+                    SELECTCOLUMNS(
+                        NATURALINNERJOIN(
                             NATURALINNERJOIN(
                                 NATURALINNERJOIN(
-                                    NATURALINNERJOIN(
-                                        SELECTCOLUMNS(
-                                            INFO.PERSPECTIVECOLUMNS(),
-                                            "PerspectiveTableID", [PerspectiveTableID],
-                                            "ColumnID", [ColumnID]
-                                        ),
-                                        SELECTCOLUMNS(
-                                            _PerspectiveTables,
-                                            "PerspectiveTableID", [ID],
-                                            "TableID", [TableID]
-                                        )
+                                    SELECTCOLUMNS(
+                                        INFO.PERSPECTIVECOLUMNS(),
+                                        "PerspectiveTableID", [PerspectiveTableID],
+                                        "ColumnID", [ColumnID]
                                     ),
                                     SELECTCOLUMNS(
-                                        INFO.COLUMNS(),
-                                        "ColumnID", [ID],
-                                        "ColumnName", IF(NOT ISBLANK([ExplicitName]), [ExplicitName], [InferredName])
+                                        _PerspectiveTables,
+                                        "PerspectiveTableID", [ID],
+                                        "TableID", [TableID]
                                     )
                                 ),
                                 SELECTCOLUMNS(
-                                    INFO.TABLES(),
-                                    "TableID", [ID],
-                                    "TableName", [Name]
+                                    INFO.COLUMNS(),
+                                    "ColumnID", [ID],
+                                    "ColumnName", IF(NOT ISBLANK([ExplicitName]), [ExplicitName], [InferredName])
                                 )
                             ),
-                            "Name", [TableName] & "[" & [ColumnName] & "]"
+                            SELECTCOLUMNS(
+                                INFO.TABLES(),
+                                "TableID", [ID],
+                                "TableName", [Name]
+                            )
                         ),
-                        FILTER(
-                            DATATABLE("Name", STRING, {{"__EMPTY__"}}),
-                            FALSE()
-                        )
+                        "Name", [TableName] & "[" & [ColumnName] & "]"
                     )
                 
                 // Get actual measures in perspective
                 VAR _ActualMeasures =
-                    IF(
-                        _PerspectiveExists,
-                        SELECTCOLUMNS(
+                    SELECTCOLUMNS(
+                        NATURALINNERJOIN(
                             NATURALINNERJOIN(
                                 NATURALINNERJOIN(
-                                    NATURALINNERJOIN(
-                                        SELECTCOLUMNS(
-                                            INFO.PERSPECTIVEMEASURES(),
-                                            "PerspectiveTableID", [PerspectiveTableID],
-                                            "MeasureID", [MeasureID]
-                                        ),
-                                        SELECTCOLUMNS(
-                                            _PerspectiveTables,
-                                            "PerspectiveTableID", [ID]
-                                        )
+                                    SELECTCOLUMNS(
+                                        INFO.PERSPECTIVEMEASURES(),
+                                        "PerspectiveTableID", [PerspectiveTableID],
+                                        "MeasureID", [MeasureID]
                                     ),
                                     SELECTCOLUMNS(
-                                        INFO.MEASURES(),
-                                        "MeasureID", [ID],
-                                        "MeasureTableID", [TableID],
-                                        "MeasureName", [Name]
+                                        _PerspectiveTables,
+                                        "PerspectiveTableID", [ID]
                                     )
                                 ),
                                 SELECTCOLUMNS(
-                                    INFO.TABLES(),
-                                    "MeasureTableID", [ID],
-                                    "TableName", [Name]
+                                    INFO.MEASURES(),
+                                    "MeasureID", [ID],
+                                    "MeasureTableID", [TableID],
+                                    "MeasureName", [Name]
                                 )
                             ),
-                            "Name", [TableName] & "[" & [MeasureName] & "]"
+                            SELECTCOLUMNS(
+                                INFO.TABLES(),
+                                "MeasureTableID", [ID],
+                                "TableName", [Name]
+                            )
                         ),
-                        FILTER(
-                            DATATABLE("Name", STRING, {{"__EMPTY__"}}),
-                            FALSE()
-                        )
+                        "Name", [TableName] & "[" & [MeasureName] & "]"
                     )
                 
                 // Calculate expected counts from comma-separated lists
@@ -181,12 +160,7 @@ createOrReplace
                 VAR _MissingMeasuresCount = MAX(0, _ExpectedMeasuresCount - _MatchedMeasuresCount)
                 
                 VAR _ExpectedCount = _ExpectedTablesCount + _ExpectedColumnsCount + _ExpectedMeasuresCount
-                VAR _ActualCount =
-                    IF(
-                        _PerspectiveExists,
-                        COUNTROWS(_ActualTables) + COUNTROWS(_ActualColumns) + COUNTROWS(_ActualMeasures),
-                        0
-                    )
+                VAR _ActualCount = COUNTROWS(_ActualTables) + COUNTROWS(_ActualColumns) + COUNTROWS(_ActualMeasures)
                 VAR _MissingCount = _MissingTablesCount + _MissingColumnsCount + _MissingMeasuresCount
                 
                 VAR _Passed = _PerspectiveExists && _MissingCount = 0
