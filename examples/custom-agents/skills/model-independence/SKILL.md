@@ -93,7 +93,7 @@ VAR _StringList =
         GENERATESERIES(1, COUNTROWS(inputTable)),
         SELECTCOLUMNS(
             TOPN(1, inputTable, [VALUE], ASC),
-            "Value", CONCATENATEX(CURRENTTABLE(), "", "")
+            "IteratedValue", CONCATENATEX(CURRENTTABLE(), "", "")
         ),
         ","
     )
@@ -101,9 +101,11 @@ VAR _StringList =
 
 **How this works:**
 1. `GENERATESERIES(1, COUNTROWS(inputTable))` - Creates a sequence from 1 to row count
-2. For each iteration, `TOPN(1, inputTable, [VALUE], ASC)` - Gets the Nth row
-3. `SELECTCOLUMNS(..., CONCATENATEX(CURRENTTABLE(), "", ""))` - Extracts the value from the first (and only) column
+2. For each iteration, `TOPN(1, inputTable, [VALUE], ASC)` - Gets the Nth row (NOTE: [VALUE] is the GENERATESERIES iterator, not a column name in inputTable)
+3. `SELECTCOLUMNS(..., CONCATENATEX(CURRENTTABLE(), "", ""))` - Extracts the value from the first (and only) column of the current row, regardless of that column's actual name
 4. `CONCATENATEX(...)` - Joins all values with a delimiter
+
+**Important Note:** The [VALUE] reference is from the GENERATESERIES iterator, not a column in the input table. This pattern works with any single-column table regardless of the column's actual name.
 
 ### Alternative Pattern: Accept String Parameters Instead
 
@@ -179,14 +181,18 @@ VAR _Missing = EXCEPT(_Expected, _Actual)
 But when _Expected comes from a parameter, convert to string-based comparison:
 
 ```dax
-// Model-independent approach
-VAR _ExpectedUpper = "," & UPPER(_ExpectedList) & ","
+// Model-independent approach using exact string matching with delimiters
+VAR _ExpectedUpper = "," & UPPER(TRIM(_ExpectedList)) & ","
 VAR _Matched = 
     FILTER(
         _Actual,
-        CONTAINSSTRING(_ExpectedUpper, "," & UPPER([Name]) & ",")
+        CONTAINSSTRING(_ExpectedUpper, "," & TRIM(UPPER([Name])) & ",")
     )
+// Note: Delimiters (commas) prevent most substring false matches
+// but names should not contain commas themselves
 ```
+
+**Limitation:** The string-based CONTAINSSTRING approach with delimiters works well for most cases, but names containing the delimiter character (comma) will cause issues. Document this limitation clearly, or use a different delimiter that won't appear in names (e.g., pipe `|` or semicolon `;`).
 
 ## Common Model-Dependent Antipatterns
 

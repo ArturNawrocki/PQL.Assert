@@ -4,6 +4,7 @@ createOrReplace
     /// Asserts that a perspective exists and contains expected tables, columns, and measures.
     /// Uses INFO.PERSPECTIVES() and related DMV functions to validate perspective membership.
     /// Model-independent: accepts comma-separated string lists instead of TABLE parameters.
+    /// NOTE: List items should not contain commas. Use exact names without extra delimiters.
     /// @param {STRING} testName - Description of the test being performed
     /// @param {STRING} perspectiveName - Name of the perspective to validate
     /// @param {STRING} expectedTablesList - Comma-separated table names (empty string for no tables)
@@ -146,12 +147,12 @@ createOrReplace
                         LEN(expectedMeasuresList) - LEN(SUBSTITUTE(expectedMeasuresList, ",", "")) + 1
                     )
                 
-                // Prepare for case-insensitive string matching
-                VAR _ExpectedTablesUpper = "," & UPPER(expectedTablesList) & ","
-                VAR _ExpectedColumnsUpper = "," & UPPER(expectedColumnsList) & ","
-                VAR _ExpectedMeasuresUpper = "," & UPPER(expectedMeasuresList) & ","
+                // Prepare for case-insensitive string matching with proper delimiters to avoid substring false matches
+                VAR _ExpectedTablesUpper = "," & UPPER(TRIM(expectedTablesList)) & ","
+                VAR _ExpectedColumnsUpper = "," & UPPER(TRIM(expectedColumnsList)) & ","
+                VAR _ExpectedMeasuresUpper = "," & UPPER(TRIM(expectedMeasuresList)) & ","
                 
-                // Count matched items using string matching
+                // Count matched items using exact string matching (with delimiters to prevent substring matches)
                 VAR _MatchedTablesCount =
                     COUNTROWS(
                         FILTER(
@@ -175,9 +176,9 @@ createOrReplace
                     )
                 
                 // Calculate missing counts
-                VAR _MissingTablesCount = COALESCE(MAX(0, _ExpectedTablesCount - _MatchedTablesCount), 0)
-                VAR _MissingColumnsCount = COALESCE(MAX(0, _ExpectedColumnsCount - _MatchedColumnsCount), 0)
-                VAR _MissingMeasuresCount = COALESCE(MAX(0, _ExpectedMeasuresCount - _MatchedMeasuresCount), 0)
+                VAR _MissingTablesCount = MAX(0, _ExpectedTablesCount - _MatchedTablesCount)
+                VAR _MissingColumnsCount = MAX(0, _ExpectedColumnsCount - _MatchedColumnsCount)
+                VAR _MissingMeasuresCount = MAX(0, _ExpectedMeasuresCount - _MatchedMeasuresCount)
                 
                 VAR _ExpectedCount = _ExpectedTablesCount + _ExpectedColumnsCount + _ExpectedMeasuresCount
                 VAR _ActualCount =
