@@ -101,11 +101,14 @@ VAR _StringList =
 
 **How this works:**
 1. `GENERATESERIES(1, COUNTROWS(inputTable))` - Creates a sequence from 1 to row count
-2. For each iteration, `TOPN(1, inputTable, [VALUE], ASC)` - Gets the Nth row (NOTE: [VALUE] is the GENERATESERIES iterator, not a column name in inputTable)
+2. For each iteration, `TOPN(1, inputTable, [VALUE], ASC)` - Gets rows from inputTable (NOTE: [VALUE] is the GENERATESERIES iterator, not a column name in inputTable. Row ordering may not be deterministic without an explicit sort key from the original table.)
 3. `SELECTCOLUMNS(..., CONCATENATEX(CURRENTTABLE(), "", ""))` - Extracts the value from the first (and only) column of the current row, regardless of that column's actual name
 4. `CONCATENATEX(...)` - Joins all values with a delimiter
 
-**Important Note:** The [VALUE] reference is from the GENERATESERIES iterator, not a column in the input table. This pattern works with any single-column table regardless of the column's actual name.
+**Important Notes:** 
+- The [VALUE] reference is from the GENERATESERIES iterator, not a column in the input table
+- This pattern works with any single-column table regardless of the column's actual name
+- Row ordering is not guaranteed unless the input table has an explicit sort applied
 
 ### Alternative Pattern: Accept String Parameters Instead
 
