@@ -313,10 +313,10 @@
                 // SecurityFilteringBehavior: 1 = OneDirection, 2 = BothDirections
                 VAR _ActualSecFiltering = MAXX(_MatchingRel, SWITCH([SecurityFilteringBehavior], 1, "OneDirection", 2, "BothDirections", "Unknown"))
 
-                // Evaluate optional checks (skip when parameter is "")
-                VAR _FromCardOk = IF(fromCardinality = "", TRUE, UPPER(_ActualFromCard) = UPPER(fromCardinality))
-                VAR _ToCardOk = IF(toCardinality = "", TRUE, UPPER(_ActualToCard) = UPPER(toCardinality))
-                VAR _SecFilterOk = IF(securityFilteringBehavior = "", TRUE, UPPER(_ActualSecFiltering) = UPPER(securityFilteringBehavior))
+                // Evaluate optional checks (skip when parameter is "" or relationship not found)
+                VAR _FromCardOk = IF(fromCardinality = "" || NOT _Found, TRUE, UPPER(_ActualFromCard) = UPPER(fromCardinality))
+                VAR _ToCardOk = IF(toCardinality = "" || NOT _Found, TRUE, UPPER(_ActualToCard) = UPPER(toCardinality))
+                VAR _SecFilterOk = IF(securityFilteringBehavior = "" || NOT _Found, TRUE, UPPER(_ActualSecFiltering) = UPPER(securityFilteringBehavior))
 
                 VAR _Passed = _Found && _FromCardOk && _ToCardOk && _SecFilterOk
 
