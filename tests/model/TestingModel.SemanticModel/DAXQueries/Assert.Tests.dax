@@ -290,9 +290,27 @@ VAR _Tbl_DataType_Fail = PQL.Assert.Tbl.ColumnDataTypeShouldBe("Tbl.ColumnDataTy
 // RELATIONSHIP ASSERTION FUNCTIONS
 // ============================================
 
-// PQL.Assert.Relationship.ShouldExist
+// PQL.Assert.Relationship.ShouldExist — basic existence
 VAR _Rel_ShouldExist_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: Valid relationship should pass", "TestData", "ID", "TestData-Fact", "ID")
 VAR _Rel_ShouldExist_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: Invalid relationship should fail", "FakeFrom", "Col", "FakeTo", "Col")
+
+// PQL.Assert.Relationship.ShouldExist — FromCardinality (TestData[ID] -> TestData-Fact[ID] has FromCardinality=One)
+VAR _Rel_FromCard_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: FromCardinality=One should pass", "TestData", "ID", "TestData-Fact", "ID", "One")
+VAR _Rel_FromCard_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: FromCardinality=Many should fail", "TestData", "ID", "TestData-Fact", "ID", "Many")
+
+// PQL.Assert.Relationship.ShouldExist — ToCardinality (default ToCardinality=Many)
+VAR _Rel_ToCard_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: ToCardinality=Many should pass", "TestData", "ID", "TestData-Fact", "ID", "", "Many")
+VAR _Rel_ToCard_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: ToCardinality=One should fail", "TestData", "ID", "TestData-Fact", "ID", "", "One")
+
+// PQL.Assert.Relationship.ShouldExist — SecurityFilteringBehavior (default=OneDirection)
+VAR _Rel_SecFilter_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: SecurityFiltering=OneDirection should pass", "TestData", "ID", "TestData-Fact", "ID", "", "", "OneDirection")
+VAR _Rel_SecFilter_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: SecurityFiltering=BothDirections should fail", "TestData", "ID", "TestData-Fact", "ID", "", "", "BothDirections")
+
+// PQL.Assert.Relationship.ShouldExist — all optional params correct
+VAR _Rel_AllParams_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: All params correct should pass", "TestData", "ID", "TestData-Fact", "ID", "One", "Many", "OneDirection")
+
+// PQL.Assert.Relationship.ShouldExist — relationship not found with optional params
+VAR _Rel_NotFound_WithParams_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: Non-existent relationship with cardinality should fail", "FakeFrom", "Col", "FakeTo", "Col", "One", "Many", "OneDirection")
 
 // ============================================
 // Combine All Test Results
@@ -448,7 +466,15 @@ VAR _AllTests = UNION(
     
     // Relationship Assertions
     _Rel_ShouldExist_Pass,
-    _Rel_ShouldExist_Fail
+    _Rel_ShouldExist_Fail,
+    _Rel_FromCard_Pass,
+    _Rel_FromCard_Fail,
+    _Rel_ToCard_Pass,
+    _Rel_ToCard_Fail,
+    _Rel_SecFilter_Pass,
+    _Rel_SecFilter_Fail,
+    _Rel_AllParams_Pass,
+    _Rel_NotFound_WithParams_Fail
 )
 
 // ============================================

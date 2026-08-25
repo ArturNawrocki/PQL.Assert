@@ -267,17 +267,81 @@
 
 
     /// Relationship Assertions - PQL.Assert.Relationship namespace
+    /// Asserts that a relationship exists between two columns, with optional cardinality and security filtering checks.
+    /// Uses INFO.RELATIONSHIPS() to validate FromCardinality, ToCardinality, and SecurityFilteringBehavior.
+    /// Cardinality values: "One" or "Many". SecurityFilteringBehavior values: "OneDirection" or "BothDirections".
+    /// Omit or pass "" for any optional parameter to skip that check.
+    /// @param {STRING} fromCardinality - Optional. Expected cardinality on the From side ("One" or "Many"). Default "" skips check.
+    /// @param {STRING} toCardinality - Optional. Expected cardinality on the To side ("One" or "Many"). Default "" skips check.
+    /// @param {STRING} securityFilteringBehavior - Optional. Expected security filtering behavior ("OneDirection" or "BothDirections"). Default "" skips check.
     function 'PQL.Assert.Relationship.ShouldExist' =
-            (testName : STRING, fromTable : STRING, fromColumn : STRING, toTable : STRING, toColumn : STRING) =>
-                VAR _Relationships = INFO.VIEW.RELATIONSHIPS()
-                VAR _Found = COUNTROWS(FILTER(_Relationships,
+            (
+                testName : STRING,
+                fromTable : STRING,
+                fromColumn : STRING,
+                toTable : STRING,
+                toColumn : STRING,
+                fromCardinality : STRING = "",
+                toCardinality : STRING = "",
+                securityFilteringBehavior : STRING = ""
+            ) =>
+                // Existence check using INFO.VIEW.RELATIONSHIPS (human-readable table/column names)
+                VAR _ViewRels = INFO.VIEW.RELATIONSHIPS()
+                VAR _Found = COUNTROWS(FILTER(_ViewRels,
                     [FromTable] = fromTable && [FromColumn] = fromColumn &&
                     [ToTable] = toTable && [ToColumn] = toColumn)) > 0
+
+                // Resolve table and column IDs to join with INFO.RELATIONSHIPS for cardinality and security filtering
+                VAR _InfoTables = INFO.TABLES()
+                VAR _InfoCols = INFO.COLUMNS()
+                VAR _InfoRels = INFO.RELATIONSHIPS()
+
+                VAR _FromTableID = MAXX(FILTER(_InfoTables, [Name] = fromTable), [ID])
+                VAR _ToTableID = MAXX(FILTER(_InfoTables, [Name] = toTable), [ID])
+                VAR _FromColID = MAXX(FILTER(_InfoCols, [TableID] = _FromTableID && [ExplicitName] = fromColumn), [ID])
+                VAR _ToColID = MAXX(FILTER(_InfoCols, [TableID] = _ToTableID && [ExplicitName] = toColumn), [ID])
+
+                // Find the matching relationship in INFO.RELATIONSHIPS (numeric cardinality and security values)
+                VAR _MatchingRel = FILTER(_InfoRels,
+                    [FromTableID] = _FromTableID && [FromColumnID] = _FromColID &&
+                    [ToTableID] = _ToTableID && [ToColumnID] = _ToColID)
+
+                // FromCardinality / ToCardinality: 1 = One, 2 = Many
+                VAR _ActualFromCard = MAXX(_MatchingRel, SWITCH([FromCardinality], 1, "One", 2, "Many", "Unknown"))
+                VAR _ActualToCard = MAXX(_MatchingRel, SWITCH([ToCardinality], 1, "One", 2, "Many", "Unknown"))
+
+                // SecurityFilteringBehavior: 1 = OneDirection, 2 = BothDirections
+                VAR _ActualSecFiltering = MAXX(_MatchingRel, SWITCH([SecurityFilteringBehavior], 1, "OneDirection", 2, "BothDirections", "Unknown"))
+
+                // Evaluate optional checks (skip when parameter is "")
+                VAR _FromCardOk = IF(fromCardinality = "", TRUE, UPPER(_ActualFromCard) = UPPER(fromCardinality))
+                VAR _ToCardOk = IF(toCardinality = "", TRUE, UPPER(_ActualToCard) = UPPER(toCardinality))
+                VAR _SecFilterOk = IF(securityFilteringBehavior = "", TRUE, UPPER(_ActualSecFiltering) = UPPER(securityFilteringBehavior))
+
+                VAR _Passed = _Found && _FromCardOk && _ToCardOk && _SecFilterOk
+
+                // Build descriptive Expected message
+                VAR _RelKey = fromTable & "[" & fromColumn & "] -> " & toTable & "[" & toColumn & "]"
+                VAR _ExpectedSuffix =
+                    IF(fromCardinality <> "", " | FromCardinality: " & fromCardinality, "") &
+                    IF(toCardinality <> "", " | ToCardinality: " & toCardinality, "") &
+                    IF(securityFilteringBehavior <> "", " | SecurityFiltering: " & securityFilteringBehavior, "")
+
+                // Build Actual message showing values for each checked attribute
+                VAR _ActualDetails =
+                    IF(
+                        _Found,
+                        IF(fromCardinality <> "", " | FromCardinality: " & IF(ISBLANK(_ActualFromCard), "N/A", _ActualFromCard), "") &
+                        IF(toCardinality <> "", " | ToCardinality: " & IF(ISBLANK(_ActualToCard), "N/A", _ActualToCard), "") &
+                        IF(securityFilteringBehavior <> "", " | SecurityFiltering: " & IF(ISBLANK(_ActualSecFiltering), "N/A", _ActualSecFiltering), ""),
+                        ""
+                    )
+
                 RETURN ROW(
                     "TestName", testName,
-                    "Expected", "Relationship '" & fromTable & "[" & fromColumn & "] -> " & toTable & "[" & toColumn & "]' exists",
-                    "Actual", IF(_Found, "EXISTS", "NOT FOUND"),
-                    "Passed", _Found
+                    "Expected", "Relationship '" & _RelKey & "' exists" & _ExpectedSuffix,
+                    "Actual", IF(_Found, "EXISTS" & _ActualDetails, "NOT FOUND"),
+                    "Passed", _Passed
                 )
         annotation DAXLIB_PackageId = PQL.Assert
         annotation DAXLIB_PackageVersion = 0.5.0
