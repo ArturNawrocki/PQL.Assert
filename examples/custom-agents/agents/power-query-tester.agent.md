@@ -439,7 +439,10 @@ EVALUATE PQL.Assert.ShouldEqual("Test 1: 2+2 should equal 4", 4, 2+2)
 
 ### Relationship Assertions
 
-- `PQL.Assert.Relationship.ShouldExist(testName, fromTable, fromColumn, toTable, toColumn)` - Asserts relationship exists
+- `PQL.Assert.Relationship.ShouldExist(testName, fromTable, fromColumn, toTable, toColumn, [fromCardinality], [toCardinality], [securityFilteringBehavior])` - Asserts a relationship exists between two columns, with optional cardinality and security filtering checks. Pass `""` (or omit) any optional argument to skip that check.
+  - `fromCardinality` (optional) — expected From-side cardinality: `"One"` or `"Many"`.
+  - `toCardinality` (optional) — expected To-side cardinality: `"One"` or `"Many"`.
+  - `securityFilteringBehavior` (optional) — expected filter direction: `"OneDirection"` or `"BothDirections"`.
 
 ### Test Discovery
 
@@ -591,7 +594,8 @@ DEFINE
 	UNION (
 		PQL.Assert.Tbl.ShouldExist("Sales table exists", "Sales"),
 		PQL.Assert.Col.ShouldExist("Customer ID column exists", "Customers", "CustomerID"),
-		PQL.Assert.Relationship.ShouldExist("Sales-Customer relationship", "Sales", "CustomerID", "Customers", "CustomerID")
+		PQL.Assert.Relationship.ShouldExist("Sales-Customer relationship", "Sales", "CustomerID", "Customers", "CustomerID"),
+		PQL.Assert.Relationship.ShouldExist("Sales-Customer is Many-to-One, single direction", "Sales", "CustomerID", "Customers", "CustomerID", "Many", "One", "OneDirection")
 	)
 
 EVALUATE Schema.ANY.Tests()

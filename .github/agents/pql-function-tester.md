@@ -50,6 +50,12 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
     - MUST implement retry logic (up to 2 retries) for failed queries
     - MUST report comprehensive test summary showing results from both models
     - Avoid generating report visuals
+    - WHEN a feature branch or epic is being closed (merge to main, PR ready, "wrap up", "finish epic"), MUST run the EndOfEpicWorkflow which:
+        * runs auditTestCoverage() and reports coverage %
+        * verifies every NEW or MODIFIED function (including new optional parameters) has at least one pass and one fail test case
+        * confirms the package version in src/manifest.daxlib has been bumped relative to main
+        * updates README.md, src/README.md, and any relevant docs (e.g., function reference, CHANGELOG if present) to reflect the epic's changes
+    - WHEN running tests from outside Power BI Desktop (CI, ad-hoc, or user request to "run in venv"), MAY use the `pql-test` CLI from PyPI executed inside a Python virtual environment (see PqlTestVenvExecution)
   }
 
   ## Interfaces {
@@ -578,6 +584,32 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
 
       return: { total, tested, untested, coverage%, untestedList, extraList }
     }
+
+    // ─── Epic Closeout ───────────────────────────────────────
+
+    endOfEpicWorkflow() => {
+      // Executes EndOfEpicWorkflow (see Workflows section) — coverage audit + version check + docs.
+      1. diff: git diff --name-status main...HEAD
+      2. version: verify src/manifest.daxlib version > main's version; if not, prompt /bump-version
+      3. coverage: auditTestCoverage()
+      4. optional-param coverage: for each NEW optional parameter in modified signatures,
+         confirm at least one test omits the parameter AND one test supplies an explicit value
+      5. tests: runAllTests() (or runTestsInVenv() if requested); require 100% pass
+      6. docs: update README.md, src/README.md, CHANGELOG (create if missing), and any docs referencing changed signatures
+      7. report: summary of changed files, functions added/modified, new optional params, tests added, coverage %, version diff, docs updated
+      return: { changedFiles, functionsAdded, functionsModified, newOptionalParams, testsAdded, coveragePct, versionOld, versionNew, docsUpdated }
+    }
+
+    runTestsInVenv() => {
+      // Executes tests via the pql-test PyPI package in .venv
+      1. if .venv missing: create via `python -m venv .venv`
+      2. install: `.venv\Scripts\python -m pip install --upgrade pql-test`
+      3. run: pql-test against tests/model/TestingModel.pbip
+      4. run: pql-test against tests/rls_model/RLS_Model.pbip
+      5. parse: results, aggregate pass/fail
+      6. report: combined summary; surface failures with TestName and Actual
+      return: { testingModel: { passed, total }, rlsModel: { passed, total }, overall: { passed, total } }
+    }
   }
 
   ## Commands {
@@ -632,6 +664,12 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
 
     /audit-coverage =>
       auditTestCoverage()
+
+    /end-epic =>
+      endOfEpicWorkflow()
+
+    /run-tests-venv =>
+      runTestsInVenv()
   }
 
   ## Pattern Matching {
@@ -648,6 +686,8 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
       /where.*update|which.*file/ => askWhereToUpdate()
       /bump.*version|update.*version|change.*version/ => /bump-version
       /audit.*coverage|check.*coverage|missing.*test|untested/ => /audit-coverage
+      /end.*epic|finish.*epic|wrap.*up.*epic|close.*epic|epic.*complete|epic.*done|ready.*to.*merge/ => /end-epic
+      /pql-test|run.*venv|virtual.*env.*test|pypi.*test/ => /run-tests-venv
     }
   }
 
@@ -753,6 +793,67 @@ tools: ["read", "edit", "agent","search", "powerbi-modeling-mcp/*"]
          -> show total pass/fail across all tests
          -> highlight any failures for investigation
          -> remind about OLS testing requirements if OLS tests were run
+    }
+
+    // End-to-end: Close out an epic / feature branch
+    EndOfEpicWorkflow {
+      1. Diff against main:
+         -> run: git diff --name-status main...HEAD
+         -> list: changed files grouped by category (src/lib, tests/model, tests/rls_model, scripts, docs)
+         -> extract: new / modified function signatures from src/lib/*.tmdl
+         -> flag: any NEW optional parameters (parameters with `= <default>` in the signature)
+      2. Version bump check:
+         -> read: current version from src/manifest.daxlib on HEAD
+         -> read: version from src/manifest.daxlib on main (git show main:src/manifest.daxlib)
+         -> if versions equal: prompt user to run /bump-version before merging
+         -> if HEAD > main: confirm all DAXLIB_PackageVersion annotations across src/lib/*.tmdl, TMDLScripts/*.tmdl, and definition/functions.tmdl match the new version
+      3. Coverage audit:
+         -> run: auditTestCoverage()
+         -> for each NEW function: verify at least one pass case and one fail case exist in DAXQueries
+         -> for each NEW optional parameter: verify a test exercises both the default (omitted) and an explicit value
+         -> for any function still missing tests: create them, then re-run
+      4. Full test run:
+         -> run: runAllTests() (both TestingModel and RLS_Model) OR runTestsInVenv() if requested
+         -> require: 100% pass rate before proceeding
+         -> if failures: halt and surface for fix
+      5. Documentation refresh:
+         -> update: README.md — feature highlights, new function list, changed behavior
+         -> update: src/README.md — function reference (signatures + descriptions) for new/modified functions
+         -> update: scripts/README.md — if any scripts changed
+         -> update / create: CHANGELOG entry for the bumped version listing added functions, new optional parameters, breaking changes, and fixes
+         -> update: any docs/ or examples/ files that reference changed signatures
+      6. Final report to user:
+         -> summary table: files changed | functions added | functions modified | new optional params | tests added | coverage %
+         -> version diff (old -> new)
+         -> list of documentation files updated
+         -> confirmation that all tests pass
+         -> ask: "Epic ready to merge to main. Any remaining items?"
+    }
+
+    // End-to-end: Run tests via pql-test PyPI package in a Python virtual environment
+    PqlTestVenvExecution {
+      // Use when the user requests external test execution or CI-style runs
+      // without needing Power BI Desktop connections managed by the MCP server.
+      1. Ensure venv exists:
+         -> check for: .venv/ in repo root
+         -> if missing: run `python -m venv .venv` then activate
+      2. Install / upgrade pql-test:
+         -> run: `.venv\\Scripts\\python -m pip install --upgrade pql-test` (Windows)
+                or `. .venv/bin/activate && pip install --upgrade pql-test`
+      3. Discover targets:
+         -> scan: tests/model/TestingModel.SemanticModel/DAXQueries for *.dax test files
+         -> scan: tests/rls_model/RLS_Model.SemanticModel/DAXQueries for *.dax test files
+      4. Execute:
+         -> invoke: `pql-test --project tests/model/TestingModel.pbip` (or equivalent CLI syntax)
+         -> then:   `pql-test --project tests/rls_model/RLS_Model.pbip`
+         -> capture: exit codes and structured output (JSON if available)
+      5. Report:
+         -> aggregate: pass / fail counts per model
+         -> surface: any failures with TestName and Actual
+         -> compare: results to last MCP-based run if available
+      6. Cleanup:
+         -> leave venv intact for reuse
+         -> note: user can `deactivate` when done
     }
   }
 
