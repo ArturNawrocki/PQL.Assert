@@ -298,19 +298,19 @@ VAR _Rel_ShouldExist_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.Sh
 VAR _Rel_FromCard_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: FromCardinality=One should pass", "TestData", "ID", "TestData-Fact", "ID", "One")
 VAR _Rel_FromCard_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: FromCardinality=Many should fail", "TestData", "ID", "TestData-Fact", "ID", "Many")
 
-// PQL.Assert.Relationship.ShouldExist — ToCardinality (default ToCardinality=Many)
-VAR _Rel_ToCard_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: ToCardinality=Many should pass", "TestData", "ID", "TestData-Fact", "ID", "", "Many")
-VAR _Rel_ToCard_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: ToCardinality=One should fail", "TestData", "ID", "TestData-Fact", "ID", "", "One")
+// PQL.Assert.Relationship.ShouldExist — ToCardinality (TestData[ID] -> TestData-Fact[ID] has ToCardinality=One)
+VAR _Rel_ToCard_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: ToCardinality=One should pass", "TestData", "ID", "TestData-Fact", "ID", "", "One")
+VAR _Rel_ToCard_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: ToCardinality=Many should fail", "TestData", "ID", "TestData-Fact", "ID", "", "Many")
 
 // PQL.Assert.Relationship.ShouldExist — SecurityFilteringBehavior (default=OneDirection)
 VAR _Rel_SecFilter_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: SecurityFiltering=OneDirection should pass", "TestData", "ID", "TestData-Fact", "ID", "", "", "OneDirection")
 VAR _Rel_SecFilter_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: SecurityFiltering=BothDirections should fail", "TestData", "ID", "TestData-Fact", "ID", "", "", "BothDirections")
 
 // PQL.Assert.Relationship.ShouldExist — all optional params correct
-VAR _Rel_AllParams_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: All params correct should pass", "TestData", "ID", "TestData-Fact", "ID", "One", "Many", "OneDirection")
+VAR _Rel_AllParams_Pass = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: All params correct should pass", "TestData", "ID", "TestData-Fact", "ID", "One", "One", "OneDirection")
 
 // PQL.Assert.Relationship.ShouldExist — relationship not found with optional params
-VAR _Rel_NotFound_WithParams_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: Non-existent relationship with cardinality should fail", "FakeFrom", "Col", "FakeTo", "Col", "One", "Many", "OneDirection")
+VAR _Rel_NotFound_WithParams_Fail = PQL.Assert.Relationship.ShouldExist("Relationship.ShouldExist: Non-existent relationship with cardinality should fail", "FakeFrom", "Col", "FakeTo", "Col", "One", "One", "OneDirection")
 
 // ============================================
 // Combine All Test Results
@@ -550,6 +550,87 @@ VAR _Summary =
             )
     )
 
+// Per-category breakdown so each namespace's coverage is visible at a glance
+VAR _BasicRows = FILTER(
+    _ValidationResults,
+    NOT CONTAINSSTRING([TestName], "Relationship.")
+    && NOT CONTAINSSTRING([TestName], "Col.")
+    && NOT CONTAINSSTRING([TestName], "Tbl.")
+)
+VAR _ColRows = FILTER(_ValidationResults, CONTAINSSTRING([TestName], "Col."))
+VAR _TblRows = FILTER(_ValidationResults, CONTAINSSTRING([TestName], "Tbl."))
+VAR _RelRows = FILTER(_ValidationResults, CONTAINSSTRING([TestName], "Relationship."))
+
+VAR _BasicTotal = COUNTROWS(_BasicRows)
+VAR _BasicCorrect = COUNTROWS(FILTER(_BasicRows, [ValidationStatus] = "✅ CORRECT"))
+VAR _BasicMismatch = COUNTROWS(FILTER(_BasicRows, CONTAINSSTRING([ValidationStatus], "MISMATCH")))
+
+VAR _ColTotal = COUNTROWS(_ColRows)
+VAR _ColCorrect = COUNTROWS(FILTER(_ColRows, [ValidationStatus] = "✅ CORRECT"))
+VAR _ColMismatch = COUNTROWS(FILTER(_ColRows, CONTAINSSTRING([ValidationStatus], "MISMATCH")))
+
+VAR _TblTotal = COUNTROWS(_TblRows)
+VAR _TblCorrect = COUNTROWS(FILTER(_TblRows, [ValidationStatus] = "✅ CORRECT"))
+VAR _TblMismatch = COUNTROWS(FILTER(_TblRows, CONTAINSSTRING([ValidationStatus], "MISMATCH")))
+
+VAR _RelTotal = COUNTROWS(_RelRows)
+VAR _RelCorrect = COUNTROWS(FILTER(_RelRows, [ValidationStatus] = "✅ CORRECT"))
+VAR _RelMismatch = COUNTROWS(FILTER(_RelRows, CONTAINSSTRING([ValidationStatus], "MISMATCH")))
+
+VAR _CatBasic = 
+    ROW(
+        "TestName", "--- Basic Assertions ---",
+        "Expected", "Total: " & _BasicTotal,
+        "Actual", "Correct: " & _BasicCorrect & " | Mismatches: " & _BasicMismatch,
+        "Passed", IF(_BasicMismatch = 0, TRUE, FALSE),
+        "ExpectedToPass", BLANK(),
+        "ExpectedToFail", BLANK(),
+        "HasExpectation", BLANK(),
+        "ValidationStatus",
+            IF(_BasicMismatch = 0, "✅ CATEGORY CLEAN", "❌ " & _BasicMismatch & " MISMATCHES")
+    )
+
+VAR _CatCol = 
+    ROW(
+        "TestName", "--- Column Assertions ---",
+        "Expected", "Total: " & _ColTotal,
+        "Actual", "Correct: " & _ColCorrect & " | Mismatches: " & _ColMismatch,
+        "Passed", IF(_ColMismatch = 0, TRUE, FALSE),
+        "ExpectedToPass", BLANK(),
+        "ExpectedToFail", BLANK(),
+        "HasExpectation", BLANK(),
+        "ValidationStatus",
+            IF(_ColMismatch = 0, "✅ CATEGORY CLEAN", "❌ " & _ColMismatch & " MISMATCHES")
+    )
+
+VAR _CatTbl = 
+    ROW(
+        "TestName", "--- Table Assertions ---",
+        "Expected", "Total: " & _TblTotal,
+        "Actual", "Correct: " & _TblCorrect & " | Mismatches: " & _TblMismatch,
+        "Passed", IF(_TblMismatch = 0, TRUE, FALSE),
+        "ExpectedToPass", BLANK(),
+        "ExpectedToFail", BLANK(),
+        "HasExpectation", BLANK(),
+        "ValidationStatus",
+            IF(_TblMismatch = 0, "✅ CATEGORY CLEAN", "❌ " & _TblMismatch & " MISMATCHES")
+    )
+
+VAR _CatRel = 
+    ROW(
+        "TestName", "--- Relationship Assertions ---",
+        "Expected", "Total: " & _RelTotal,
+        "Actual", "Correct: " & _RelCorrect & " | Mismatches: " & _RelMismatch,
+        "Passed", IF(_RelMismatch = 0, TRUE, FALSE),
+        "ExpectedToPass", BLANK(),
+        "ExpectedToFail", BLANK(),
+        "HasExpectation", BLANK(),
+        "ValidationStatus",
+            IF(_RelMismatch = 0, "✅ CATEGORY CLEAN", "❌ " & _RelMismatch & " MISMATCHES")
+    )
+
+VAR _CategoryBreakdown = UNION(_CatBasic, _CatCol, _CatTbl, _CatRel)
+
 // Show only mismatches and summary for quick review
 VAR _MismatchesOnly = 
     FILTER(
@@ -560,6 +641,7 @@ VAR _MismatchesOnly =
 VAR _QuickReport = 
     UNION(
         _Summary,
+        _CategoryBreakdown,
         _MismatchesOnly
     )
 
@@ -567,13 +649,19 @@ VAR _QuickReport =
 VAR _DetailedReport = 
     UNION(
         _Summary,
+        _CategoryBreakdown,
         _ValidationResults
     )
 
 // Output validation results - switch between _QuickReport and _DetailedReport
 EVALUATE _QuickReport
 ORDER BY 
-    IF([TestName] = "=== VALIDATION SUMMARY ===", 0, 1),
+    SWITCH(
+        TRUE(),
+        [TestName] = "=== VALIDATION SUMMARY ===", 0,
+        LEFT([TestName], 3) = "---", 1,
+        2
+    ),
     [ValidationStatus] DESC,
     [TestName]
 
