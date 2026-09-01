@@ -6,6 +6,10 @@ A comprehensive DAX assertion library for writing unit tests in Power BI and Ana
 
 For complete library documentation, usage examples, and API reference, see the **[Library Documentation](src/README.md)**.
 
+## 📝 Release Notes
+
+See [CHANGELOG.md](CHANGELOG.md) for the full version history and per-release notes.
+
 ## 🤝 Contributing
 
 We welcome contributions to PQL.Assert! Here's how you can help:
