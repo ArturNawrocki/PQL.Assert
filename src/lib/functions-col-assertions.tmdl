@@ -649,7 +649,6 @@ createOrReplace
 		annotation DAXLIB_PackageVersion = 0.6.0
 
 	/// Asserts whether column is available for MDX queries. Prevents problems for downstream Analyze in Excel users
-
 	function 'PQL.Assert.Col.IsAvailableInMDX' =
 		(testName : STRING, tableName : STRING, columnName : STRING) =>
 			VAR _ColumnID = MAXX(FILTER(INFO.VIEW.COLUMNS(), [Table] = tableName && [Name] = columnName), [ID])
